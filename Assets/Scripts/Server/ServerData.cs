@@ -22,6 +22,7 @@ public class ServerData : MonoBehaviour
     string id, pass;
 
     public TMP_Text warning;
+    public GameObject LoadingBar;
 
     private void Awake()
     {
@@ -83,6 +84,7 @@ public class ServerData : MonoBehaviour
             return;
         }
 
+        LoadingBar.SetActive(true);
         WWWForm form = new WWWForm();
         form.AddField("order", "register");
         form.AddField("id", id);
@@ -113,6 +115,7 @@ public class ServerData : MonoBehaviour
 
     IEnumerator LoginAndSwitchScene(WWWForm form)
     {
+        LoadingBar.SetActive(true);
         using (UnityWebRequest www = UnityWebRequest.Post(URL, form))
         {
             yield return www.SendWebRequest();

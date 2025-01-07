@@ -11,6 +11,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     private readonly string version = "1.0"; // 게임 버전
     private string userId; // 유저 ID
 
+    LoadingProcess LP;
+
     //룸 ID를 입력할 인풋 필드
     public TMP_InputField roomInputField;
 
@@ -24,9 +26,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     //룸 목록이 표시될 scroll content
     public Transform scrollContent;
 
+    public GameObject LoadingPanel;
+
     //네트워크 접속은 Start()보다 먼저 실행되어야한다. Awake() 함수 사용
     private void Awake()
     {
+        LP = FindAnyObjectByType<LoadingProcess>();
         //씬 동기화. 맨 처음 접속한 사람이 방장이 된다.
         PhotonNetwork.AutomaticallySyncScene = true;
         //버전 할당. 위에 string으로 만들었던 version을 쓴다.
@@ -112,6 +117,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     void Start()
     {
         StartCoroutine(GetNicknameFromGoogleSheet());
+    }
+    void Update()
+    {
+        if(LP.Loading.activeSelf && LP.currentValue >= 100)
+        {
+            LoadingPanel.SetActive(false);
+        }
     }
     string SetRoomName()
     {
