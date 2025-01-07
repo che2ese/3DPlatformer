@@ -126,6 +126,9 @@ public class ServerData : MonoBehaviour
 
                 if (response.result == "OK")
                 {
+                    PlayerPrefs.SetString("userId", id); // 로그인한 유저 ID 저장
+                    PlayerPrefs.Save();
+
                     // C열과 D열 값 확인
                     if (response.msg.Contains("C") && response.msg.Contains("D"))
                     {

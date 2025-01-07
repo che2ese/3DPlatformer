@@ -48,6 +48,39 @@ public class SceneLoader : MonoBehaviour
                 }
             }
         }
+        if (scene.name == "MenuScene")
+        {
+            GameObject onlineButton = GameObject.Find("Online");
+            GameObject stageButton = GameObject.Find("Stage");
+            GameObject arcadeButton = GameObject.Find("Arcade");
+            if (onlineButton != null)
+            {
+                Button btn = onlineButton.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.onClick.RemoveAllListeners(); // 기존 이벤트 제거
+                    btn.onClick.AddListener(() => OnStartButtonClicked("OnlineScene")); // 새로운 이벤트 추가
+                }
+            }
+            if (stageButton != null)
+            {
+                Button btn = stageButton.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.onClick.RemoveAllListeners(); // 기존 이벤트 제거
+                    btn.onClick.AddListener(() => OnStartButtonClicked("StageScene")); // 새로운 이벤트 추가
+                }
+            }
+            if (arcadeButton != null)
+            {
+                Button btn = arcadeButton.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.onClick.RemoveAllListeners(); // 기존 이벤트 제거
+                    btn.onClick.AddListener(() => OnStartButtonClicked("ArcadeScene")); // 새로운 이벤트 추가
+                }
+            }
+        }
     }
     void Update()
     {
@@ -57,6 +90,10 @@ public class SceneLoader : MonoBehaviour
             if (SceneManager.GetActiveScene().name == "MenuScene")
             {
                 SceneManager.LoadScene("MainScene"); // MainScene으로 전환
+            }
+            if (SceneManager.GetActiveScene().name == "OnlineScene" || SceneManager.GetActiveScene().name == "StageScene" || SceneManager.GetActiveScene().name == "ArcadeScene")
+            {
+                SceneManager.LoadScene("MenuScene"); // MainScene으로 전환
             }
         }
     }
