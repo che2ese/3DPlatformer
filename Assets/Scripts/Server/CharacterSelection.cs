@@ -8,10 +8,10 @@ using TMPro;
 public class CharacterSelection : MonoBehaviour
 {
     [Header("CharSelection")]
-    public Button[] characterButtons; // Ä³¸¯ÅÍ ¹öÆ° (1, 2, 3, 4)
-    public Button confirmButton;     // ¼±ÅÃ È®ÀÎ ¹öÆ°
-    private Button selectedButton = null; // ÇöÀç ¼±ÅÃµÈ ¹öÆ°
-    public string selectedCharacter = ""; // ¼±ÅÃµÈ Ä³¸¯ÅÍ ¹øÈ£
+    public Button[] characterButtons; // ìºë¦­í„° ë²„íŠ¼ (1, 2, 3, 4)
+    public Button confirmButton;     // ì„ íƒ í™•ì¸ ë²„íŠ¼
+    private Button selectedButton = null; // í˜„ì¬ ì„ íƒëœ ë²„íŠ¼
+    public string selectedCharacter = ""; // ì„ íƒëœ ìºë¦­í„° ë²ˆí˜¸
 
     [Header("NIckSelection")]
     public GameObject NickPanel;
@@ -23,56 +23,56 @@ public class CharacterSelection : MonoBehaviour
 
     void Start()
     {
-        // ¹öÆ° ÃÊ±âÈ­
+        // ë²„íŠ¼ ì´ˆê¸°í™”
         foreach (var button in characterButtons)
         {
             button.onClick.AddListener(() => OnCharacterSelected(button));
         }
 
         confirmButton.onClick.AddListener(OnConfirmSelection);
-        confirmButton.interactable = false; // ¼±ÅÃ È®ÀÎ ¹öÆ° ºñÈ°¼ºÈ­
+        confirmButton.interactable = false; // ì„ íƒ í™•ì¸ ë²„íŠ¼ ë¹„í™œì„±í™”
     }
 
     void OnCharacterSelected(Button clickedButton)
     {
-        // ÀÌ¹Ì ¼±ÅÃµÈ ¹öÆ°À» ´Ù½Ã ´©¸£¸é ¼±ÅÃ Ãë¼Ò
+        // ì´ë¯¸ ì„ íƒëœ ë²„íŠ¼ì„ ë‹¤ì‹œ ëˆ„ë¥´ë©´ ì„ íƒ ì·¨ì†Œ
         if (selectedButton == clickedButton)
         {
             ResetSelection();
             return;
         }
 
-        // »õ ¹öÆ° ¼±ÅÃ
-        selectedCharacter = clickedButton.name; // ¹öÆ° ÀÌ¸§À» Ä³¸¯ÅÍ ¹øÈ£·Î »ç¿ë
+        // ìƒˆ ë²„íŠ¼ ì„ íƒ
+        selectedCharacter = clickedButton.name; // ë²„íŠ¼ ì´ë¦„ì„ ìºë¦­í„° ë²ˆí˜¸ë¡œ ì‚¬ìš©
         selectedButton = clickedButton;
 
-        // ´Ù¸¥ ¹öÆ° ºñÈ°¼ºÈ­
+        // ë‹¤ë¥¸ ë²„íŠ¼ ë¹„í™œì„±í™”
         foreach (var button in characterButtons)
         {
-            button.interactable = (button == clickedButton); // ¼±ÅÃµÈ ¹öÆ°¸¸ È°¼ºÈ­
+            button.interactable = (button == clickedButton); // ì„ íƒëœ ë²„íŠ¼ë§Œ í™œì„±í™”
         }
 
-        // ¼±ÅÃµÈ ¹öÆ° °­Á¶ (¿¹: »ö º¯°æ)
+        // ì„ íƒëœ ë²„íŠ¼ ê°•ì¡° (ì˜ˆ: ìƒ‰ ë³€ê²½)
         clickedButton.GetComponent<Image>().color = Color.green;
 
-        // ¼±ÅÃ È®ÀÎ ¹öÆ° È°¼ºÈ­
+        // ì„ íƒ í™•ì¸ ë²„íŠ¼ í™œì„±í™”
         confirmButton.interactable = true;
     }
 
     void ResetSelection()
     {
-        // ¼±ÅÃ Ãë¼Ò
+        // ì„ íƒ ì·¨ì†Œ
         selectedCharacter = "";
         selectedButton = null;
 
-        // ¸ğµç ¹öÆ° ´Ù½Ã È°¼ºÈ­
+        // ëª¨ë“  ë²„íŠ¼ ë‹¤ì‹œ í™œì„±í™”
         foreach (var button in characterButtons)
         {
             button.interactable = true;
-            button.GetComponent<Image>().color = Color.white; // »ö»ó ÃÊ±âÈ­
+            button.GetComponent<Image>().color = Color.white; // ìƒ‰ìƒ ì´ˆê¸°í™”
         }
 
-        // ¼±ÅÃ È®ÀÎ ¹öÆ° ºñÈ°¼ºÈ­
+        // ì„ íƒ í™•ì¸ ë²„íŠ¼ ë¹„í™œì„±í™”
         confirmButton.interactable = false;
     }
 
@@ -80,17 +80,17 @@ public class CharacterSelection : MonoBehaviour
     {
         if (string.IsNullOrEmpty(selectedCharacter))
         {
-            Debug.LogError("Ä³¸¯ÅÍ°¡ ¼±ÅÃµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogError("ìºë¦­í„°ê°€ ì„ íƒë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
         WWWForm form = new WWWForm();
         form.AddField("order", "selectCharacter");
-        form.AddField("character", selectedCharacter); // ¼±ÅÃµÈ Ä³¸¯ÅÍ ¹øÈ£
+        form.AddField("character", selectedCharacter); // ì„ íƒëœ ìºë¦­í„° ë²ˆí˜¸
 
         StartCoroutine(PostToGoogleSheet(form));
 
-        // Panel È°¼ºÈ­
+        // Panel í™œì„±í™”
         NickPanel.SetActive(true);
     }
 
@@ -102,15 +102,15 @@ public class CharacterSelection : MonoBehaviour
 
             if (www.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("Ä³¸¯ÅÍ ¼±ÅÃ ÀúÀå ¿Ï·á: " + www.downloadHandler.text);
+                Debug.Log("ìºë¦­í„° ì„ íƒ ì €ì¥ ì™„ë£Œ: " + www.downloadHandler.text);
             }
             else
             {
-                Debug.LogError("¼­¹ö ¿äÃ» ½ÇÆĞ: " + www.error);
+                Debug.LogError("ì„œë²„ ìš”ì²­ ì‹¤íŒ¨: " + www.error);
             }
         }
     }
-    // ´Ğ³×ÀÓ ÀúÀå ÇÔ¼ö
+    // ë‹‰ë„¤ì„ ì €ì¥ í•¨ìˆ˜
     public void OnSaveNick()
     {
         string nickName = NickInput.text.Trim();
@@ -120,7 +120,7 @@ public class CharacterSelection : MonoBehaviour
             warning.gameObject.SetActive(true);
             warning.text = "empty";
             StartCoroutine(ServerData.instance.TextSetFalse());
-            Debug.LogError("´Ğ³×ÀÓÀÌ ºñ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError("ë‹‰ë„¤ì„ì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -140,24 +140,24 @@ public class CharacterSelection : MonoBehaviour
             if (www.result == UnityWebRequest.Result.Success)
             {
                 string response = www.downloadHandler.text;
-                Debug.Log("ÀÀ´ä: " + response);
+                Debug.Log("ì‘ë‹µ: " + response);
 
                 if (response.Contains("\"result\":\"ERROR\""))
                 {
                     warning.gameObject.SetActive(true);
-                    warning.text = "Áßº¹";
+                    warning.text = "ì¤‘ë³µ";
                     StartCoroutine(ServerData.instance.TextSetFalse());
-                    Debug.LogError("´Ğ³×ÀÓ Áßº¹ ¶Ç´Â ÀúÀå ½ÇÆĞ");
+                    Debug.LogError("ë‹‰ë„¤ì„ ì¤‘ë³µ ë˜ëŠ” ì €ì¥ ì‹¤íŒ¨");
                 }
                 else
                 {
-                    Debug.Log("´Ğ³×ÀÓ ÀúÀå ¿Ï·á");
+                    Debug.Log("ë‹‰ë„¤ì„ ì €ì¥ ì™„ë£Œ");
                     SceneManager.LoadScene("MainScene");
                 }
             }
             else
             {
-                Debug.LogError("¼­¹ö ¿äÃ» ½ÇÆĞ: " + www.error);
+                Debug.LogError("ì„œë²„ ìš”ì²­ ì‹¤íŒ¨: " + www.error);
             }
         }
     }

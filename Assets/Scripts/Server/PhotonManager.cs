@@ -8,110 +8,110 @@ using Photon.Realtime;
 
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
-    private readonly string version = "1.0"; // °ÔÀÓ ¹öÀü
-    private string userId; // À¯Àú ID
+    private readonly string version = "1.0"; // ê²Œì„ ë²„ì „
+    private string userId; // ìœ ì € ID
 
     LoadingProcess LP;
 
-    //·ë ID¸¦ ÀÔ·ÂÇÒ ÀÎÇ² ÇÊµå
+    //ë£¸ IDë¥¼ ì…ë ¥í•  ì¸í’‹ í•„ë“œ
     public TMP_InputField roomInputField;
 
-    public TMP_Text NickName; // ´Ğ³×ÀÓ UI ÅØ½ºÆ®
+    public TMP_Text NickName; // ë‹‰ë„¤ì„ UI í…ìŠ¤íŠ¸
     const string URL = "https://script.google.com/macros/s/AKfycbyTfXkFJW5FQh_lDEg0R6T5YTef4z7yCbmXVKe7SNdpAaKncquSuyYYwBcFlPIZgZs/exec";
 
-    //·ë ¸ñ·Ï¿¡ ´ëÇÑ µ¥ÀÌÅÍ ÀúÀå
+    //ë£¸ ëª©ë¡ì— ëŒ€í•œ ë°ì´í„° ì €ì¥
     Dictionary<string, GameObject> rooms = new Dictionary<string, GameObject>();
-    //·ë ¸ñ·ÏÀ» Ç¥½ÃÇÒ ÇÁ¸®ÆÕ
+    //ë£¸ ëª©ë¡ì„ í‘œì‹œí•  í”„ë¦¬íŒ¹
     GameObject roomItemPrefab;
-    //·ë ¸ñ·ÏÀÌ Ç¥½ÃµÉ scroll content
+    //ë£¸ ëª©ë¡ì´ í‘œì‹œë  scroll content
     public Transform scrollContent;
 
     public GameObject LoadingPanel;
 
-    //³×Æ®¿öÅ© Á¢¼ÓÀº Start()º¸´Ù ¸ÕÀú ½ÇÇàµÇ¾î¾ßÇÑ´Ù. Awake() ÇÔ¼ö »ç¿ë
+    //ë„¤íŠ¸ì›Œí¬ ì ‘ì†ì€ Start()ë³´ë‹¤ ë¨¼ì € ì‹¤í–‰ë˜ì–´ì•¼í•œë‹¤. Awake() í•¨ìˆ˜ ì‚¬ìš©
     private void Awake()
     {
         LP = FindAnyObjectByType<LoadingProcess>();
-        //¾À µ¿±âÈ­. ¸Ç Ã³À½ Á¢¼ÓÇÑ »ç¶÷ÀÌ ¹æÀåÀÌ µÈ´Ù.
+        //ì”¬ ë™ê¸°í™”. ë§¨ ì²˜ìŒ ì ‘ì†í•œ ì‚¬ëŒì´ ë°©ì¥ì´ ëœë‹¤.
         PhotonNetwork.AutomaticallySyncScene = true;
-        //¹öÀü ÇÒ´ç. À§¿¡ stringÀ¸·Î ¸¸µé¾ú´ø versionÀ» ¾´´Ù.
+        //ë²„ì „ í• ë‹¹. ìœ„ì— stringìœ¼ë¡œ ë§Œë“¤ì—ˆë˜ versionì„ ì“´ë‹¤.
         PhotonNetwork.GameVersion = version;
-        //Æ÷Åæ ¼­¹ö¿ÍÀÇ Åë½Å È½¼ö¸¦ ·Î±×·Î Âï±â. ±âº»°ª : 30
-        Debug.Log(PhotonNetwork.SendRate); //Á¦´ë·Î Åë½ÅÀÌ µÇ¾ú´Ù¸é 30ÀÌ Ãâ·ÂµÈ´Ù.
+        //í¬í†¤ ì„œë²„ì™€ì˜ í†µì‹  íšŸìˆ˜ë¥¼ ë¡œê·¸ë¡œ ì°ê¸°. ê¸°ë³¸ê°’ : 30
+        Debug.Log(PhotonNetwork.SendRate); //ì œëŒ€ë¡œ í†µì‹ ì´ ë˜ì—ˆë‹¤ë©´ 30ì´ ì¶œë ¥ëœë‹¤.
 
         roomItemPrefab = Resources.Load<GameObject>("RoomItem");
 
-        //Æ÷Åæ ¼­¹ö¿¡ Á¢¼Ó
+        //í¬í†¤ ì„œë²„ì— ì ‘ì†
         if (PhotonNetwork.IsConnected == false)
         {
             PhotonNetwork.ConnectUsingSettings();
         }
     }
-    //CallBack ÇÔ¼ö
-    public override void OnConnectedToMaster() //Á¤»óÀûÀ¸·Î ¸¶½ºÅÍ ¼­¹ö¿¡ Á¢¼ÓÀÌ µÇ¸é È£ÃâµÈ´Ù.
+    //CallBack í•¨ìˆ˜
+    public override void OnConnectedToMaster() //ì •ìƒì ìœ¼ë¡œ ë§ˆìŠ¤í„° ì„œë²„ì— ì ‘ì†ì´ ë˜ë©´ í˜¸ì¶œëœë‹¤.
     {
-        //¸¶½ºÅÍ ¼­¹ö¿¡ Á¢¼ÓÀÌ µÇ¾ú´ÂÁö µğ¹ö±ë ÇÑ´Ù.
+        //ë§ˆìŠ¤í„° ì„œë²„ì— ì ‘ì†ì´ ë˜ì—ˆëŠ”ì§€ ë””ë²„ê¹… í•œë‹¤.
         Debug.Log("Connected to Master");
-        Debug.Log($"In Lobby = {PhotonNetwork.InLobby}"); //·Îºñ¿¡ µé¾î¿Í ÀÖÀ¸¸é True, ¾Æ´Ï¸é False ¹İÈ¯. Master ¼­¹ö¿¡´Â Á¢¼ÓÇßÁö¸¸ ·Îºñ¿¡´Â ¾Æ´Ï¹Ç·Î False ¹İÈ¯µÈ´Ù.
-        //·Îºñ Á¢¼Ó
+        Debug.Log($"In Lobby = {PhotonNetwork.InLobby}"); //ë¡œë¹„ì— ë“¤ì–´ì™€ ìˆìœ¼ë©´ True, ì•„ë‹ˆë©´ False ë°˜í™˜. Master ì„œë²„ì—ëŠ” ì ‘ì†í–ˆì§€ë§Œ ë¡œë¹„ì—ëŠ” ì•„ë‹ˆë¯€ë¡œ False ë°˜í™˜ëœë‹¤.
+        //ë¡œë¹„ ì ‘ì†
         PhotonNetwork.JoinLobby();
     }
 
-    public override void OnJoinedLobby() //·Îºñ¿¡ Á¢¼ÓÀÌ Á¦´ë·Î µÇ¾ú´Ù¸é ÇØ´ç Äİ¹éÇÔ¼ö È£Ãâ
+    public override void OnJoinedLobby() //ë¡œë¹„ì— ì ‘ì†ì´ ì œëŒ€ë¡œ ë˜ì—ˆë‹¤ë©´ í•´ë‹¹ ì½œë°±í•¨ìˆ˜ í˜¸ì¶œ
     {
-        Debug.Log($"In Lobby = {PhotonNetwork.InLobby}"); //·Îºñ¿¡ Á¢¼ÓÀÌ µÇ¾ú´Ù¸é True°¡ ¹İÈ¯ µÉ °ÍÀÌ´Ù.
-        //¹æ Á¢¼Ó ¹æ¹ıÀº µÎ °¡Áö. 1.·£´ı ¸ÅÄ¡¸ŞÀÌÅ·, 2.¼±ÅÃµÈ ¹æ Á¢¼Ó
+        Debug.Log($"In Lobby = {PhotonNetwork.InLobby}"); //ë¡œë¹„ì— ì ‘ì†ì´ ë˜ì—ˆë‹¤ë©´ Trueê°€ ë°˜í™˜ ë  ê²ƒì´ë‹¤.
+        //ë°© ì ‘ì† ë°©ë²•ì€ ë‘ ê°€ì§€. 1.ëœë¤ ë§¤ì¹˜ë©”ì´í‚¹, 2.ì„ íƒëœ ë°© ì ‘ì†
         //PhotonNetwork.JoinRandomRoom();
     }
-    //¹æ »ı¼ºÀÌ µÇÁö ¾Ê¾ÒÀ¸¸é ¿À·ù Äİ¹é ÇÔ¼ö ½ÇÇà
+    //ë°© ìƒì„±ì´ ë˜ì§€ ì•Šì•˜ìœ¼ë©´ ì˜¤ë¥˜ ì½œë°± í•¨ìˆ˜ ì‹¤í–‰
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log($"JoinRandom Failed {returnCode}: {message}");
 
-        OnMakeRoomClick(); //¿À·ù ³ª´Â °ÍÀ» ¹æÁöÇÏ±â À§ÇØ¼­.
+        OnMakeRoomClick(); //ì˜¤ë¥˜ ë‚˜ëŠ” ê²ƒì„ ë°©ì§€í•˜ê¸° ìœ„í•´ì„œ.
 
-        //·ë ¼Ó¼º ¼³Á¤
+        //ë£¸ ì†ì„± ì„¤ì •
         //RoomOptions roomOptions = new RoomOptions();
-        //·ëÀÇ Á¢¼ÓÇÒ ¼ö ÀÖ´Â ÃÖ´ë Á¢¼ÓÀÚ ¼ö ÃÖ´ë Á¦ÇÑÀ» ÇØ³ö¾ß CCU¸¦ Á¦ÇÑÇÒ ¼ö ÀÖ´Ù.
+        //ë£¸ì˜ ì ‘ì†í•  ìˆ˜ ìˆëŠ” ìµœëŒ€ ì ‘ì†ì ìˆ˜ ìµœëŒ€ ì œí•œì„ í•´ë†”ì•¼ CCUë¥¼ ì œí•œí•  ìˆ˜ ìˆë‹¤.
         //roomOptions.MaxPlayers = 20;
-        //·ë ¿ÀÇÂ ¿©ºÎ
+        //ë£¸ ì˜¤í”ˆ ì—¬ë¶€
         //roomOptions.IsOpen = true;
-        //·Îºñ¿¡¼­ ·ëÀÇ ¸ñ·Ï¿¡ ³ëÃâ½ÃÅ³Áö ¿©ºÎ. °ø°³¹æ »ı¼º
+        //ë¡œë¹„ì—ì„œ ë£¸ì˜ ëª©ë¡ì— ë…¸ì¶œì‹œí‚¬ì§€ ì—¬ë¶€. ê³µê°œë°© ìƒì„±
         //roomOptions.IsVisible = true;
-        //·ë »ı¼º
-        //PhotonNetwork.CreateRoom("Room1", roomOptions); //·ë ÀÌ¸§°ú ·ë ¼³Á¤. ¿ì¸®´Â roomOptions¿¡ ¼³Á¤À» ÀÌ¹Ì ÇØ³õ¾Ò´Ù.
+        //ë£¸ ìƒì„±
+        //PhotonNetwork.CreateRoom("Room1", roomOptions); //ë£¸ ì´ë¦„ê³¼ ë£¸ ì„¤ì •. ìš°ë¦¬ëŠ” roomOptionsì— ì„¤ì •ì„ ì´ë¯¸ í•´ë†“ì•˜ë‹¤.
     }
 
-    //Á¦´ë·Î ·ëÀÌ ÀÖ´Ù¸é ´ÙÀ½ÀÇ Äİ¹é ÇÔ¼ö¸¦ È£ÃâÇÑ´Ù.
+    //ì œëŒ€ë¡œ ë£¸ì´ ìˆë‹¤ë©´ ë‹¤ìŒì˜ ì½œë°± í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•œë‹¤.
     public override void OnCreatedRoom()
     {
         Debug.Log("Created Room");
         Debug.Log($"Room Name: {PhotonNetwork.CurrentRoom.Name}");
     }
 
-    //·ë¿¡ µé¾î¿ÔÀ» ¶§ Äİ¹é ÇÔ¼ö
+    //ë£¸ì— ë“¤ì–´ì™”ì„ ë•Œ ì½œë°± í•¨ìˆ˜
     public override void OnJoinedRoom()
     {
         Debug.Log($"In Room = {PhotonNetwork.InRoom}");
         Debug.Log($"Player Count = {PhotonNetwork.CurrentRoom.PlayerCount}");
-        //Á¢¼ÓÇÑ »ç¿ëÀÚ ´Ğ³×ÀÓ È®ÀÎ
+        //ì ‘ì†í•œ ì‚¬ìš©ì ë‹‰ë„¤ì„ í™•ì¸
         foreach (var player in PhotonNetwork.CurrentRoom.Players)
         {
-            //ÇÃ·¹ÀÌ¾î ´Ğ³×ÀÓ, À¯ÀúÀÇ °íÀ¯°ª °¡Á®¿À±â
-            Debug.Log($"ÇÃ·¹ÀÌ¾î ´Ğ³×ÀÓ: {player.Value.NickName}, À¯Àú °íÀ¯°ª: {player.Value.ActorNumber}");
+            //í”Œë ˆì´ì–´ ë‹‰ë„¤ì„, ìœ ì €ì˜ ê³ ìœ ê°’ ê°€ì ¸ì˜¤ê¸°
+            Debug.Log($"í”Œë ˆì´ì–´ ë‹‰ë„¤ì„: {player.Value.NickName}, ìœ ì € ê³ ìœ ê°’: {player.Value.ActorNumber}");
         }
 
-        //ÇÃ·¹ÀÌ¾î »ı¼º Æ÷ÀÎÆ® ±×·ì ¹è¿­À» ¹Ş¾Æ¿À±â. Æ÷ÀÎÆ® ±×·ìÀÇ ÀÚ½Ä ¿ÀºêÁ§Æ®ÀÇ Transform ¹Ş¾Æ¿À±â.
+        //í”Œë ˆì´ì–´ ìƒì„± í¬ì¸íŠ¸ ê·¸ë£¹ ë°°ì—´ì„ ë°›ì•„ì˜¤ê¸°. í¬ì¸íŠ¸ ê·¸ë£¹ì˜ ìì‹ ì˜¤ë¸Œì íŠ¸ì˜ Transform ë°›ì•„ì˜¤ê¸°.
         //Transform[] points = GameObject.Find("PointGroup").GetComponentsInChildren<Transform>();
-        //1ºÎÅÍ ¹è¿­ÀÇ ±æÀÌ±îÁöÀÇ ¼ıÀÚ Áß RandomÇÑ °ªÀ» ÃßÃâ
+        //1ë¶€í„° ë°°ì—´ì˜ ê¸¸ì´ê¹Œì§€ì˜ ìˆ«ì ì¤‘ Randomí•œ ê°’ì„ ì¶”ì¶œ
         //int idx = Random.Range(1, points.Length);
-        //ÇÃ·¹ÀÌ¾î ÇÁ¸®ÆÕÀ» ÃßÃâÇÑ idx À§Ä¡¿Í È¸Àü °ª¿¡ »ı¼º. ³×Æ®¿öÅ©¸¦ ÅëÇØ¼­.
+        //í”Œë ˆì´ì–´ í”„ë¦¬íŒ¹ì„ ì¶”ì¶œí•œ idx ìœ„ì¹˜ì™€ íšŒì „ ê°’ì— ìƒì„±. ë„¤íŠ¸ì›Œí¬ë¥¼ í†µí•´ì„œ.
         //PhotonNetwork.Instantiate("Player", points[idx].position, points[idx].rotation, 0);
         
-        //¸¶½ºÅÍ Å¬¶óÀÌ¾ğÆ®ÀÎ °æ¿ì °ÔÀÓ ¾À ·Îµù
+        //ë§ˆìŠ¤í„° í´ë¼ì´ì–¸íŠ¸ì¸ ê²½ìš° ê²Œì„ ì”¬ ë¡œë”©
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel("RoomScene"); //¾À ÀÌ¸§À¸·Î ºÒ·¯¿À±â
+            PhotonNetwork.LoadLevel("RoomScene"); //ì”¬ ì´ë¦„ìœ¼ë¡œ ë¶ˆëŸ¬ì˜¤ê¸°
         }
     }
     void Start()
@@ -127,55 +127,55 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
     string SetRoomName()
     {
-        //ºñ¾îÀÖÀ¸¸é ·£´ıÇÑ ·ë ÀÌ¸§. ±×·¸Áö ¾ÊÀ¸¸é °¡Á®¿Àµµ·Ï.
+        //ë¹„ì–´ìˆìœ¼ë©´ ëœë¤í•œ ë£¸ ì´ë¦„. ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ ê°€ì ¸ì˜¤ë„ë¡.
         if (string.IsNullOrEmpty(roomInputField.text))
         {
             roomInputField.text = $"ROOM_{Random.Range(1, 101):000}";
         }
         return roomInputField.text;
     }
-    public void OnMakeRoomClick() //¹æ »ı¼º ¹öÆ° ¸ÅÇÎ ÇÔ¼ö
+    public void OnMakeRoomClick() //ë°© ìƒì„± ë²„íŠ¼ ë§¤í•‘ í•¨ìˆ˜
     {
-        //·ë ¼Ó¼º Á¤ÀÇ
+        //ë£¸ ì†ì„± ì •ì˜
         RoomOptions ro = new RoomOptions();
         ro.MaxPlayers = 2;
         ro.IsOpen = true;
-        //°ø°³¹æ ¼³Á¤
+        //ê³µê°œë°© ì„¤ì •
         ro.IsVisible = true;
-        //·ë »ı¼º
-        PhotonNetwork.CreateRoom(SetRoomName(), ro); //°íÁ¤µÈ °ªÀÌ ¾Æ´Ï¶ó À¯Àú°¡ Å¸ÀÌÇÎÇÑ °ªÀ» ¹Ş¾Æ¿Â´Ù.
+        //ë£¸ ìƒì„±
+        PhotonNetwork.CreateRoom(SetRoomName(), ro); //ê³ ì •ëœ ê°’ì´ ì•„ë‹ˆë¼ ìœ ì €ê°€ íƒ€ì´í•‘í•œ ê°’ì„ ë°›ì•„ì˜¨ë‹¤.
     }
-    //¹æ ¸®½ºÆ®¸¦ ¼ö½ÅÇÏ´Â Äİ¹é ÇÔ¼ö »ı¼º
+    //ë°© ë¦¬ìŠ¤íŠ¸ë¥¼ ìˆ˜ì‹ í•˜ëŠ” ì½œë°± í•¨ìˆ˜ ìƒì„±
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        // »èÁ¦µÈ RoomItem ÇÁ¸®ÆÕÀ» ÀúÀåÇÒ ÀÓ½Ãº¯¼ö
+        // ì‚­ì œëœ RoomItem í”„ë¦¬íŒ¹ì„ ì €ì¥í•  ì„ì‹œë³€ìˆ˜
         GameObject tempRoom = null;
         foreach (var roomInfo in roomList)
         {
-            // ·ëÀÌ »èÁ¦µÈ °æ¿ì
+            // ë£¸ì´ ì‚­ì œëœ ê²½ìš°
             if (roomInfo.RemovedFromList == true)
             {
-                // µñ¼Å³Ê¸®¿¡¼­ ·ë ÀÌ¸§À¸·Î °Ë»öÇØ ÀúÀåµÈ RoomItem ÇÁ¸®ÆÕÀ» ÃßÃâ
+                // ë”•ì…”ë„ˆë¦¬ì—ì„œ ë£¸ ì´ë¦„ìœ¼ë¡œ ê²€ìƒ‰í•´ ì €ì¥ëœ RoomItem í”„ë¦¬íŒ¹ì„ ì¶”ì¶œ
                 rooms.TryGetValue(roomInfo.Name, out tempRoom);
-                // RoomItem ÇÁ¸®ÆÕ »èÁ¦
+                // RoomItem í”„ë¦¬íŒ¹ ì‚­ì œ
                 Destroy(tempRoom);
-                // µñ¼Å³Ê¸®¿¡¼­ ÇØ´ç ·ë ÀÌ¸§ÀÇ µ¥ÀÌÅÍ¸¦ »èÁ¦
+                // ë”•ì…”ë„ˆë¦¬ì—ì„œ í•´ë‹¹ ë£¸ ì´ë¦„ì˜ ë°ì´í„°ë¥¼ ì‚­ì œ
                 rooms.Remove(roomInfo.Name);
 
             }
-            else // ·ë Á¤º¸°¡ º¯°æµÈ °æ¿ì
+            else // ë£¸ ì •ë³´ê°€ ë³€ê²½ëœ ê²½ìš°
             {
-                // ·ë ÀÌ¸§ÀÌ µñ¼Å³Ê¸®¿¡ ¾ø´Â °æ¿ì »õ·Î Ãß°¡
+                // ë£¸ ì´ë¦„ì´ ë”•ì…”ë„ˆë¦¬ì— ì—†ëŠ” ê²½ìš° ìƒˆë¡œ ì¶”ê°€
                 if (rooms.ContainsKey(roomInfo.Name) == false)
                 {
-                    // RoomInfo ÇÁ¸®ÆÕÀ» scrollContent ÇÏÀ§¿¡ »ı¼º
+                    // RoomInfo í”„ë¦¬íŒ¹ì„ scrollContent í•˜ìœ„ì— ìƒì„±
                     GameObject roomPrefab = Instantiate(roomItemPrefab, scrollContent);
-                    // ·ë Á¤º¸¸¦ Ç¥½ÃÇÏ±â À§ÇØ RoomInfo Á¤º¸ Àü´Ş
+                    // ë£¸ ì •ë³´ë¥¼ í‘œì‹œí•˜ê¸° ìœ„í•´ RoomInfo ì •ë³´ ì „ë‹¬
                     roomPrefab.GetComponent<RoomData>().RoomInfo = roomInfo;
-                    // µñ¼Å³Ê¸® ÀÚ·áÇü¿¡ µ¥ÀÌÅÍ Ãß°¡
+                    // ë”•ì…”ë„ˆë¦¬ ìë£Œí˜•ì— ë°ì´í„° ì¶”ê°€
                     rooms.Add(roomInfo.Name, roomPrefab);
                 }
-                else  // ·ë ÀÌ¸§ÀÌ µñ¼Å³Ê¸®¿¡ ¾ø´Â °æ¿ì¿¡ ·ë Á¤º¸¸¦ °»½Å
+                else  // ë£¸ ì´ë¦„ì´ ë”•ì…”ë„ˆë¦¬ì— ì—†ëŠ” ê²½ìš°ì— ë£¸ ì •ë³´ë¥¼ ê°±ì‹ 
                 {
                     rooms.TryGetValue(roomInfo.Name, out tempRoom);
                     tempRoom.GetComponent<RoomData>().RoomInfo = roomInfo;
@@ -188,7 +188,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         WWWForm form = new WWWForm();
         form.AddField("order", "getNickname");
-        form.AddField("id", PlayerPrefs.GetString("userId")); // ·Î±×ÀÎ ½Ã ÀúÀåµÈ ID »ç¿ë
+        form.AddField("id", PlayerPrefs.GetString("userId")); // ë¡œê·¸ì¸ ì‹œ ì €ì¥ëœ ID ì‚¬ìš©
 
         using (UnityWebRequest www = UnityWebRequest.Post(URL, form))
         {
@@ -197,23 +197,23 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             if (www.result == UnityWebRequest.Result.Success)
             {
                 string response = www.downloadHandler.text;
-                Debug.Log("ÀÀ´ä: " + response);
+                Debug.Log("ì‘ë‹µ: " + response);
 
                 var serverResponse = JsonUtility.FromJson<ServerResponse>(response);
                 if (serverResponse.result == "OK")
                 {
-                    userId = serverResponse.msg; // ´Ğ³×ÀÓÀ» userId·Î ¼³Á¤
-                    PhotonNetwork.NickName = userId; // PhotonÀÇ ´Ğ³×ÀÓ ¼³Á¤
-                    NickName.text = userId; // UI¿¡ ´Ğ³×ÀÓ Ç¥½Ã
+                    userId = serverResponse.msg; // ë‹‰ë„¤ì„ì„ userIdë¡œ ì„¤ì •
+                    PhotonNetwork.NickName = userId; // Photonì˜ ë‹‰ë„¤ì„ ì„¤ì •
+                    NickName.text = userId; // UIì— ë‹‰ë„¤ì„ í‘œì‹œ
                 }
                 else
                 {
-                    Debug.LogError("´Ğ³×ÀÓÀ» °¡Á®¿Ã ¼ö ¾ø½À´Ï´Ù: " + serverResponse.msg);
+                    Debug.LogError("ë‹‰ë„¤ì„ì„ ê°€ì ¸ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: " + serverResponse.msg);
                 }
             }
             else
             {
-                Debug.LogError("¼­¹ö ¿äÃ» ½ÇÆĞ: " + www.error);
+                Debug.LogError("ì„œë²„ ìš”ì²­ ì‹¤íŒ¨: " + www.error);
             }
         }
         NickName.text = userId;

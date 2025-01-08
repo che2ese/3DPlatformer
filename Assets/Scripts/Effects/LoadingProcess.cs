@@ -6,16 +6,16 @@ using TMPro;
 
 public class LoadingProcess : MonoBehaviour
 {
-    public TMP_Text ProgressIndicator; // ÁøÇà·ü ÅØ½ºÆ®
-    public Image LoadingBar;           // ·Îµù ¹Ù
-    public float currentValue = 0f;   // ÇöÀç ÁøÇà °ª
-    private float speed = 20f;                // ÁøÇà ¼Óµµ
-    public GameObject Loading;         // ·Îµù ÆĞ³Î
+    public TMP_Text ProgressIndicator; // ì§„í–‰ë¥  í…ìŠ¤íŠ¸
+    public Image LoadingBar;           // ë¡œë”© ë°”
+    public float currentValue = 0f;   // í˜„ì¬ ì§„í–‰ ê°’
+    private float speed = 20f;                // ì§„í–‰ ì†ë„
+    public GameObject Loading;         // ë¡œë”© íŒ¨ë„
 
     // Start is called before the first frame update
     void Start()
     {
-        ResetLoading(); // ½ÃÀÛ ½Ã ·Îµù »óÅÂ ÃÊ±âÈ­
+        ResetLoading(); // ì‹œì‘ ì‹œ ë¡œë”© ìƒíƒœ ì´ˆê¸°í™”
     }
 
     // Update is called once per frame
@@ -32,31 +32,31 @@ public class LoadingProcess : MonoBehaviour
 
             if (Loading != null && Loading.activeSelf)
             {
-                ResetLoading(); // ·Îµù »óÅÂ ÃÊ±âÈ­
-                Loading.SetActive(false); // ·Îµù ÆĞ³Î ºñÈ°¼ºÈ­
+                ResetLoading(); // ë¡œë”© ìƒíƒœ ì´ˆê¸°í™”
+                Loading.SetActive(false); // ë¡œë”© íŒ¨ë„ ë¹„í™œì„±í™”
             }
         }
 
         LoadingBar.fillAmount = currentValue / 100;
     }
 
-    // ·Îµù »óÅÂ ÃÊ±âÈ­
+    // ë¡œë”© ìƒíƒœ ì´ˆê¸°í™”
     public void ResetLoading()
     {
-        currentValue = 0f; // ÁøÇà °ª ÃÊ±âÈ­
+        currentValue = 0f; // ì§„í–‰ ê°’ ì´ˆê¸°í™”
         if (Loading != null)
         {
-            Loading.SetActive(true); // ·Îµù ÆĞ³Î È°¼ºÈ­
+            Loading.SetActive(true); // ë¡œë”© íŒ¨ë„ í™œì„±í™”
         }
 
         if (ProgressIndicator != null)
         {
-            ProgressIndicator.text = "0%"; // ÃÊ±â ÁøÇà·ü Ç¥½Ã
+            ProgressIndicator.text = "0%"; // ì´ˆê¸° ì§„í–‰ë¥  í‘œì‹œ
         }
 
         if (LoadingBar != null)
         {
-            LoadingBar.fillAmount = 0f; // ·Îµù ¹Ù ÃÊ±âÈ­
+            LoadingBar.fillAmount = 0f; // ë¡œë”© ë°” ì´ˆê¸°í™”
         }
     }
 }

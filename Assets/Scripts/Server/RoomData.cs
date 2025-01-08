@@ -7,11 +7,11 @@ using TMPro;
 public class RoomData : MonoBehaviour
 {
     private RoomInfo _roomInfo;
-    // ÇÏÀ§¿¡ ÀÖ´Â TMP_Text¸¦ ÀúÀåÇÒ º¯¼ö
+    // í•˜ìœ„ì— ìˆëŠ” TMP_Textë¥¼ ì €ì¥í•  ë³€ìˆ˜
     private TMP_Text roomInfoText;
-    // PhotonManager Á¢±Ù º¯¼ö
+    // PhotonManager ì ‘ê·¼ ë³€ìˆ˜
     private PhotonManager photonManager;
-    // ÇÁ·ÎÆÛÆ¼ Á¤ÀÇ
+    // í”„ë¡œí¼í‹° ì •ì˜
     public RoomInfo RoomInfo
     {
         get
@@ -22,9 +22,9 @@ public class RoomData : MonoBehaviour
         set
         {
             _roomInfo = value;
-            // ·ë Á¤º¸ Ç¥½Ã
+            // ë£¸ ì •ë³´ í‘œì‹œ
             roomInfoText.text = $"{_roomInfo.Name} ({_roomInfo.PlayerCount}/{_roomInfo.MaxPlayers})";
-            // ¹öÆ° Å¬¸¯ ÀÌº¥Æ®¿¡ ÇÔ¼ö ¿¬°á
+            // ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ì— í•¨ìˆ˜ ì—°ê²°
             GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => OnEnterRoom(_roomInfo.Name));
         }
     }
@@ -37,13 +37,13 @@ public class RoomData : MonoBehaviour
 
     void OnEnterRoom(string roomName)
     {
-        // ·ë ¼Ó¼º Á¤ÀÇ
+        // ë£¸ ì†ì„± ì •ì˜
         RoomOptions ro = new RoomOptions();
-        ro.MaxPlayers = 20;     // ·ë¿¡ Á¢¼ÓÇÒ ¼ö ÀÖ´Â ÃÖ´ë Á¢¼ÓÀÚ ¼ö
-        ro.IsOpen = true;       // ·ëÀÇ ¿ÀÇÂ ¿©ºÎ
-        ro.IsVisible = true;    // ·Îºñ¿¡¼­ ·ë ¸ñ·Ï¿¡ ³ëÃâ½ÃÅ³Áö ¿©ºÎ
+        ro.MaxPlayers = 20;     // ë£¸ì— ì ‘ì†í•  ìˆ˜ ìˆëŠ” ìµœëŒ€ ì ‘ì†ì ìˆ˜
+        ro.IsOpen = true;       // ë£¸ì˜ ì˜¤í”ˆ ì—¬ë¶€
+        ro.IsVisible = true;    // ë¡œë¹„ì—ì„œ ë£¸ ëª©ë¡ì— ë…¸ì¶œì‹œí‚¬ì§€ ì—¬ë¶€
 
-        // ·ë Á¢¼Ó
+        // ë£¸ ì ‘ì†
         PhotonNetwork.JoinOrCreateRoom(roomName, ro, TypedLobby.Default);
     }
 }

@@ -10,31 +10,31 @@ public class SceneLoader : MonoBehaviour
 
     void Awake()
     {
-        // ½Ì±ÛÅæ ÆĞÅÏÀ¸·Î °´Ã¼ À¯Áö
+        // ì‹±ê¸€í†¤ íŒ¨í„´ìœ¼ë¡œ ê°ì²´ ìœ ì§€
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // ¾À ÀüÈ¯ ½Ã »èÁ¦µÇÁö ¾ÊÀ½
+            DontDestroyOnLoad(gameObject); // ì”¬ ì „í™˜ ì‹œ ì‚­ì œë˜ì§€ ì•ŠìŒ
         }
         else
         {
-            Destroy(gameObject); // Áßº¹ ¹æÁö
+            Destroy(gameObject); // ì¤‘ë³µ ë°©ì§€
         }
     }
     void OnEnable()
     {
-        // ¾À ·Îµå ÀÌº¥Æ®¿¡ ¸Ş¼­µå µî·Ï
+        // ì”¬ ë¡œë“œ ì´ë²¤íŠ¸ì— ë©”ì„œë“œ ë“±ë¡
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDisable()
     {
-        // ¾À ·Îµå ÀÌº¥Æ®¿¡¼­ ¸Ş¼­µå Á¦°Å
+        // ì”¬ ë¡œë“œ ì´ë²¤íŠ¸ì—ì„œ ë©”ì„œë“œ ì œê±°
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ÇöÀç ¾ÀÀÌ MenuSceneÀÏ ¶§ StartBtn ÃÊ±âÈ­
+        // í˜„ì¬ ì”¬ì´ MenuSceneì¼ ë•Œ StartBtn ì´ˆê¸°í™”
         if (scene.name == "MainScene")
         {
             GameObject startButton = GameObject.Find("StartBtn");
@@ -43,8 +43,8 @@ public class SceneLoader : MonoBehaviour
                 Button btn = startButton.GetComponent<Button>();
                 if (btn != null)
                 {
-                    btn.onClick.RemoveAllListeners(); // ±âÁ¸ ÀÌº¥Æ® Á¦°Å
-                    btn.onClick.AddListener(() => OnStartButtonClicked("MenuScene")); // »õ·Î¿î ÀÌº¥Æ® Ãß°¡
+                    btn.onClick.RemoveAllListeners(); // ê¸°ì¡´ ì´ë²¤íŠ¸ ì œê±°
+                    btn.onClick.AddListener(() => OnStartButtonClicked("MenuScene")); // ìƒˆë¡œìš´ ì´ë²¤íŠ¸ ì¶”ê°€
                 }
             }
         }
@@ -58,8 +58,8 @@ public class SceneLoader : MonoBehaviour
                 Button btn = onlineButton.GetComponent<Button>();
                 if (btn != null)
                 {
-                    btn.onClick.RemoveAllListeners(); // ±âÁ¸ ÀÌº¥Æ® Á¦°Å
-                    btn.onClick.AddListener(() => OnStartButtonClicked("OnlineScene")); // »õ·Î¿î ÀÌº¥Æ® Ãß°¡
+                    btn.onClick.RemoveAllListeners(); // ê¸°ì¡´ ì´ë²¤íŠ¸ ì œê±°
+                    btn.onClick.AddListener(() => OnStartButtonClicked("OnlineScene")); // ìƒˆë¡œìš´ ì´ë²¤íŠ¸ ì¶”ê°€
                 }
             }
             if (stageButton != null)
@@ -67,8 +67,8 @@ public class SceneLoader : MonoBehaviour
                 Button btn = stageButton.GetComponent<Button>();
                 if (btn != null)
                 {
-                    btn.onClick.RemoveAllListeners(); // ±âÁ¸ ÀÌº¥Æ® Á¦°Å
-                    btn.onClick.AddListener(() => OnStartButtonClicked("StageScene")); // »õ·Î¿î ÀÌº¥Æ® Ãß°¡
+                    btn.onClick.RemoveAllListeners(); // ê¸°ì¡´ ì´ë²¤íŠ¸ ì œê±°
+                    btn.onClick.AddListener(() => OnStartButtonClicked("StageScene")); // ìƒˆë¡œìš´ ì´ë²¤íŠ¸ ì¶”ê°€
                 }
             }
             if (arcadeButton != null)
@@ -76,30 +76,30 @@ public class SceneLoader : MonoBehaviour
                 Button btn = arcadeButton.GetComponent<Button>();
                 if (btn != null)
                 {
-                    btn.onClick.RemoveAllListeners(); // ±âÁ¸ ÀÌº¥Æ® Á¦°Å
-                    btn.onClick.AddListener(() => OnStartButtonClicked("ArcadeScene")); // »õ·Î¿î ÀÌº¥Æ® Ãß°¡
+                    btn.onClick.RemoveAllListeners(); // ê¸°ì¡´ ì´ë²¤íŠ¸ ì œê±°
+                    btn.onClick.AddListener(() => OnStartButtonClicked("ArcadeScene")); // ìƒˆë¡œìš´ ì´ë²¤íŠ¸ ì¶”ê°€
                 }
             }
         }
     }
     void Update()
     {
-        // ESC Å° ÀÔ·Â Ã³¸®
+        // ESC í‚¤ ì…ë ¥ ì²˜ë¦¬
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (SceneManager.GetActiveScene().name == "MenuScene")
             {
-                SceneManager.LoadScene("MainScene"); // MainSceneÀ¸·Î ÀüÈ¯
+                SceneManager.LoadScene("MainScene"); // MainSceneìœ¼ë¡œ ì „í™˜
             }
             if (SceneManager.GetActiveScene().name == "OnlineScene" || SceneManager.GetActiveScene().name == "StageScene" || SceneManager.GetActiveScene().name == "ArcadeScene")
             {
-                SceneManager.LoadScene("MenuScene"); // MainSceneÀ¸·Î ÀüÈ¯
+                SceneManager.LoadScene("MenuScene"); // MainSceneìœ¼ë¡œ ì „í™˜
             }
         }
     }
     void OnStartButtonClicked(string SceneName)
     {
-        // StartBtnÀÌ ´­·ÈÀ» ¶§ MenuSceneÀ¸·Î ÀüÈ¯
+        // StartBtnì´ ëˆŒë ¸ì„ ë•Œ MenuSceneìœ¼ë¡œ ì „í™˜
         SceneManager.LoadScene(SceneName);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems; // EventSystem Ãß°¡
+using UnityEngine.EventSystems; // EventSystem ì¶”ê°€
 using TMPro;
 
 [System.Serializable]
@@ -13,7 +13,7 @@ public class ServerResponse
 }
 public class ServerData : MonoBehaviour
 {
-    public static ServerData instance; // **½Ì±ÛÅæ ÀÎ½ºÅÏ½º**
+    public static ServerData instance; // **ì‹±ê¸€í†¤ ì¸ìŠ¤í„´ìŠ¤**
 
     public ServerResponse server;
 
@@ -49,19 +49,19 @@ public class ServerData : MonoBehaviour
         HandleTabKey();
     }
 
-    // Tab Å° ÀÔ·Â Ã³¸®
+    // Tab í‚¤ ì…ë ¥ ì²˜ë¦¬
     private void HandleTabKey()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (IDInput.isFocused)
             {
-                // IDInput¿¡¼­ Tab Å°¸¦ ´©¸£¸é PassInputÀ¸·Î ÀÌµ¿
+                // IDInputì—ì„œ Tab í‚¤ë¥¼ ëˆ„ë¥´ë©´ PassInputìœ¼ë¡œ ì´ë™
                 PassInput.Select();
             }
             else if (PassInput.isFocused)
             {
-                // PassInput¿¡¼­ Tab Å°¸¦ ´©¸£¸é IDInputÀ¸·Î µ¹¾Æ°¡°Ô (¼øÈ¯ ±¸Á¶)
+                // PassInputì—ì„œ Tab í‚¤ë¥¼ ëˆ„ë¥´ë©´ IDInputìœ¼ë¡œ ëŒì•„ê°€ê²Œ (ìˆœí™˜ êµ¬ì¡°)
                 IDInput.Select();
             }
         }
@@ -83,7 +83,7 @@ public class ServerData : MonoBehaviour
             warning.gameObject.SetActive(true);
             warning.text = "empty";
             StartCoroutine(TextSetFalse());
-            print("¾ÆÀÌµğ ¶Ç´Â ºñ¹Ğ¹øÈ£°¡ ºñ¾îÀÖ½À´Ï´Ù");
+            print("ì•„ì´ë”” ë˜ëŠ” ë¹„ë°€ë²ˆí˜¸ê°€ ë¹„ì–´ìˆìŠµë‹ˆë‹¤");
             return;
         }
 
@@ -92,7 +92,7 @@ public class ServerData : MonoBehaviour
         form.AddField("order", "register");
         form.AddField("id", id);
         form.AddField("pass", pass);
-        form.AddField("role", "User"); // E¿­¿¡ Ãß°¡µÉ ¿ªÇÒ ÁöÁ¤
+        form.AddField("role", "User"); // Eì—´ì— ì¶”ê°€ë  ì—­í•  ì§€ì •
 
         StartCoroutine(Post(form));
     }
@@ -104,7 +104,7 @@ public class ServerData : MonoBehaviour
             warning.gameObject.SetActive(true);
             warning.text = "empty";
             StartCoroutine(TextSetFalse());
-            print("¾ÆÀÌµğ ¶Ç´Â ºñ¹Ğ¹øÈ£°¡ ºñ¾îÀÖ½À´Ï´Ù");
+            print("ì•„ì´ë”” ë˜ëŠ” ë¹„ë°€ë²ˆí˜¸ê°€ ë¹„ì–´ìˆìŠµë‹ˆë‹¤");
             return;
         }
 
@@ -127,29 +127,29 @@ public class ServerData : MonoBehaviour
             {
                 string responseText = www.downloadHandler.text;
 
-                // JSON ÀÀ´äÀ» ÆÄ½ÌÇÏ¿© È®ÀÎ
+                // JSON ì‘ë‹µì„ íŒŒì‹±í•˜ì—¬ í™•ì¸
                 var response = JsonUtility.FromJson<ServerResponse>(responseText);
 
                 if (response.result == "OK")
                 {
-                    PlayerPrefs.SetString("userId", id); // ·Î±×ÀÎÇÑ À¯Àú ID ÀúÀå
+                    PlayerPrefs.SetString("userId", id); // ë¡œê·¸ì¸í•œ ìœ ì € ID ì €ì¥
                     PlayerPrefs.Save();
 
-                    // C¿­°ú D¿­ °ª È®ÀÎ
+                    // Cì—´ê³¼ Dì—´ ê°’ í™•ì¸
                     if (response.msg.Contains("C") && response.msg.Contains("D"))
                     {
-                        Debug.Log("¸ğµç °ªÀÌ ÀúÀåµÊ: MainSceneÀ¸·Î ÀÌµ¿");
-                        SceneManager.LoadScene("MainScene"); // MainSceneÀ¸·Î ÀüÈ¯
+                        Debug.Log("ëª¨ë“  ê°’ì´ ì €ì¥ë¨: MainSceneìœ¼ë¡œ ì´ë™");
+                        SceneManager.LoadScene("MainScene"); // MainSceneìœ¼ë¡œ ì „í™˜
                     }
                     else
                     {
-                        Debug.Log("C¿­ ¶Ç´Â D¿­ °ªÀÌ ¾øÀ½: SelectSceneÀ¸·Î ÀÌµ¿");
-                        SceneManager.LoadScene("SelectScene"); // SelectSceneÀ¸·Î ÀüÈ¯
+                        Debug.Log("Cì—´ ë˜ëŠ” Dì—´ ê°’ì´ ì—†ìŒ: SelectSceneìœ¼ë¡œ ì´ë™");
+                        SceneManager.LoadScene("SelectScene"); // SelectSceneìœ¼ë¡œ ì „í™˜
                     }
                 }
                 else
                 {
-                    // ·Î±×ÀÎ ½ÇÆĞ ¸Ş½ÃÁö Ç¥½Ã
+                    // ë¡œê·¸ì¸ ì‹¤íŒ¨ ë©”ì‹œì§€ í‘œì‹œ
                     warning.gameObject.SetActive(true);
                     warning.text = response.msg;
                     StartCoroutine(TextSetFalse());
@@ -158,7 +158,7 @@ public class ServerData : MonoBehaviour
             }
             else
             {
-                Debug.LogError("¼­¹ö ¿äÃ» ½ÇÆĞ: " + www.error);
+                Debug.LogError("ì„œë²„ ìš”ì²­ ì‹¤íŒ¨: " + www.error);
             }
         }
     }
@@ -173,12 +173,12 @@ public class ServerData : MonoBehaviour
 
     IEnumerator Post(WWWForm form)
     {
-        using (UnityWebRequest www = UnityWebRequest.Post(URL, form)) // ¹İµå½Ã usingÀ» ½á¾ßÇÑ´Ù
+        using (UnityWebRequest www = UnityWebRequest.Post(URL, form)) // ë°˜ë“œì‹œ usingì„ ì¨ì•¼í•œë‹¤
         {
             yield return www.SendWebRequest();
 
             if (www.isDone) Response(www.downloadHandler.text);
-            else print("À¥ÀÇ ÀÀ´äÀÌ ¾ø½À´Ï´Ù.");
+            else print("ì›¹ì˜ ì‘ë‹µì´ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
     void Response(string json)
@@ -192,11 +192,11 @@ public class ServerData : MonoBehaviour
             warning.gameObject.SetActive(true);
             warning.text = server.msg;
             StartCoroutine(TextSetFalse());
-            print(server.order + "À» ½ÇÇàÇÒ ¼ö ¾ø½À´Ï´Ù. ¿¡·¯ ¸Ş½ÃÁö : " + server.msg);
+            print(server.order + "ì„ ì‹¤í–‰í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. ì—ëŸ¬ ë©”ì‹œì§€ : " + server.msg);
             return;
         }
 
-        print(server.order + "À» ½ÇÇàÇß½À´Ï´Ù. ¸Ş½ÃÁö : " + server.msg);
+        print(server.order + "ì„ ì‹¤í–‰í–ˆìŠµë‹ˆë‹¤. ë©”ì‹œì§€ : " + server.msg);
     }
 
     public IEnumerator TextSetFalse()
