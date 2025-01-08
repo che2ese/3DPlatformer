@@ -9,8 +9,18 @@ using TMPro;
 [System.Serializable]
 public class ServerResponse
 {
-    public string order, result, msg;
+    public string order;       // 요청 명령
+    public string result;      // 결과 상태 (OK/ERROR)
+    public string msg;         // 메시지
 }
+[System.Serializable]
+public class UserInfoData
+{
+    public string nickname; // 닉네임
+    public int character; // 캐릭터 (숫자)
+    public string role; // 역할
+}
+
 public class ServerData : MonoBehaviour
 {
     public static ServerData instance; // **싱글톤 인스턴스**
@@ -23,6 +33,19 @@ public class ServerData : MonoBehaviour
 
     public TMP_Text warning;
     public GameObject LoadingBar;
+
+    // 읽기 전용 프로퍼티
+    public string Id
+    {
+        get { return id; }
+    }
+
+    // 읽기/쓰기 가능한 프로퍼티
+    public string ModifiableId
+    {
+        get { return id; }
+        set { id = value; }
+    }
 
     private void Awake()
     {
@@ -195,6 +218,46 @@ public class ServerData : MonoBehaviour
         }
 
         print(server.order + "을 실행했습니다. 메시지 : " + server.msg);
+    }
+    public void RequestUserInfo(string userId)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("order", "getUserInfo");
+        form.AddField("id", userId);
+        StartCoroutine(GetUserInfoFromGoogleSheet(form));
+    }
+
+    IEnumerator GetUserInfoFromGoogleSheet(WWWForm form)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Post(URL, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                string responseText = www.downloadHandler.text;
+                Debug.Log($"유저 정보 응답: {responseText}");
+
+                var serverResponse = JsonUtility.FromJson<ServerResponse>(responseText);
+
+                if (serverResponse.result == "OK")
+                {
+                    var userInfo = JsonUtility.FromJson<UserInfoData>(serverResponse.msg);
+                    Debug.Log($"유저 정보 가져오기 성공: 닉네임={userInfo.nickname}, 캐릭터={userInfo.character}, 역할={userInfo.role}");
+
+                    // UserInfoManager에 데이터 설정
+                    UserInfoManager.instance.SetUserInfo(userInfo.nickname, userInfo.character, userInfo.role);
+                }
+                else
+                {
+                    Debug.LogError($"유저 정보를 가져오는 데 실패: {serverResponse.msg}");
+                }
+            }
+            else
+            {
+                Debug.LogError($"서버 요청 실패: {www.error}");
+            }
+        }
     }
 
     public IEnumerator TextSetFalse()

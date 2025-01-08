@@ -1226,6 +1226,9 @@ MonoBehaviour:
     order: 
     result: 
     msg: 
+    nickname: 
+    character: 
+    role: 
   IDInput: {fileID: 1535192128}
   PassInput: {fileID: 792681730}
   warning: {fileID: 1536925605}

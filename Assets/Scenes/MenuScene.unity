@@ -183,7 +183,7 @@ MonoBehaviour:
   m_text: "\uC628\uB77C\uC778"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -411,7 +411,7 @@ MonoBehaviour:
   m_text: "\uC544\uCF00\uC774\uB4DC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -485,6 +485,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 656605765}
   m_CullTransparentMesh: 1
+--- !u!1 &744075675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 744075677}
+  - component: {fileID: 744075676}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &744075676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744075675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdaaf1a772d95e44a9527cc5d2fc7fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &744075677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744075675}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &896883843
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,7 +710,7 @@ MonoBehaviour:
   m_text: "\uC2A4\uD14C\uC774\uC9C0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1254,3 +1298,4 @@ SceneRoots:
   - {fileID: 411530775}
   - {fileID: 1210613276}
   - {fileID: 1326618900}
+  - {fileID: 744075677}

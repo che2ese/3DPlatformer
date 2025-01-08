@@ -8,8 +8,11 @@ public class SceneLoader : MonoBehaviour
 {
     private static SceneLoader instance;
 
+    ServerData SD;
+
     void Awake()
     {
+        SD = FindAnyObjectByType<ServerData>();
         // 싱글톤 패턴으로 객체 유지
         if (instance == null)
         {
@@ -37,7 +40,10 @@ public class SceneLoader : MonoBehaviour
         // 현재 씬이 MenuScene일 때 StartBtn 초기화
         if (scene.name == "MainScene")
         {
+            SD.RequestUserInfo(SD.ModifiableId);
             GameObject startButton = GameObject.Find("StartBtn");
+            GameObject shopButton = GameObject.Find("ShopBtn");
+            GameObject finishButton = GameObject.Find("FinishBtn");
             if (startButton != null)
             {
                 Button btn = startButton.GetComponent<Button>();
@@ -45,6 +51,24 @@ public class SceneLoader : MonoBehaviour
                 {
                     btn.onClick.RemoveAllListeners(); // 기존 이벤트 제거
                     btn.onClick.AddListener(() => OnStartButtonClicked("MenuScene")); // 새로운 이벤트 추가
+                }
+            }
+            if (shopButton != null)
+            {
+                Button btn = shopButton.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.onClick.RemoveAllListeners(); // 기존 이벤트 제거
+                    btn.onClick.AddListener(() => OnStartButtonClicked("ShopScene")); // 새로운 이벤트 추가
+                }
+            }
+            if (finishButton != null)
+            {
+                Button btn = finishButton.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.onClick.RemoveAllListeners(); // 기존 이벤트 제거
+                    btn.onClick.AddListener(() => Application.Quit()); // 새로운 이벤트 추가
                 }
             }
         }
@@ -87,7 +111,7 @@ public class SceneLoader : MonoBehaviour
         // ESC 키 입력 처리
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (SceneManager.GetActiveScene().name == "MenuScene")
+            if (SceneManager.GetActiveScene().name == "MenuScene" || SceneManager.GetActiveScene().name == "ShopScene")
             {
                 SceneManager.LoadScene("MainScene"); // MainScene으로 전환
             }
