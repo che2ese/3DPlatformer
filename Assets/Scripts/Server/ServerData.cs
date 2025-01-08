@@ -41,7 +41,10 @@ public class ServerData : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            Login();
+            if (SceneManager.GetActiveScene().name == "LoginScene")
+            {
+                Login();
+            }
         }
         HandleTabKey();
     }
