@@ -334,7 +334,7 @@ MonoBehaviour:
   m_text: "\uB85C\uADF8\uC778"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -596,7 +596,7 @@ MonoBehaviour:
   m_text: "\uC544\uC774\uB514\uB97C \uC785\uB825\uD558\uC138\uC694"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -730,7 +730,7 @@ MonoBehaviour:
   m_text: "\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1530,7 +1530,7 @@ MonoBehaviour:
   m_text: "\uD68C\uC6D0\uAC00\uC785"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1952,7 +1952,7 @@ MonoBehaviour:
   m_text: "\uBE44\uBC00\uBC88\uD638\uB97C \uC785\uB825\uD558\uC138\uC694"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2489,7 +2489,7 @@ MonoBehaviour:
   m_text: "\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c279260d51f5b274da42c27e9676675e, type: 2}
-  m_sharedMaterial: {fileID: -5119406578523938219, guid: c279260d51f5b274da42c27e9676675e, type: 2}
+  m_sharedMaterial: {fileID: 4399608251032834227, guid: c279260d51f5b274da42c27e9676675e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
