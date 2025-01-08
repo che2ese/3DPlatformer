@@ -81,9 +81,8 @@ public class ServerData : MonoBehaviour
         if (!SetIDPass())
         {
             warning.gameObject.SetActive(true);
-            warning.text = "empty";
+            warning.text = "아이디 또는 비밀번호가 비어있습니다";
             StartCoroutine(TextSetFalse());
-            print("아이디 또는 비밀번호가 비어있습니다");
             return;
         }
 
@@ -102,9 +101,8 @@ public class ServerData : MonoBehaviour
         if (!SetIDPass())
         {
             warning.gameObject.SetActive(true);
-            warning.text = "empty";
+            warning.text = "아이디 또는 비밀번호가 비어있습니다";
             StartCoroutine(TextSetFalse());
-            print("아이디 또는 비밀번호가 비어있습니다");
             return;
         }
 

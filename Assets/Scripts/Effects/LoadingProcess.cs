@@ -9,7 +9,7 @@ public class LoadingProcess : MonoBehaviour
     public TMP_Text ProgressIndicator; // 진행률 텍스트
     public Image LoadingBar;           // 로딩 바
     public float currentValue = 0f;   // 현재 진행 값
-    private float speed = 20f;                // 진행 속도
+    private float speed = 30f;                // 진행 속도
     public GameObject Loading;         // 로딩 패널
 
     // Start is called before the first frame update
