@@ -1,0 +1,13 @@
+To achieve the same graphic quality as the screenshots shown in the store, you must do some 
+configurations.
+
+First of all change the Color Space to Gamma (you will edit/Project settings/Player/Other 
+Settings).
+
+Second, you must add the Tag Manager.
+In the inspector under edit/add Tags and Layers, import the tag preset.
+
+Third, you must install URP to the project and import the package called URP Settings, then in 
+edit/Project settings/Quality you must assign the following file to the different qualities.
+
+FOR MORE DETAILS READ THE DOCUMENTATION.
