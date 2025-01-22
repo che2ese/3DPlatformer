@@ -16,7 +16,8 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
+    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
+      human bone 'Hips' not found\n"
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -24,7 +25,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -77,12 +78,73 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  referencedClips: []
+  referencedClips:
+  - 873e7ab051ab9d247be303e723effb69
   importAnimation: 1
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton: []
+    skeleton:
+    - name: cat(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: "B\xE9zierCurve"
+      parentName: cat(Clone)
+      position: {x: -0, y: -1.0158476, z: -0.75049126}
+      rotation: {x: 0.65875834, y: -0.2570071, z: 0.65874684, w: -0.2569775}
+      scale: {x: 73.45752, y: 73.45752, z: 73.45751}
+    - name: Cube
+      parentName: cat(Clone)
+      position: {x: -0, y: -1.4476196, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 75.77523, y: 75.77523, z: 75.77523}
+    - name: Cube.001
+      parentName: cat(Clone)
+      position: {x: -0, y: -0.037413005, z: 0.0000000050267674}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 111.779526, y: 111.779526, z: 111.779526}
+    - name: Cube.002
+      parentName: cat(Clone)
+      position: {x: -5.4076873e-34, y: -0.40428692, z: 0.8257867}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 7.507128, y: 7.507128, z: 7.507128}
+    - name: Cube.003
+      parentName: cat(Clone)
+      position: {x: 0.001730554, y: -0.011297494, z: 3.5104333e-10}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Cube.004
+      parentName: cat(Clone)
+      position: {x: -0.0033714597, y: -0.042384, z: 0.31084338}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Cube.005
+      parentName: cat(Clone)
+      position: {x: -0, y: 0, z: -0.0137769645}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 101.46451, y: 101.46451, z: 101.46451}
+    - name: Cube.006
+      parentName: cat(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Cube.007
+      parentName: cat(Clone)
+      position: {x: 0.0010905926, y: -0.4913129, z: 0.58021146}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 24.242178, y: 15.662211, z: 15.662211}
+    - name: Green Simple
+      parentName: cat(Clone)
+      position: {x: -4.1949523e-34, y: 1.8892385e-18, z: -0.033367697}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Sphere
+      parentName: cat(Clone)
+      position: {x: -0, y: 0, z: -0.006466196}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -93,13 +155,13 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
