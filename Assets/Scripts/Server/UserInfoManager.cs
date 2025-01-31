@@ -24,7 +24,7 @@ public class UserInfoManager : MonoBehaviour
 
     public void SetUserInfo(string nickname, int character, string role)
     {
-        Debug.Log($"SetUserInfo È£ÃâµÊ: ´Ğ³×ÀÓ={nickname}, Ä³¸¯ÅÍ={character}, ¿ªÇÒ={role}");
+        Debug.Log($"SetUserInfo í˜¸ì¶œë¨: ë‹‰ë„¤ì„={nickname}, ìºë¦­í„°={character}, ì—­í• ={role}");
         this.nickname = nickname;
         this.character = character;
         this.role = role;

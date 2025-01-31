@@ -9,19 +9,21 @@ public class PlayerScript : MonoBehaviour
 
     private void Start()
     {
-        // UserInfoManager¿¡¼­ À¯Àú Á¤º¸ °¡Á®¿À±â
+        // UserInfoManagerì—ì„œ ìœ ì € ì •ë³´ ê°€ì ¸ì˜¤ê¸°
         if (UserInfoManager.instance != null)
         {
             playerNickname = UserInfoManager.instance.nickname;
             playerCharacter = UserInfoManager.instance.character;
             playerRole = UserInfoManager.instance.role;
 
-            // °¡Á®¿Â µ¥ÀÌÅÍ¸¦ ·Î±×·Î Ãâ·Â
-            Debug.Log($"ÇÃ·¹ÀÌ¾î Á¤º¸: ´Ğ³×ÀÓ={playerNickname}, Ä³¸¯ÅÍ={playerCharacter}, ¿ªÇÒ={playerRole}");
+            Debug.Log($"í”Œë ˆì´ì–´ ì •ë³´: ë‹‰ë„¤ì„={playerNickname}, ìºë¦­í„°={playerCharacter}, ì—­í• ={playerRole}");
         }
         else
         {
-            Debug.LogError("UserInfoManager ÀÎ½ºÅÏ½º°¡ ¾ø½À´Ï´Ù!");
+
+        }
+        {
+            Debug.LogError("UserInfoManager ì¸ìŠ¤í„´ìŠ¤ê°€ ì—†ìŠµë‹ˆë‹¤!");
         }
     }
 }
