@@ -8,6 +8,7 @@ public class UserInfoManager : MonoBehaviour
     public string nickname { get; private set; }
     public int character { get; private set; }
     public string role { get; private set; }
+    public int money { get; private set; }
 
     private void Awake()
     {
@@ -22,11 +23,12 @@ public class UserInfoManager : MonoBehaviour
         }
     }
 
-    public void SetUserInfo(string nickname, int character, string role)
+    public void SetUserInfo(string nickname, int character, string role, int money)
     {
-        Debug.Log($"SetUserInfo È£ÃâµÊ: ´Ğ³×ÀÓ={nickname}, Ä³¸¯ÅÍ={character}, ¿ªÇÒ={role}");
+        Debug.Log($"SetUserInfo í˜¸ì¶œë¨: ë‹‰ë„¤ì„={nickname}, ìºë¦­í„°={character}, ì—­í• ={role}, ì¬í™”={money}");
         this.nickname = nickname;
         this.character = character;
         this.role = role;
+        this.money = money;
     }
 }

@@ -19,6 +19,7 @@ public class UserInfoData
     public string nickname; // 닉네임
     public int character; // 캐릭터 (숫자)
     public string role; // 역할
+    public int money;
 }
 
 public class ServerData : MonoBehaviour
@@ -219,6 +220,52 @@ public class ServerData : MonoBehaviour
 
         print(server.order + "을 실행했습니다. 메시지 : " + server.msg);
     }
+    public void UpdateMoney(int newMoney)
+    {
+        if (string.IsNullOrEmpty(UserInfoManager.instance.nickname))
+        {
+            Debug.LogError("유저 정보가 없습니다.");
+            return;
+        }
+
+        WWWForm form = new WWWForm();
+        form.AddField("order", "updateMoney");
+        form.AddField("id", PlayerPrefs.GetString("userId")); // 저장된 ID 가져오기
+        form.AddField("money", newMoney.ToString()); // 업데이트할 Money 값
+
+        StartCoroutine(SendMoneyUpdate(form));
+    }
+
+    IEnumerator SendMoneyUpdate(WWWForm form)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Post(URL, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                string responseText = www.downloadHandler.text;
+                Debug.Log($"Money 업데이트 응답: {responseText}");
+
+                var serverResponse = JsonUtility.FromJson<ServerResponse>(responseText);
+
+                if (serverResponse.result == "OK")
+                {
+                    Debug.Log($"Money 업데이트 성공: {serverResponse.msg}");
+                }
+                else
+                {
+                    Debug.LogError($"Money 업데이트 실패: {serverResponse.msg}");
+                }
+            }
+            else
+            {
+                Debug.LogError($"서버 요청 실패: {www.error}");
+            }
+        }
+    }
+
+
     public void RequestUserInfo(string userId)
     {
         WWWForm form = new WWWForm();
@@ -243,10 +290,10 @@ public class ServerData : MonoBehaviour
                 if (serverResponse.result == "OK")
                 {
                     var userInfo = JsonUtility.FromJson<UserInfoData>(serverResponse.msg);
-                    Debug.Log($"유저 정보 가져오기 성공: 닉네임={userInfo.nickname}, 캐릭터={userInfo.character}, 역할={userInfo.role}");
+                    Debug.Log($"유저 정보 가져오기 성공: 닉네임={userInfo.nickname}, 캐릭터={userInfo.character}, 역할={userInfo.role}, 재화={userInfo.money}");
 
                     // UserInfoManager에 데이터 설정
-                    UserInfoManager.instance.SetUserInfo(userInfo.nickname, userInfo.character, userInfo.role);
+                    UserInfoManager.instance.SetUserInfo(userInfo.nickname, userInfo.character, userInfo.role, userInfo.money);
                 }
                 else
                 {

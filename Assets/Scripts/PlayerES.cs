@@ -1,98 +1,173 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerES : MonoBehaviour
 {
-    // °È´Â ¼Óµµ
+    // ì´ë™ ê´€ë ¨ ë³€ìˆ˜
+    [Header("Move")]
     public float walkSpeed;
-    // ´Ş¸®´Â ¼Óµµ
     public float runSpeed;
-    // Á¡ÇÁÇÏ´Â Èû
     public float jumpPower;
 
-    // Á¡ÇÁ È½¼ö
-    int jumpCount;
+    // ìŠ¤í…Œë¯¸ë‚˜ ê´€ë ¨ ë³€ìˆ˜
+    [Header ("Stamina")]
+    public float maxStamina = 100f; 
+    public float stamina;
+    public float staminaDecreaseRate = 30f;
+    public float staminaRecoveryRate = 10f;
+    public float staminaRecoveryDelay = 1f;
+    public Image staminaBar;
 
-    // ÇÃ·¹ÀÌ¾î Rigidbody ÄÄÆ÷³ÍÆ®
-    Rigidbody rb;
+    // ì´ë™ ì…ë ¥ê°’
+    float hAxis;
+    float vAxis;
 
-    // °È±â ´Ş¸®±â ¼Óµµ º¯°æ¿ë º¯¼ö
-    private float defaultSpeed;
+    // ë²„íŠ¼ ì…ë ¥ê°’
+    bool runDown;
+    bool jumpDown;
+    bool attack1Down;
 
-    // Start is called before the first frame update
-    void Start()
+    // í™œë™ ìƒíƒœ
+    bool isJump;
+    bool isRunning;
+    bool isStaminaDepleted;
+    bool isAttack;
+
+    Vector3 moveVec;
+
+    Animator anim;
+    Rigidbody rigid;
+
+    void Awake()
     {
-        // ÇÃ·¹ÀÌ¾î Rigidbody ÄÄÆ÷³ÍÆ® °¡Á®¿Í¼­ ÀúÀå
-        rb = GetComponent<Rigidbody>();
-        // °È´Â ¼Óµµ·Î ½ÃÀÛ
-        defaultSpeed = walkSpeed;
+        rigid = GetComponent<Rigidbody>();
+        anim = GetComponentInChildren<Animator>();
+        stamina = maxStamina;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        Walk();
+        GetInput();
+        Move();
+        Stamina();
+        Attack();
         Jump();
     }
 
-    void Walk()
+    void GetInput()
     {
-        // ¹æÇâÅ° + wsad ÀÔ·Â ¹Ş¾Æ ¼ıÀÚ·Î ÀúÀå
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
+        // ì…ë ¥ê°’ ë°›ê¸°
+        hAxis = Input.GetAxis("Horizontal");
+        vAxis = Input.GetAxis("Vertical");
 
-        // xÃà¿¡ h °ª, zÃà¿¡ v °ª ³ÖÀº º¯¼ö »ı¼º
-        Vector3 dir = new Vector3(h, 0, v);
-
-        // ´ë°¢¼± ¹æÇâ ÀÌµ¿ ½Ã ¼Óµµ µ¿ÀÏÇÏµµ·Ï Á¤±ÔÈ­
-        dir.Normalize();
-
-        // transform.position ¾È ¾´ ÀÌÀ¯
-        // Á¡ÇÁ ¹× Ãæµ¹ µî ¹°¸® ÀÛ¿ëÀº Rigidbody ÄÄÆ÷³ÍÆ®¸¦ ÅëÇØ ±¸ÇöµÇ¾ú´Âµ¥
-        // ÀÌµ¿À» Transform ÄÄÆ÷³ÍÆ®·Î ±¸ÇöÇÏ¸é º®¿¡ ¸·Èú °æ¿ì ¹®Á¦ ¹ß»ı
-
-        // *Time.deltaTime = 30FPS (1ÃÊ´ç º¸¿©ÁÖ´Â ÇÁ·¹ÀÓ ¼ö) ÀÏ °æ¿ì 1/30ÃÊ (¸ğµç ±â±â¿¡¼­ µ¿ÀÏÇÑ ¼Óµµ)
-        rb.MovePosition(rb.position + (dir * defaultSpeed * Time.deltaTime));
-
-        Dash();
-    }
-
-    void Dash()
-    {
-        if (Input.GetKey(KeyCode.LeftShift))
+        // ìŠ¤í…Œë¯¸ë‚˜ê°€ 0 ì´ìƒì¼ ë•Œë§Œ ë‹¬ë¦¬ê¸° ê°€ëŠ¥
+        if (stamina > 0)
         {
-            defaultSpeed = runSpeed;
+            runDown = Input.GetKey(KeyCode.LeftShift);
         }
         else
         {
-            defaultSpeed = walkSpeed;
+            runDown = false; 
         }
+
+        jumpDown = Input.GetButtonDown("Jump");
+        attack1Down = Input.GetButtonDown("Fire1");
+    }
+    
+    void Move()
+    {
+        // ì´ë™ ì½”ë“œ 
+        moveVec = new Vector3(hAxis, 0, vAxis).normalized;
+        transform.position += moveVec * (runDown ? runSpeed : walkSpeed) * Time.deltaTime;
+
+        // ì• ë‹ˆë©”ì´ì…˜ ì„¤ì • 
+        anim.SetBool("isWalk", moveVec != Vector3.zero);
+        anim.SetBool("isRun", runDown);
+
+        // ë°©í–¥ ì„¤ì •
+        transform.LookAt(transform.position + moveVec);
+    }
+
+    void Stamina()
+    {
+        // ìŠ¤í…Œë¯¸ë‚˜ ê´€ë¦¬
+        isRunning = runDown && moveVec != Vector3.zero;
+
+        if (isRunning)
+        {
+            stamina -= staminaDecreaseRate * Time.deltaTime;
+            stamina = Mathf.Clamp(stamina, 0, maxStamina);
+
+            // ìŠ¤í…Œë¯¸ë‚˜ 0ì´ ë˜ë©´ ì¼ì • ì‹œê°„ ëŒ€ê¸° í›„ íšŒë³µ ì‹œì‘
+            if (stamina <= 0 && !isStaminaDepleted)
+            {
+                StartCoroutine(WaitBeforeRecovery());
+            }
+        }
+
+        // ë‹¬ë¦¬ì§€ ì•Šì„ ë•Œ ìŠ¤í…Œë¯¸ë‚˜ íšŒë³µ
+        if (!isRunning && stamina < maxStamina && !isStaminaDepleted)
+        {
+            stamina += staminaRecoveryRate * Time.deltaTime;
+            stamina = Mathf.Clamp(stamina, 0, maxStamina);
+        }
+
+        // ìŠ¤í…Œë¯¸ë‚˜ UI ì—…ë°ì´íŠ¸
+        staminaBar.fillAmount = stamina / maxStamina;
+    }
+
+    IEnumerator WaitBeforeRecovery()
+    {
+        // ìŠ¤í…Œë¯¸ë‚˜ ê³ ê°ˆ ë”œë ˆì´
+        isStaminaDepleted = true; 
+        yield return new WaitForSeconds(staminaRecoveryDelay); 
+        isStaminaDepleted = false;
+    }
+
+    void Attack()
+    {
+        // ê·¼ì ‘ ê³µê²© 
+        if (attack1Down && !isAttack)
+        {
+            anim.SetTrigger("doAttack1");
+            StartCoroutine(ResetAttackCooldown());
+        }
+    }
+
+    IEnumerator ResetAttackCooldown()
+    {
+        // ê³µê²©í•˜ë©´ 2ì´ˆ ì¿¨íƒ€ì„ && ë‹¤ë¥¸ anim ì œí•œ
+        anim.SetBool("isAttack", true);
+        isAttack = true;
+
+        yield return new WaitForSeconds(1f);
+
+        isAttack = false;
+        anim.SetBool("isAttack", false);
     }
 
     void Jump()
     {
-        // ½ºÆäÀÌ½º¹Ù ´©¸¥ ¼ø°£ && Á¡ÇÁ È½¼ö 1º¸´Ù ÀÛÀ¸¸é
-        // 2´Ü Á¡ÇÁ ³ÖÀ» °æ¿ì jumpCount < 2 ·Î º¯°æ
-        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 1)
+        // ì í”„ ê¸°ëŠ¥ 
+        if (!isJump && jumpDown)
         {
-            // À§·Î ¼ø°£ÀûÀÎ Èû ¹ß»ı
-            // AddForce(¹æÇâ + Å©±â = º¤ÅÍ, ÈûÀÇ ¹æ½Ä)
-            rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-            // Á¡ÇÁ È½¼ö 1 Áõ°¡
-            jumpCount++;
+            rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            anim.SetBool("isJump", true);
+            anim.SetTrigger("doJump");
+            isJump = true;
         }
     }
 
-    // µÎ ¿ÀºêÁ§Æ® ¸ğµÎ isTrigger°¡ Ã¼Å©µÇÁö ¾ÊÀº °æ¿ì ¾²´Â OnCollision ÇÔ¼ö (ÇÏ³ª¶óµµ Ã¼Å© ½Ã OnTrigger ÇÔ¼ö)
-    // µÎ ÇÔ¼ö ¸ğµÎ ¸Å°³º¯¼ö = Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®ÀÇ Á¤º¸ (ÀÌ¸§, ÅÂ±× µÑ ´Ù Æ÷ÇÔ. but, ÅÂ±× ºñ±³ ¿¬»êÀÌ °¡º±´Ù)
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
-        // Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®ÀÇ ÅÂ±×°¡ "Ground" ¶ó¸é
+        // ì°©ì§€ í™•ì¸
         if (collision.gameObject.tag == "Ground")
         {
-            // Á¡ÇÁ È½¼ö ÃÊ±âÈ­
-            jumpCount = 0;
+            anim.SetBool("isJump", false);
+            isJump = false;
         }
     }
+
 }
