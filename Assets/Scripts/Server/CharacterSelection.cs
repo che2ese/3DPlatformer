@@ -9,14 +9,15 @@ public class CharacterSelection : MonoBehaviour
 {
     [Header("CharSelection")]
     public Button[] characterButtons; // 캐릭터 버튼 (1, 2, 3, 4)
+    public GameObject[] characterObjects; // 캐릭터 오브젝트 (애니메이션 적용)
     public Button confirmButton;     // 선택 확인 버튼
     private Button selectedButton = null; // 현재 선택된 버튼
+    private GameObject selectedCharacterObject = null; // 현재 선택된 캐릭터 오브젝트
     public string selectedCharacter = ""; // 선택된 캐릭터 번호
 
     [Header("NIckSelection")]
     public GameObject NickPanel;
     public TMP_InputField NickInput;
-
     public TMP_Text warning;
 
     const string URL = "https://script.google.com/macros/s/AKfycbyTfXkFJW5FQh_lDEg0R6T5YTef4z7yCbmXVKe7SNdpAaKncquSuyYYwBcFlPIZgZs/exec";
@@ -24,17 +25,21 @@ public class CharacterSelection : MonoBehaviour
     void Start()
     {
         // 버튼 초기화
-        foreach (var button in characterButtons)
+        for (int i = 0; i < characterButtons.Length; i++)
         {
-            button.onClick.AddListener(() => OnCharacterSelected(button));
+            int index = i; // 람다 캡처 문제 방지
+            characterButtons[i].onClick.AddListener(() => OnCharacterSelected(index));
         }
 
         confirmButton.onClick.AddListener(OnConfirmSelection);
         confirmButton.interactable = false; // 선택 확인 버튼 비활성화
     }
 
-    void OnCharacterSelected(Button clickedButton)
+    void OnCharacterSelected(int index)
     {
+        Button clickedButton = characterButtons[index];
+        GameObject characterObject = characterObjects[index];
+
         // 이미 선택된 버튼을 다시 누르면 선택 취소
         if (selectedButton == clickedButton)
         {
@@ -42,17 +47,27 @@ public class CharacterSelection : MonoBehaviour
             return;
         }
 
+        // 이전 선택 해제
+        if (selectedCharacterObject != null)
+        {
+            selectedCharacterObject.GetComponent<Animator>().SetBool("isSelected", false);
+        }
+
         // 새 버튼 선택
-        selectedCharacter = clickedButton.name; // 버튼 이름을 캐릭터 번호로 사용
+        selectedCharacter = clickedButton.name;
         selectedButton = clickedButton;
+        selectedCharacterObject = characterObject;
+
+        // 캐릭터 애니메이션 활성화
+        selectedCharacterObject.GetComponent<Animator>().SetBool("isSelected", true);
 
         // 다른 버튼 비활성화
         foreach (var button in characterButtons)
         {
-            button.interactable = (button == clickedButton); // 선택된 버튼만 활성화
+            button.interactable = (button == clickedButton);
         }
 
-        // 선택된 버튼 강조 (예: 색 변경)
+        // 선택된 버튼 강조
         clickedButton.GetComponent<Image>().color = Color.green;
 
         // 선택 확인 버튼 활성화
@@ -69,7 +84,14 @@ public class CharacterSelection : MonoBehaviour
         foreach (var button in characterButtons)
         {
             button.interactable = true;
-            button.GetComponent<Image>().color = Color.white; // 색상 초기화
+            button.GetComponent<Image>().color = Color.white;
+        }
+
+        // 애니메이션 해제
+        if (selectedCharacterObject != null)
+        {
+            selectedCharacterObject.GetComponent<Animator>().SetBool("isSelected", false);
+            selectedCharacterObject = null;
         }
 
         // 선택 확인 버튼 비활성화
@@ -86,7 +108,7 @@ public class CharacterSelection : MonoBehaviour
 
         WWWForm form = new WWWForm();
         form.AddField("order", "selectCharacter");
-        form.AddField("character", selectedCharacter); // 선택된 캐릭터 번호
+        form.AddField("character", selectedCharacter);
 
         StartCoroutine(PostToGoogleSheet(form));
 
@@ -110,7 +132,7 @@ public class CharacterSelection : MonoBehaviour
             }
         }
     }
-    // 닉네임 저장 함수
+
     public void OnSaveNick()
     {
         string nickName = NickInput.text.Trim();
