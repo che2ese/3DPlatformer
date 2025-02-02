@@ -20,9 +20,6 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-
-        }
-        {
             Debug.LogError("UserInfoManager 인스턴스가 없습니다!");
         }
     }
