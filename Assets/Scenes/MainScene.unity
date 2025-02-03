@@ -1116,8 +1116,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterPrefabs:
   - {fileID: 7622948989457165120, guid: 6993b538b28a23549a811a2eafa91f63, type: 3}
-  - {fileID: 919132149155446097, guid: 0eec903dc564f314a907106fed8688e0, type: 3}
   - {fileID: 2364687565975220601, guid: 41f7b014a4f4099418d21e1971b7c604, type: 3}
+  - {fileID: 919132149155446097, guid: 0eec903dc564f314a907106fed8688e0, type: 3}
   - {fileID: 919132149155446097, guid: 76a2ea0aff1b2ce4c80ea8fe4f273e01, type: 3}
 --- !u!4 &1487100500
 Transform:
