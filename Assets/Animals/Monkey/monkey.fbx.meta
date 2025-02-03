@@ -16,7 +16,8 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
+    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
+      human bone 'LeftLowerLeg' not found\n"
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -82,7 +83,137 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton: []
+    skeleton:
+    - name: monkey(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Armature
+      parentName: monkey(Clone)
+      position: {x: -0, y: -0.903806, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Bone.001
+      parentName: Armature
+      position: {x: -0, y: 0, z: -0.0017009294}
+      rotation: {x: -0.29101813, y: -0.64444435, z: -0.64444435, w: 0.29101807}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: Bone.002
+      parentName: Bone.001
+      position: {x: -0, y: 0.006790111, z: 0}
+      rotation: {x: -0.000000099748014, y: 0.0000000688394, z: -0.7071068, w: 0.7071067}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.003
+      parentName: Bone.002
+      position: {x: -5.9604643e-10, y: 0.0033546116, z: -3.5527136e-17}
+      rotation: {x: 0.00000012644342, y: 0.00000005062472, z: 0.56614554, w: 0.8243053}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.003_end
+      parentName: Bone.003
+      position: {x: -0, y: 0.0032601135, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.004
+      parentName: Bone.001
+      position: {x: -0, y: 0.006790111, z: 0}
+      rotation: {x: 0.00000013411044, y: -0.000000059604638, z: 0.9703722, w: -0.24161518}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.005
+      parentName: Bone.004
+      position: {x: 5.9604643e-10, y: 0.0035436032, z: -3.5527136e-17}
+      rotation: {x: 0.000000009430475, y: -0.00000014868398, z: 0.11693321, w: 0.9931398}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.005_end
+      parentName: Bone.005
+      position: {x: -0, y: 0.0032128661, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.006
+      parentName: Armature
+      position: {x: -0, y: 0, z: -0.0017009294}
+      rotation: {x: 0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.006_end
+      parentName: Bone.006
+      position: {x: -0, y: 0.008375212, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.007
+      parentName: Armature
+      position: {x: -0, y: 0, z: -0.0017009294}
+      rotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071067}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.010
+      parentName: Bone.007
+      position: {x: -0, y: 0.004636037, z: 0}
+      rotation: {x: -0.6150111, y: 0.00000005960465, z: -0.00000005960465, w: 0.7885184}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: Bone.010_end
+      parentName: Bone.010
+      position: {x: -0, y: 0.0053672264, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.008
+      parentName: Armature
+      position: {x: -0, y: 0, z: -0.0017009294}
+      rotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071067}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.009
+      parentName: Bone.008
+      position: {x: -0, y: 0.004326968, z: 0}
+      rotation: {x: -0.6149269, y: -0.00000008940697, z: 0.00000014901161, w: 0.7885841}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.009_end
+      parentName: Bone.009
+      position: {x: -0, y: 0.004854964, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Cube
+      parentName: monkey(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 117.274185, y: 117.274185, z: 117.274185}
+    - name: Green Simple
+      parentName: monkey(Clone)
+      position: {x: -4.1949523e-34, y: 1.8892385e-18, z: -0.033367697}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: NurbsPath
+      parentName: monkey(Clone)
+      position: {x: -0.031506203, y: -0.40489104, z: 0.9502003}
+      rotation: {x: -0.6388147, y: -1.4493518e-17, z: 1.4493518e-17, w: 0.76936066}
+      scale: {x: 3.0660217, y: 3.0660214, z: 3.0660214}
+    - name: NurbsPath.001
+      parentName: monkey(Clone)
+      position: {x: 0.029284725, y: -0.40489104, z: 0.9502003}
+      rotation: {x: 0.0000002459758, y: 0.63356066, z: 0.773693, w: -0.00000014492726}
+      scale: {x: 3.0660217, y: 3.0660212, z: 3.0660212}
+    - name: body
+      parentName: monkey(Clone)
+      position: {x: -0, y: -1.4476196, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 75.77523, y: 75.77523, z: 75.77523}
+    - name: ears
+      parentName: monkey(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: eyes
+      parentName: monkey(Clone)
+      position: {x: 8.486129e-18, y: -0.038218126, z: 0.0060344413}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: nose
+      parentName: monkey(Clone)
+      position: {x: 1.4400194e-17, y: -0.30942252, z: 0.95620173}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 7.507128, y: 7.507128, z: 7.507128}
+    - name: tail
+      parentName: monkey(Clone)
+      position: {x: -0, y: -1.0158476, z: -0.75049126}
+      rotation: {x: 0.65875834, y: -0.2570071, z: 0.65874684, w: -0.2569775}
+      scale: {x: 73.45752, y: 73.45752, z: 73.45751}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -97,9 +228,9 @@ ModelImporter:
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 3
+  animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

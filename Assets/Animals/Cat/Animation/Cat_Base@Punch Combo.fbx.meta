@@ -434,7 +434,7 @@ ModelImporter:
     - name: mixamorig:RightShoulder
       parentName: mixamorig:Spine2
       position: {x: 0.1737613, y: 0.098302886, z: -0.004117398}
-      rotation: {x: -0.5518424, y: -0.43518698, z: 0.5656408, w: -0.43143123}
+      rotation: {x: -0.5518424, y: -0.43518695, z: 0.5656408, w: -0.4314312}
       scale: {x: 0.9999998, y: 0.9999996, z: 1}
     - name: mixamorig:RightArm
       parentName: mixamorig:RightShoulder
@@ -479,7 +479,7 @@ ModelImporter:
     - name: mixamorig:LeftUpLeg
       parentName: mixamorig:Hips
       position: {x: -0.3260047, y: -0.061398935, z: -0.0037702199}
-      rotation: {x: -0.00015257893, y: 0.10836363, z: 0.9941101, w: 0.0015369364}
+      rotation: {x: -0.00015257893, y: 0.10836364, z: 0.9941101, w: 0.0015369366}
       scale: {x: 1, y: 0.99999994, z: 0.9999999}
     - name: mixamorig:LeftLeg
       parentName: mixamorig:LeftUpLeg
@@ -519,7 +519,7 @@ ModelImporter:
     - name: mixamorig:RightFoot
       parentName: mixamorig:RightLeg
       position: {x: 0.000000004030139, y: 0.22822116, z: -2.0897457e-10}
-      rotation: {x: 0.8178089, y: 0.10798754, z: -0.0889887, w: 0.55821896}
+      rotation: {x: 0.8178089, y: 0.10798753, z: -0.088988684, w: 0.55821896}
       scale: {x: 0.99999994, y: 1, z: 0.99999994}
     - name: mixamorig:RightToeBase
       parentName: mixamorig:RightFoot
