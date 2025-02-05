@@ -286,4 +286,13 @@ public class PlayerES : MonoBehaviour
         transform.position = respawnPosition;
         stamina = 100;
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("ScaleBlock"))
+        {
+            rigid.useGravity = true;
+            rigid.AddForce(Vector3.down * 10f, ForceMode.Acceleration);
+        }
+    }
 }
