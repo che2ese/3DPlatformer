@@ -9,6 +9,11 @@ public class PlayerES : MonoBehaviour
     [Header("Setting")]
     public Vector3 respawnPosition;
 
+    // 캐릭터 관련 변수
+    [Header("Character")]
+    public int characterNum;
+    public GameObject[] character;
+
     // 이동 관련 변수
     [Header("Move")]
     public float walkSpeed;
@@ -28,6 +33,12 @@ public class PlayerES : MonoBehaviour
     [Header("Jump")]
     public float raycastDistance = 1.1f;
     public LayerMask groundLayer;
+
+    // 공격 관련 변수
+    [Header("Attack")]
+    public float attackCooldown;
+
+    bool isAbleAttack = true;
 
     // 이동 입력값
     float hAxis;
@@ -51,9 +62,19 @@ public class PlayerES : MonoBehaviour
 
     void Awake()
     {
+        SetActiveCharacter(characterNum);
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         stamina = maxStamina;
+    }
+
+    void SetActiveCharacter(int characterNum)
+    {
+        // 모든 캐릭터를 비활성화한 후, 선택된 것만 활성화
+        for (int i = 0; i < character.Length; i++)
+        {
+            character[i].SetActive(i == characterNum);
+        }
     }
 
     void Update()
@@ -62,8 +83,7 @@ public class PlayerES : MonoBehaviour
         Move();
         Stamina();
         if (!isStaminaDepleted) Attack();
-        if (!isStaminaDepleted) Jump();
-
+        if (!isStaminaDepleted && !isAttack) Jump();
     }
 
     void OnTriggerEnter(Collider other)
@@ -96,35 +116,57 @@ public class PlayerES : MonoBehaviour
         jumpDown = Input.GetButtonDown("Jump");
         attack1Down = Input.GetButtonDown("Fire1");
     }
-    
+
     void Move()
     {
-        // 이동 코드 
-        moveVec = new Vector3(hAxis, 0, vAxis).normalized;
+        // 카메라 기준 방향 벡터 가져오기
+        Vector3 camForward = new Vector3(Camera.main.transform.forward.x, 0, Camera.main.transform.forward.z).normalized;
+        Vector3 camRight = new Vector3(Camera.main.transform.right.x, 0, Camera.main.transform.right.z).normalized;
 
-        // 벽 뚫림 방지
-        bool wallHit = Physics.Raycast(transform.position, moveVec, 1f, LayerMask.GetMask("Ground"));
+        // 입력 방향을 카메라 방향 기준으로 변환
+        moveVec = (camForward * vAxis + camRight * hAxis).normalized;
 
-        // 벽 인지 레이캐스트 보기 
-        Debug.DrawRay(transform.position, moveVec * 1f, wallHit ? Color.red : Color.green, 0.1f);
+        // 벽 충돌 감지 (머리, 중심, 발)
+        Vector3 centerPosition = transform.position + Vector3.down * 0.6f;
+        Vector3 headPosition = transform.position + Vector3.up * 0.4f;
+        Vector3 footPosition = transform.position + Vector3.down * 1.6f;
 
-        if (!wallHit && !isStaminaDepleted)
+        bool wallHitCenter = Physics.Raycast(centerPosition, moveVec, 0.9f, LayerMask.GetMask("Ground"));
+        bool wallHitHead = Physics.Raycast(headPosition, moveVec, 0.8f, LayerMask.GetMask("Ground"));
+        bool wallHitFoot = Physics.Raycast(footPosition, moveVec, 0.4f, LayerMask.GetMask("Ground"));
+        bool wallHit = wallHitCenter || wallHitHead || wallHitFoot;
+
+        // 벽 감지 레이캐스트 보기 
+        Debug.DrawRay(centerPosition, moveVec * 0.9f, wallHitCenter ? Color.red : Color.green, 0.1f);
+        Debug.DrawRay(headPosition, moveVec * 0.8f, wallHitHead ? Color.red : Color.green, 0.1f);
+        Debug.DrawRay(footPosition, moveVec * 0.4f, wallHitFoot ? Color.red : Color.green, 0.1f);
+
+        if (!wallHit && !isStaminaDepleted && !isAttack)
         {
+            // 이동 처리
             transform.position += moveVec * (runDown ? runSpeed : walkSpeed) * Time.deltaTime;
+
+            if (moveVec != Vector3.zero)
+            {
+
+                Quaternion targetRotation = Quaternion.LookRotation(moveVec, Vector3.up);
+
+                if (Quaternion.Angle(transform.rotation, targetRotation) > 1f)
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+                }
+            }
         }
 
         // 애니메이션 설정 
         anim.SetBool("isWalk", moveVec != Vector3.zero);
         anim.SetBool("isRun", runDown);
-
-        // 방향 설정
-        if (!isStaminaDepleted) transform.LookAt(transform.position + moveVec);
     }
 
     void Stamina()
     {
         // 스테미나 관리
-        isRunning = runDown && moveVec != Vector3.zero;
+        isRunning = !isStaminaDepleted && runDown && moveVec != Vector3.zero;
 
         // 달리는 동시에 땅에 있지 않을 때
         if (isRunning && !isGrounded)
@@ -167,15 +209,27 @@ public class PlayerES : MonoBehaviour
     {
         // 스테미나 고갈 딜레이
         isStaminaDepleted = true;
-        yield return new WaitForSeconds(staminaRecoveryDelay);
-        stamina = 3;
+        anim.SetTrigger("doStaminaRecovery");
+
+        float recoveryTime = 0f;
+
+        while (recoveryTime < staminaRecoveryDelay)
+        {
+            stamina += staminaRecoveryRate * Time.deltaTime;
+            stamina = Mathf.Clamp(stamina, 0, maxStamina);
+            staminaBar.fillAmount = stamina / maxStamina;
+
+            recoveryTime += Time.deltaTime;
+            yield return null; 
+        }
+
         isStaminaDepleted = false;
     }
 
     void Attack()
     {
         // 근접 공격 
-        if (attack1Down && !isAttack)
+        if (attack1Down && !isAttack && isGrounded && isAbleAttack)
         {
             anim.SetTrigger("doAttack1");
             StartCoroutine(ResetAttackCooldown());
@@ -184,14 +238,21 @@ public class PlayerES : MonoBehaviour
 
     IEnumerator ResetAttackCooldown()
     {
-        // 공격하면 2초 쿨타임 && 다른 anim 제한
+        // 공격하면 쿨타임 && 다른 anim 제한
         anim.SetBool("isAttack", true);
         isAttack = true;
+        isAbleAttack = false;
+        anim.applyRootMotion = true;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
         isAttack = false;
+        anim.applyRootMotion = false;
         anim.SetBool("isAttack", false);
+
+        // 공격 후 쿨타임 
+        yield return new WaitForSeconds(attackCooldown);
+        isAbleAttack = true;
     }
 
     void Jump()

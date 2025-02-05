@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
     private Coroutine coRotate;
     private Coroutine coOffset;
 
-    public static CameraController instance;
+    public static CameraController instance; 
 
     private void Awake()
     {
