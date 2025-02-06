@@ -36,6 +36,16 @@ public class MovingBlock : MonoBehaviour
 
     private Renderer blockRenderer;  // 블록의 렌더러
 
+    [Header("Conveyor Settings")]
+    [HideInInspector]
+    public bool applyForce;
+    [HideInInspector]
+    public float force = 2;
+    [HideInInspector]
+    public Vector3 direction;
+    [HideInInspector]
+    public float changeDir = 3f;
+
     void Start()
     {
         blockRenderer = GetComponentInChildren<Renderer>();  // 렌더러 컴포넌트를 가져옵니다.
@@ -47,6 +57,15 @@ public class MovingBlock : MonoBehaviour
         if (version == 3)
         {
             StartCoroutine(HandleVisibility(initialDisappearDelay));  // 초기 딜레이를 넣어서 Coroutine 시작
+        }
+        if (version == 4)
+        {
+            if (applyForce)
+            {
+                var rb = this.gameObject.AddComponent<Rigidbody>();
+                rb.isKinematic = true;
+            }
+            StartCoroutine(ChangeDirectionRoutine()); // 3초마다 방향 반전 코루틴 실행
         }
     }
 
@@ -61,7 +80,8 @@ public class MovingBlock : MonoBehaviour
             case 2:
                 ChangeScale();
                 break;
-            case 3:
+            case 4:
+                transform.Rotate(direction * Time.deltaTime);
                 break;
             default:
                 break;
@@ -132,6 +152,15 @@ public class MovingBlock : MonoBehaviour
         }
     }
 
+    private IEnumerator ChangeDirectionRoutine()
+    {
+        while (version == 4)
+        {
+            yield return new WaitForSeconds(changeDir); // 3초 대기
+            direction = -direction; // 방향 반전
+        }
+    }
+
     // 플레이어가 블록 따라가는 기능 (버전 1에서만 실행)
     private void OnTriggerEnter(Collider other)
     {
@@ -146,6 +175,29 @@ public class MovingBlock : MonoBehaviour
         if (version == 1 && other.CompareTag("Player"))
         {
             other.transform.parent = null;
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (version == 4 && applyForce && collision.gameObject.CompareTag("Player"))
+        {
+            Rigidbody playerRb = collision.gameObject.GetComponent<Rigidbody>();
+
+            if (playerRb != null && collision.contactCount > 0)
+            {
+                // 접촉한 지점의 법선 벡터(Normal Vector) 가져오기
+                Vector3 contactNormal = collision.contacts[0].normal;
+
+                // 부모 오브젝트의 회전 방향 가져오기
+                Vector3 rotationAxis = direction.normalized; // 회전 방향 (예: (0,1,0) = Y축 회전)
+
+                // 접촉한 위치에서 회전 방향과 법선 벡터를 이용해 이동 방향 계산
+                Vector3 tangentDirection = Vector3.Cross(rotationAxis, contactNormal).normalized;
+
+                // 플레이어가 원기둥의 회전 방향을 따라 자연스럽게 이동하도록 velocity 설정
+                playerRb.velocity = new Vector3(tangentDirection.x * force, playerRb.velocity.y, tangentDirection.z * force);
+            }
         }
     }
 }

@@ -34,6 +34,13 @@ public class MovingBlockEditor : Editor
             block.disappearTime = EditorGUILayout.FloatField("Disappear Time", block.disappearTime);
             block.reappearTime = EditorGUILayout.FloatField("Reappear Time", block.reappearTime);
         }
+        else if (block.version == 4)
+        {
+            block.applyForce = EditorGUILayout.Toggle("Apply Force", block.applyForce);
+            block.force = EditorGUILayout.FloatField("Force", block.force);
+            block.direction = EditorGUILayout.Vector3Field("Direction", block.direction);
+            block.changeDir = EditorGUILayout.FloatField("Change Direction", block.changeDir);
+        }
         else
         {
             GUILayout.Label("Select a valid version (1 or 2) for additional settings.");
