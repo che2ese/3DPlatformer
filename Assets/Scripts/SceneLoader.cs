@@ -8,11 +8,8 @@ public class SceneLoader : MonoBehaviour
 {
     private static SceneLoader instance;
 
-    ServerData SD;
-
     void Awake()
     {
-        SD = FindAnyObjectByType<ServerData>();
         // 싱글톤 패턴으로 객체 유지
         if (instance == null)
         {
@@ -40,7 +37,6 @@ public class SceneLoader : MonoBehaviour
         // 현재 씬이 MenuScene일 때 StartBtn 초기화
         if (scene.name == "MainScene")
         {
-            SD.RequestUserInfo(SD.ModifiableId);
             GameObject startButton = GameObject.Find("StartBtn");
             GameObject shopButton = GameObject.Find("ShopBtn");
             GameObject finishButton = GameObject.Find("FinishBtn");

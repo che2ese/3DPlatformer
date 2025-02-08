@@ -222,11 +222,6 @@ public class ServerData : MonoBehaviour
     }
     public void UpdateMoney(int newMoney)
     {
-        if (string.IsNullOrEmpty(UserInfoManager.instance.nickname))
-        {
-            Debug.LogError("유저 정보가 없습니다.");
-            return;
-        }
 
         WWWForm form = new WWWForm();
         form.AddField("order", "updateMoney");
@@ -291,9 +286,6 @@ public class ServerData : MonoBehaviour
                 {
                     var userInfo = JsonUtility.FromJson<UserInfoData>(serverResponse.msg);
                     Debug.Log($"유저 정보 가져오기 성공: 닉네임={userInfo.nickname}, 캐릭터={userInfo.character}, 역할={userInfo.role}, 재화={userInfo.money}");
-
-                    // UserInfoManager에 데이터 설정
-                    UserInfoManager.instance.SetUserInfo(userInfo.nickname, userInfo.character, userInfo.role, userInfo.money);
                 }
                 else
                 {
