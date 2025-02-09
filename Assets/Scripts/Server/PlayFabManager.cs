@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayFabManager : MonoBehaviour
 {
-    public static PlayFabManager instance; // **½Ì±ÛÅæ ÀÎ½ºÅÏ½º**
+    public static PlayFabManager instance; // **ì‹±ê¸€í†¤ ì¸ìŠ¤í„´ìŠ¤**
 
     public TMP_InputField idInput, pwInput;
     public TMP_Text errorText;
@@ -31,22 +31,22 @@ public class PlayFabManager : MonoBehaviour
     public void Start()
     {
         if (string.IsNullOrEmpty(PlayFabSettings.staticSettings.TitleId))
-            PlayFabSettings.staticSettings.TitleId = "C528C";  // ¿©±â¿¡ ¿Ã¹Ù¸¥ Title ID ÀÔ·Â
+            PlayFabSettings.staticSettings.TitleId = "C528C";  // ì—¬ê¸°ì— ì˜¬ë°”ë¥¸ Title ID ì…ë ¥
 
-        // ¾ÀÀÌ º¯°æµÉ ¶§ ÄÚ·çÆ¾À» Ãë¼ÒÇÏµµ·Ï ÀÌº¥Æ® ¸®½º³Ê µî·Ï
+        // ì”¬ì´ ë³€ê²½ë  ë•Œ ì½”ë£¨í‹´ì„ ì·¨ì†Œí•˜ë„ë¡ ì´ë²¤íŠ¸ ë¦¬ìŠ¤ë„ˆ ë“±ë¡
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ¾ÀÀÌ ÀüÈ¯µÉ ¶§, ÇöÀç ÄÚ·çÆ¾ÀÌ ÁøÇà ÁßÀÌ¶ó¸é Ãë¼ÒÇÏ°í null·Î ÃÊ±âÈ­
+        // ì”¬ì´ ì „í™˜ë  ë•Œ, í˜„ì¬ ì½”ë£¨í‹´ì´ ì§„í–‰ ì¤‘ì´ë¼ë©´ ì·¨ì†Œí•˜ê³  nullë¡œ ì´ˆê¸°í™”
         if (currentCoroutine != null)
         {
             StopCoroutine(currentCoroutine);
             currentCoroutine = null;
         }
 
-        // errorText°¡ nullÀÌ ¾Æ´Ï¸é ¼û±â±â
+        // errorTextê°€ nullì´ ì•„ë‹ˆë©´ ìˆ¨ê¸°ê¸°
         if (errorText != null && errorText.gameObject.activeSelf)
         {
             errorText.gameObject.SetActive(false);
@@ -73,18 +73,18 @@ public class PlayFabManager : MonoBehaviour
         {
             if (idInput.isFocused)
             {
-                // IDInput¿¡¼­ Tab Å°¸¦ ´©¸£¸é PassInputÀ¸·Î ÀÌµ¿
+                // IDInputì—ì„œ Tab í‚¤ë¥¼ ëˆ„ë¥´ë©´ PassInputìœ¼ë¡œ ì´ë™
                 pwInput.Select();
             }
             else if (pwInput.isFocused)
             {
-                // PassInput¿¡¼­ Tab Å°¸¦ ´©¸£¸é IDInputÀ¸·Î µ¹¾Æ°¡°Ô (¼øÈ¯ ±¸Á¶)
+                // PassInputì—ì„œ Tab í‚¤ë¥¼ ëˆ„ë¥´ë©´ IDInputìœ¼ë¡œ ëŒì•„ê°€ê²Œ (ìˆœí™˜ êµ¬ì¡°)
                 idInput.Select();
             }
         }
     }
 
-    // ·Î±×ÀÎ ¹öÆ° Å¬¸¯ ½Ã È£Ãâ
+    // ë¡œê·¸ì¸ ë²„íŠ¼ í´ë¦­ ì‹œ í˜¸ì¶œ
     public void Login()
     {
         var request = new LoginWithEmailAddressRequest
@@ -96,7 +96,7 @@ public class PlayFabManager : MonoBehaviour
         PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
     }
 
-    // È¸¿ø°¡ÀÔ ¹öÆ° Å¬¸¯ ½Ã È£Ãâ
+    // íšŒì›ê°€ì… ë²„íŠ¼ í´ë¦­ ì‹œ í˜¸ì¶œ
     public void Register()
     {
         var request = new RegisterPlayFabUserRequest
@@ -112,12 +112,12 @@ public class PlayFabManager : MonoBehaviour
     private void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
         errorText.gameObject.SetActive(true);
-        errorText.text = "È¸¿ø°¡ÀÔ ¼º°ø! ÀÚµ¿ ·Î±×ÀÎ Áß...";
-        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ÃÊ ÈÄ¿¡ ¿¡·¯ ¸Ş½ÃÁö ¼û±â±â
+        errorText.text = "íšŒì›ê°€ì… ì„±ê³µ! ìë™ ë¡œê·¸ì¸ ì¤‘...";
+        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ì´ˆ í›„ì— ì—ëŸ¬ ë©”ì‹œì§€ ìˆ¨ê¸°ê¸°
 
         Login();
 
-        string nickname = idInput.text; // ÀÌ¸ŞÀÏ¿¡¼­ ´Ğ³×ÀÓ ÃßÃâ
+        string nickname = idInput.text; // ì´ë©”ì¼ì—ì„œ ë‹‰ë„¤ì„ ì¶”ì¶œ
 
         var updatePlayerProfileRequest = new UpdateUserTitleDisplayNameRequest
         {
@@ -130,62 +130,62 @@ public class PlayFabManager : MonoBehaviour
     private void OnLoginSuccess(LoginResult result)
     {
         errorText.gameObject.SetActive(true);
-        errorText.text = "·Î±×ÀÎ ¼º°ø!";
-        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ÃÊ ÈÄ¿¡ ¿¡·¯ ¸Ş½ÃÁö ¼û±â±â
+        errorText.text = "ë¡œê·¸ì¸ ì„±ê³µ!";
+        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ì´ˆ í›„ì— ì—ëŸ¬ ë©”ì‹œì§€ ìˆ¨ê¸°ê¸°
 
-        // ÀÌ¸ŞÀÏ ÁÖ¼Ò¿¡¼­ ´Ğ³×ÀÓ ÃßÃâ (ÀÌ¸ŞÀÏÀÇ @ ¾Õ ºÎºĞ)
+        // ì´ë©”ì¼ ì£¼ì†Œì—ì„œ ë‹‰ë„¤ì„ ì¶”ì¶œ (ì´ë©”ì¼ì˜ @ ì• ë¶€ë¶„)
         string nickname = idInput.text;
 
-        // ÇÃ·¹ÀÌ¾î ÇÁ·ÎÇÊ¿¡ ´Ğ³×ÀÓ ¼³Á¤
+        // í”Œë ˆì´ì–´ í”„ë¡œí•„ì— ë‹‰ë„¤ì„ ì„¤ì •
         var updatePlayerProfileRequest = new UpdateUserTitleDisplayNameRequest
         {
             DisplayName = nickname
         };
 
         PlayFabClientAPI.UpdateUserTitleDisplayName(updatePlayerProfileRequest,
-            result => print("´Ğ³×ÀÓ ¼³Á¤ ¼º°ø!"),
-            error => print("´Ğ³×ÀÓ ¼³Á¤ ½ÇÆĞ: " + error.GenerateErrorReport()));
+            result => print("ë‹‰ë„¤ì„ ì„¤ì • ì„±ê³µ!"),
+            error => print("ë‹‰ë„¤ì„ ì„¤ì • ì‹¤íŒ¨: " + error.GenerateErrorReport()));
 
-        // ·Î±×ÀÎ ÈÄ ÇÃ·¹ÀÌ¾î ÇÁ·ÎÇÊ Á¤º¸ °¡Á®¿À±â
+        // ë¡œê·¸ì¸ í›„ í”Œë ˆì´ì–´ í”„ë¡œí•„ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
         GetPlayerProfile();
     }
 
     private void OnRegisterFailure(PlayFabError error)
     {
-        // ¿¡·¯ º¸°í¼­¸¦ Ãâ·ÂÇÏ¿© Á¤È®ÇÑ ¿À·ù ¸Ş½ÃÁö È®ÀÎ
+        // ì—ëŸ¬ ë³´ê³ ì„œë¥¼ ì¶œë ¥í•˜ì—¬ ì •í™•í•œ ì˜¤ë¥˜ ë©”ì‹œì§€ í™•ì¸
         string errorMessage = error.GenerateErrorReport();
         print(errorMessage);
 
         errorText.gameObject.SetActive(true);
 
-        // ÀÌ¸ŞÀÏ ÁÖ¼Ò°¡ ÀÌ¹Ì Á¸ÀçÇÏ´ÂÁö Ã¼Å©
+        // ì´ë©”ì¼ ì£¼ì†Œê°€ ì´ë¯¸ ì¡´ì¬í•˜ëŠ”ì§€ ì²´í¬
         if (errorMessage.Contains("Email address already exists"))
         {
-            errorText.text = "ÀÌ¹Ì °¡ÀÔµÈ ÀÌ¸ŞÀÏ ÁÖ¼ÒÀÔ´Ï´Ù.";
+            errorText.text = "ì´ë¯¸ ê°€ì…ëœ ì´ë©”ì¼ ì£¼ì†Œì…ë‹ˆë‹¤.";
         }
-        // ÀÌ¸ŞÀÏ ÁÖ¼Ò°¡ À¯È¿ÇÏÁö ¾ÊÀºÁö Ã¼Å©
+        // ì´ë©”ì¼ ì£¼ì†Œê°€ ìœ íš¨í•˜ì§€ ì•Šì€ì§€ ì²´í¬
         else if (errorMessage.Contains("Email address is not valid"))
         {
-            errorText.text = "ÀÌ¸ŞÀÏ Çü½ÄÀ» È®ÀÎÇØ ÁÖ¼¼¿ä.";
+            errorText.text = "ì´ë©”ì¼ í˜•ì‹ì„ í™•ì¸í•´ ì£¼ì„¸ìš”.";
         }
         else if (errorMessage.Contains("Password must be between 6 and 100 characters."))
         {
-            errorText.text = "6 ÀÚ¸® ÀÌ»óÀÇ ºñ¹Ğ¹øÈ£¸¦ ¼³Á¤ÇØ ÁÖ¼¼¿ä.";
+            errorText.text = "6 ìë¦¬ ì´ìƒì˜ ë¹„ë°€ë²ˆí˜¸ë¥¼ ì„¤ì •í•´ ì£¼ì„¸ìš”.";
         }
         else
         {
-            errorText.text = $"È¸¿ø°¡ÀÔ ½ÇÆĞ: {errorMessage}";
-            print($"È¸¿ø°¡ÀÔ ½ÇÆĞ: {errorMessage}");
+            errorText.text = $"íšŒì›ê°€ì… ì‹¤íŒ¨: {errorMessage}";
+            print($"íšŒì›ê°€ì… ì‹¤íŒ¨: {errorMessage}");
         }
 
-        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ÃÊ ÈÄ¿¡ ¿¡·¯ ¸Ş½ÃÁö ¼û±â±â
+        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ì´ˆ í›„ì— ì—ëŸ¬ ë©”ì‹œì§€ ìˆ¨ê¸°ê¸°
     }
 
     private IEnumerator HideErrorTextAfterDelay()
     {
-        yield return new WaitForSeconds(3f);  // 3ÃÊ ´ë±â
+        yield return new WaitForSeconds(3f);  // 3ì´ˆ ëŒ€ê¸°
 
-        if (errorText != null) // errorText°¡ Á¸ÀçÇÏ´ÂÁö È®ÀÎ ÈÄ Á¢±Ù
+        if (errorText != null) // errorTextê°€ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸ í›„ ì ‘ê·¼
         {
             errorText.gameObject.SetActive(false);
         }
@@ -195,11 +195,11 @@ public class PlayFabManager : MonoBehaviour
     private void OnLoginFailure(PlayFabError error)
     {
         errorText.gameObject.SetActive(true);
-        errorText.text = "¾ÆÀÌµğ¿Í ºñ¹Ğ¹øÈ£¸¦ È®ÀÎÇÏ¼¼¿ä!";
-        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ÃÊ ÈÄ¿¡ ¿¡·¯ ¸Ş½ÃÁö ¼û±â±â
+        errorText.text = "ì•„ì´ë””ì™€ ë¹„ë°€ë²ˆí˜¸ë¥¼ í™•ì¸í•˜ì„¸ìš”!";
+        currentCoroutine = StartCoroutine(HideErrorTextAfterDelay());  // 3ì´ˆ í›„ì— ì—ëŸ¬ ë©”ì‹œì§€ ìˆ¨ê¸°ê¸°
     }
 
-    // ·Î±×ÀÎ ÈÄ ÇÃ·¹ÀÌ¾î ÇÁ·ÎÇÊ Á¤º¸ °¡Á®¿À±â
+    // ë¡œê·¸ì¸ í›„ í”Œë ˆì´ì–´ í”„ë¡œí•„ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
     private void GetPlayerProfile()
     {
         var request = new GetPlayerProfileRequest();
@@ -210,16 +210,16 @@ public class PlayFabManager : MonoBehaviour
     {
         if (result.PlayerProfile != null)
         {
-            // ±âº»°ª ¼³Á¤
-            string characterSelect = "0";  // ±âº»°ª: 0
+            // ê¸°ë³¸ê°’ ì„¤ì •
+            string characterSelect = "0";  // ê¸°ë³¸ê°’: 0
 
-            // »ç¿ëÀÚ µ¥ÀÌÅÍ¸¦ º°µµ·Î °¡Á®¿À´Â ÇÔ¼ö È£Ãâ
-            GetUserData();  // ÀÌ ÇÔ¼ö¿¡¼­ UserData¸¦ °¡Á®¿É´Ï´Ù.
+            // ì‚¬ìš©ì ë°ì´í„°ë¥¼ ë³„ë„ë¡œ ê°€ì ¸ì˜¤ëŠ” í•¨ìˆ˜ í˜¸ì¶œ
+            GetUserData();  // ì´ í•¨ìˆ˜ì—ì„œ UserDataë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
         }
         else
         {
-            // PlayerProfileÀÌ ¾øÀ» °æ¿ì SelectSceneÀ¸·Î ÀÌµ¿
-            Debug.Log("PlayerProfile µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+            // PlayerProfileì´ ì—†ì„ ê²½ìš° SelectSceneìœ¼ë¡œ ì´ë™
+            Debug.Log("PlayerProfile ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             SceneManager.LoadScene("SelectScene");
         }
     }
@@ -239,29 +239,29 @@ public class PlayFabManager : MonoBehaviour
             characterSelect = result.Data["characterSelect"].Value;
         }
 
-        // µğ¹ö±× ·Î±×: °ªÀ» È®ÀÎÇÏ±â À§ÇÑ Ãâ·Â
+        // ë””ë²„ê·¸ ë¡œê·¸: ê°’ì„ í™•ì¸í•˜ê¸° ìœ„í•œ ì¶œë ¥
         Debug.Log($"CharacterSelect: {characterSelect}");
 
-        // ±âº»°ªÀÎÁö¸¦ È®ÀÎÇÏ¿© ¾À ÀüÈ¯
+        // ê¸°ë³¸ê°’ì¸ì§€ë¥¼ í™•ì¸í•˜ì—¬ ì”¬ ì „í™˜
         if (characterSelect == "0")
         {
-            // characterSelect°¡ 0ÀÌ¸é SelectSceneÀ¸·Î ÀÌµ¿
+            // characterSelectê°€ 0ì´ë©´ SelectSceneìœ¼ë¡œ ì´ë™
             SceneManager.LoadScene("SelectScene");
         }
         else
         {
-            // characterSelect°¡ 0ÀÌ ¾Æ´Ï¸é MainSceneÀ¸·Î ÀÌµ¿
+            // characterSelectê°€ 0ì´ ì•„ë‹ˆë©´ MainSceneìœ¼ë¡œ ì´ë™
             SceneManager.LoadScene("MainScene");
         }
     }
 
     private void OnGetUserDataFailure(PlayFabError error)
     {
-        Debug.LogError("UserData¸¦ °¡Á®¿À´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù: " + error.GenerateErrorReport());
+        Debug.LogError("UserDataë¥¼ ê°€ì ¸ì˜¤ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤: " + error.GenerateErrorReport());
     }
 
     private void OnGetPlayerProfileFailure(PlayFabError error)
     {
-        print($"ÇÁ·ÎÇÊ ·Îµå ½ÇÆĞ: {error.GenerateErrorReport()}");
+        print($"í”„ë¡œí•„ ë¡œë“œ ì‹¤íŒ¨: {error.GenerateErrorReport()}");
     }
 }
