@@ -35,6 +35,7 @@ public class MovingBlock : MonoBehaviour
     public float reappearTime = 3f;  // 다시 나타나는 시간
 
     private Renderer blockRenderer;  // 블록의 렌더러
+    private BoxCollider blockCollider;
 
     [Header("Conveyor Settings")]
     [HideInInspector]
@@ -49,6 +50,7 @@ public class MovingBlock : MonoBehaviour
     void Start()
     {
         blockRenderer = GetComponentInChildren<Renderer>();  // 렌더러 컴포넌트를 가져옵니다.
+        blockCollider = GetComponentInChildren<BoxCollider>();
 
         if (version == 2)
         {
@@ -145,9 +147,11 @@ public class MovingBlock : MonoBehaviour
         while (true)  // 무한 반복
         {
             blockRenderer.enabled = false;  // 블록을 사라지게 함
+            blockCollider.enabled = false;
             yield return new WaitForSeconds(disappearTime);  // 사라지는 시간만큼 대기
 
             blockRenderer.enabled = true;  // 블록을 다시 나타나게 함
+            blockCollider.enabled = true;
             yield return new WaitForSeconds(reappearTime);  // 나타나는 시간만큼 대기
         }
     }
