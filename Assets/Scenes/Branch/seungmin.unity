@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 935800986}
-  m_IndirectSpecularColor: {r: 0.17660138, g: 0.5349812, b: 0.8845756, a: 1}
+  m_IndirectSpecularColor: {r: 0.17660141, g: 0.53498113, b: 0.88457537, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -866,10 +866,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1415514821}
-  - {fileID: 1150309910}
   - {fileID: 429168410}
   - {fileID: 481953908}
+  - {fileID: 1415514821}
+  - {fileID: 1150309910}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
 --- !u!1001 &99689816
@@ -16025,7 +16025,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: c4dcdbc00edde7846b1fb3a75a6f96af, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c4dcdbc00edde7846b1fb3a75a6f96af, type: 3}
       propertyPath: m_LocalPosition.y
