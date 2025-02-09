@@ -20,6 +20,8 @@ public class PlayerES : MonoBehaviour
     public float runSpeed;
     public float jumpPower;
 
+    Transform parentTransform;
+
     // 스테미나 관련 변수
     [Header ("Stamina")]
     public float maxStamina = 100f; 
@@ -65,6 +67,7 @@ public class PlayerES : MonoBehaviour
         SetActiveCharacter(characterNum);
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
+        parentTransform = transform;
         stamina = maxStamina;
     }
 
@@ -169,7 +172,7 @@ public class PlayerES : MonoBehaviour
         isRunning = !isStaminaDepleted && runDown && moveVec != Vector3.zero;
 
         // 달리는 동시에 땅에 있지 않을 때
-        if (isRunning && !isGrounded)
+        if (isRunning && !isGrounded && !isAttack)
         {
             stamina -= staminaDecreaseRate / 4 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
@@ -182,7 +185,7 @@ public class PlayerES : MonoBehaviour
         }
 
         // 달리는 동시에 땅에 있을 때
-        if (isRunning && isGrounded)
+        if (isRunning && isGrounded && !isAttack)
         {
             stamina -= staminaDecreaseRate * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
@@ -242,17 +245,58 @@ public class PlayerES : MonoBehaviour
         anim.SetBool("isAttack", true);
         isAttack = true;
         isAbleAttack = false;
-        anim.applyRootMotion = true;
 
-        yield return new WaitForSeconds(2f);
+        Vector3 startPosition = transform.position;
+
+        // 각 캐릭터에 따른 공격 이동 
+        if (characterNum == 0)
+        {
+            yield return new WaitForSeconds(1f);
+        }
+        else if (characterNum == 1)
+        {
+            yield return MoveCharacter(startPosition, transform.forward * 8.0f, 1.2f);
+        }
+        else if (characterNum == 2)
+        {
+            yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
+
+            startPosition = transform.position;
+            yield return MoveCharacter(startPosition, transform.forward * 5.5f + Vector3.up * 1.4f, 0.6f);
+        }
+        else if (characterNum == 3)
+        {
+            yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
+
+            startPosition = transform.position;
+            yield return MoveCharacter(startPosition, transform.forward * 3.5f + Vector3.up * 1.4f, 0.4f);
+
+            startPosition = transform.position;
+            yield return MoveCharacter(startPosition, transform.forward * 6.5f + Vector3.up * -1f, 0.6f);
+        }
 
         isAttack = false;
-        anim.applyRootMotion = false;
         anim.SetBool("isAttack", false);
 
         // 공격 후 쿨타임 
         yield return new WaitForSeconds(attackCooldown);
         isAbleAttack = true;
+    }
+
+    // 이동을 담당 함수 
+    private IEnumerator MoveCharacter(Vector3 startPos, Vector3 moveOffset, float moveDuration)
+    {
+        Vector3 targetPosition = startPos + moveOffset;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < moveDuration)
+        {
+            transform.position = Vector3.Lerp(startPos, targetPosition, elapsedTime / moveDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPosition;
     }
 
     void Jump()
