@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerES : MonoBehaviour
+public class PlayerPhysics : MonoBehaviour
 {
     // 설정 관련 변수
     [Header("Setting")]
@@ -35,6 +35,7 @@ public class PlayerES : MonoBehaviour
     [Header("Jump")]
     public float raycastDistance = 1.1f;
     public LayerMask groundLayer;
+    public LayerMask itemLayer;
 
     // 공격 관련 변수
     [Header("Attack")]
@@ -56,6 +57,7 @@ public class PlayerES : MonoBehaviour
     bool isRunning;
     bool isStaminaDepleted;
     bool isAttack;
+    public bool isBlock;
 
     Vector3 moveVec;
 
@@ -304,6 +306,9 @@ public class PlayerES : MonoBehaviour
         // 점프 기능 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
 
+        // float rayRadius = 0.7f; // 아이템 판독
+        // isBlock = Physics.SphereCast(transform.position, rayRadius, Vector3.up, out RaycastHit hit, raycastDistance, itemLayer);
+
         // 바닥 인지 레이캐스트 보기 
         Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
 
@@ -319,7 +324,16 @@ public class PlayerES : MonoBehaviour
             {
                 anim.SetBool("isJump", false);
             }
-        } 
+        }
+    }
+
+    void DrawThickRay(Vector3 start, Vector3 direction, float distance, Color color, float thickness = 0.05f)
+    {
+        Vector3 right = Vector3.Cross(direction, Camera.main.transform.forward).normalized * thickness;
+
+        Debug.DrawLine(start, start + direction * distance, color, 0.1f);
+        Debug.DrawLine(start + right, start + right + direction * distance, color, 0.1f);
+        Debug.DrawLine(start - right, start - right + direction * distance, color, 0.1f);
     }
 
     void Respawn()

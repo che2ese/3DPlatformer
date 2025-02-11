@@ -2,12 +2,12 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(MovingBlock))]
-public class MovingBlockEditor : Editor
+[CustomEditor(typeof(SpecialBlock))]
+public class SpecialBlockEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        MovingBlock block = (MovingBlock)target;
+        SpecialBlock block = (SpecialBlock)target;
 
         // version 값을 입력받고 해당하는 값만 인스펙터에 표시
         block.version = EditorGUILayout.IntField("Version", block.version);
