@@ -79,6 +79,13 @@ public class PlayerPhysics : MonoBehaviour
         {
             character[i].SetActive(i == characterNum);
         }
+        // 캐릭터 번호가 3일 경우 CapsuleCollider 크기 조정
+        CapsuleCollider col = GetComponent<CapsuleCollider>();
+        if (characterNum == 3 && col != null)
+        {
+            col.center = new Vector3(col.center.x, -0.45f, col.center.z);
+            col.height = 3.5f;
+        }
     }
 
     void Update()
@@ -175,7 +182,7 @@ public class PlayerPhysics : MonoBehaviour
         // 달리는 동시에 땅에 있지 않을 때
         if (isRunning && !isGrounded && !isAttack)
         {
-            stamina += staminaDecreaseRate / 5 * Time.deltaTime;
+            stamina += staminaDecreaseRate / 10 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
 
             // 스테미나 0이 되면 일정 시간 대기 후 회복 시작 
@@ -302,6 +309,7 @@ public class PlayerPhysics : MonoBehaviour
 
     void Jump()
     {
+        bool wasGrounded = isGrounded; // 이전 프레임에서 땅에 있었는지 확인
         // 점프 기능 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
 
@@ -311,23 +319,18 @@ public class PlayerPhysics : MonoBehaviour
         // 바닥 인지 레이캐스트 보기 
         Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
 
-        if (isGrounded)
+        // 점프 입력 처리
+        if (isGrounded && !wasGrounded)  // 점프 중 땅에 닿았을 때
         {
-            if (jumpDown)
-            {
-                rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-                anim.SetBool("isJump", true);
-                anim.SetTrigger("doJump");
-            }
-            else
-            {
-                AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-                if (stateInfo.IsName("Jump"))  // 실행 중인 애니메이션이 "Run"이라면
-                {
-                    anim.Play("Idle", 0, 0f);  // Idle 애니메이션으로 변경
-                }
-                anim.SetBool("isJump", false);
-            }
+            anim.SetBool("isJump", false); // 점프 상태 해제
+            anim.Play("Idle", 0, 0f);      // Idle 애니메이션 실행
+        }
+
+        if (isGrounded && jumpDown) // 땅에 있을 때 점프 가능
+        {
+            rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            anim.SetBool("isJump", true);
+            anim.SetTrigger("doJump");
         }
     }
 
