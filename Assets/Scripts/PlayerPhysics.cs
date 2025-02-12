@@ -20,8 +20,6 @@ public class PlayerPhysics : MonoBehaviour
     public float runSpeed;
     public float jumpPower;
 
-    Transform parentTransform;
-
     // 스테미나 관련 변수
     [Header ("Stamina")]
     public float maxStamina = 100f; 
@@ -39,7 +37,11 @@ public class PlayerPhysics : MonoBehaviour
 
     // 공격 관련 변수
     [Header("Attack")]
-    public float attackCooldown;
+    public float CatAttackCooldown;
+    public float PandaAttackCooldown;
+    public float MonkeyAttackCooldown;
+    public float RabbitAttackCooldown;
+    public GameObject CatPunchEffect;
 
     bool isAbleAttack = true;
 
@@ -57,6 +59,7 @@ public class PlayerPhysics : MonoBehaviour
     bool isRunning;
     bool isStaminaDepleted;
     bool isAttack;
+    bool wallHit;
 
     Vector3 moveVec;
 
@@ -68,7 +71,6 @@ public class PlayerPhysics : MonoBehaviour
         SetActiveCharacter(characterNum);
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
-        parentTransform = transform;
         stamina = maxStamina;
     }
 
@@ -91,6 +93,7 @@ public class PlayerPhysics : MonoBehaviour
     void Update()
     {
         GetInput();
+        CheckWallCollision();
         Move();
         Stamina();
         if (!isStaminaDepleted) Attack();
@@ -128,6 +131,27 @@ public class PlayerPhysics : MonoBehaviour
         attack1Down = Input.GetButtonDown("Fire1");
     }
 
+    void CheckWallCollision()
+    {
+        // 벽 충돌 감지 (머리, 중심, 발)
+        Vector3 centerPosition = transform.position + Vector3.down * 0.6f;
+        Vector3 headPosition = transform.position + Vector3.up * 0.4f;
+        Vector3 footPosition = transform.position + Vector3.down * 1.6f;
+
+        Vector3 checkDirection = (moveVec != Vector3.zero && !isAttack) ? moveVec : transform.forward; // 이동 중이면 moveVec, 아니면 정면 방향 사용
+
+        bool wallHitCenter = Physics.Raycast(centerPosition, checkDirection, 0.9f, LayerMask.GetMask("Ground"));
+        bool wallHitHead = Physics.Raycast(headPosition, checkDirection, 0.8f, LayerMask.GetMask("Ground"));
+        bool wallHitFoot = Physics.Raycast(footPosition, checkDirection, 0.4f, LayerMask.GetMask("Ground"));
+
+        wallHit = wallHitCenter || wallHitHead || wallHitFoot;
+
+        // 벽 감지 레이캐스트 디버깅
+        Debug.DrawRay(centerPosition, checkDirection * 0.9f, wallHitCenter ? Color.red : Color.green, 0.1f);
+        Debug.DrawRay(headPosition, checkDirection * 0.8f, wallHitHead ? Color.red : Color.green, 0.1f);
+        Debug.DrawRay(footPosition, checkDirection * 0.4f, wallHitFoot ? Color.red : Color.green, 0.1f);
+    }
+
     void Move()
     {
         // 카메라 기준 방향 벡터 가져오기
@@ -136,21 +160,6 @@ public class PlayerPhysics : MonoBehaviour
 
         // 입력 방향을 카메라 방향 기준으로 변환
         moveVec = (camForward * vAxis + camRight * hAxis).normalized;
-
-        // 벽 충돌 감지 (머리, 중심, 발)
-        Vector3 centerPosition = transform.position + Vector3.down * 0.6f;
-        Vector3 headPosition = transform.position + Vector3.up * 0.4f;
-        Vector3 footPosition = transform.position + Vector3.down * 1.6f;
-
-        bool wallHitCenter = Physics.Raycast(centerPosition, moveVec, 0.9f, LayerMask.GetMask("Ground"));
-        bool wallHitHead = Physics.Raycast(headPosition, moveVec, 0.8f, LayerMask.GetMask("Ground"));
-        bool wallHitFoot = Physics.Raycast(footPosition, moveVec, 0.4f, LayerMask.GetMask("Ground"));
-        bool wallHit = wallHitCenter || wallHitHead || wallHitFoot;
-
-        // 벽 감지 레이캐스트 보기 
-        Debug.DrawRay(centerPosition, moveVec * 0.9f, wallHitCenter ? Color.red : Color.green, 0.1f);
-        Debug.DrawRay(headPosition, moveVec * 0.8f, wallHitHead ? Color.red : Color.green, 0.1f);
-        Debug.DrawRay(footPosition, moveVec * 0.4f, wallHitFoot ? Color.red : Color.green, 0.1f);
 
         if (!wallHit && !isStaminaDepleted && !isAttack)
         {
@@ -259,11 +268,15 @@ public class PlayerPhysics : MonoBehaviour
         // 각 캐릭터에 따른 공격 이동 
         if (characterNum == 0)
         {
+            CatPunchEffect.SetActive(true);
             yield return new WaitForSeconds(1f);
+            CatPunchEffect.SetActive(false);
         }
         else if (characterNum == 1)
         {
-            yield return MoveCharacter(startPosition, transform.forward * 8.0f, 1.2f);
+            yield return MoveCharacter(startPosition, transform.forward * 6.0f, 0.6f);
+            startPosition = transform.position;
+            yield return MoveCharacter(startPosition, transform.forward * 9.0f, 0.6f);
         }
         else if (characterNum == 2)
         {
@@ -286,25 +299,54 @@ public class PlayerPhysics : MonoBehaviour
         isAttack = false;
         anim.SetBool("isAttack", false);
 
-        // 공격 후 쿨타임 
-        yield return new WaitForSeconds(attackCooldown);
+        // 캐릭터에 따른 공격 후 쿨타임
+        if (characterNum == 0)
+            yield return new WaitForSeconds(CatAttackCooldown);
+        else if (characterNum == 1)
+            yield return new WaitForSeconds(PandaAttackCooldown);
+        else if (characterNum == 2)
+            yield return new WaitForSeconds(MonkeyAttackCooldown);
+        else if (characterNum == 3)
+            yield return new WaitForSeconds(RabbitAttackCooldown);
         isAbleAttack = true;
     }
 
-    // 이동을 담당 함수 
+    // 공격 이동을 담당 함수 
     private IEnumerator MoveCharacter(Vector3 startPos, Vector3 moveOffset, float moveDuration)
     {
         Vector3 targetPosition = startPos + moveOffset;
         float elapsedTime = 0f;
+        bool stoppedByWall = false; // 벽에 의해 이동이 멈췄는지 확인
 
         while (elapsedTime < moveDuration)
         {
+            if (wallHit)
+            {
+                // 벽에 닿으면 현재 위치 저장 후 이동 중단
+                stoppedByWall = true;
+                break;
+            }
+
             transform.position = Vector3.Lerp(startPos, targetPosition, elapsedTime / moveDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        transform.position = targetPosition;
+        // 벽에 부딪혔다면, 남은 시간 동안 현재 위치 유지
+        if (stoppedByWall)
+        {
+            float remainingTime = moveDuration - elapsedTime;
+            while (remainingTime > 0)
+            {
+                remainingTime -= Time.deltaTime;
+                yield return null;
+            }
+        }
+        else
+        {
+            // 벽에 부딪히지 않았을 경우 최종 위치 보정
+            transform.position = targetPosition;
+        }
     }
 
     void Jump()
