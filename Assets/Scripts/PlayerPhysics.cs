@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerES : MonoBehaviour
+public class PlayerPhysics : MonoBehaviour
 {
     // 설정 관련 변수
     [Header("Setting")]
@@ -35,6 +35,7 @@ public class PlayerES : MonoBehaviour
     [Header("Jump")]
     public float raycastDistance = 1.1f;
     public LayerMask groundLayer;
+    public LayerMask itemLayer;
 
     // 공격 관련 변수
     [Header("Attack")]
@@ -77,6 +78,13 @@ public class PlayerES : MonoBehaviour
         for (int i = 0; i < character.Length; i++)
         {
             character[i].SetActive(i == characterNum);
+        }
+        // 캐릭터 번호가 3일 경우 CapsuleCollider 크기 조정
+        CapsuleCollider col = GetComponent<CapsuleCollider>();
+        if (characterNum == 3 && col != null)
+        {
+            col.center = new Vector3(col.center.x, -0.45f, col.center.z);
+            col.height = 3.5f;
         }
     }
 
@@ -174,10 +182,10 @@ public class PlayerES : MonoBehaviour
         // 달리는 동시에 땅에 있지 않을 때
         if (isRunning && !isGrounded && !isAttack)
         {
-            stamina -= staminaDecreaseRate / 4 * Time.deltaTime;
+            stamina += staminaDecreaseRate / 10 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
 
-            // 스테미나 0이 되면 일정 시간 대기 후 회복 시작
+            // 스테미나 0이 되면 일정 시간 대기 후 회복 시작 
             if (stamina <= 0 && !isStaminaDepleted)
             {
                 isRunning = false;
@@ -218,7 +226,7 @@ public class PlayerES : MonoBehaviour
 
         while (recoveryTime < staminaRecoveryDelay)
         {
-            stamina += staminaRecoveryRate * Time.deltaTime;
+            stamina += staminaRecoveryRate / 5 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
             staminaBar.fillAmount = stamina / maxStamina;
 
@@ -301,25 +309,38 @@ public class PlayerES : MonoBehaviour
 
     void Jump()
     {
+        bool wasGrounded = isGrounded; // 이전 프레임에서 땅에 있었는지 확인
         // 점프 기능 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
+
+        // float rayRadius = 0.7f; // 아이템 판독
+        // isBlock = Physics.SphereCast(transform.position, rayRadius, Vector3.up, out RaycastHit hit, raycastDistance, itemLayer);
 
         // 바닥 인지 레이캐스트 보기 
         Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
 
-        if (isGrounded)
+        // 점프 입력 처리
+        if (isGrounded && !wasGrounded)  // 점프 중 땅에 닿았을 때
         {
-            if (jumpDown)
-            {
-                rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-                anim.SetBool("isJump", true);
-                anim.SetTrigger("doJump");
-            }
-            else
-            {
-                anim.SetBool("isJump", false);
-            }
-        } 
+            anim.SetBool("isJump", false); // 점프 상태 해제
+            anim.Play("Idle", 0, 0f);      // Idle 애니메이션 실행
+        }
+
+        if (isGrounded && jumpDown) // 땅에 있을 때 점프 가능
+        {
+            rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            anim.SetBool("isJump", true);
+            anim.SetTrigger("doJump");
+        }
+    }
+
+    void DrawThickRay(Vector3 start, Vector3 direction, float distance, Color color, float thickness = 0.05f)
+    {
+        Vector3 right = Vector3.Cross(direction, Camera.main.transform.forward).normalized * thickness;
+
+        Debug.DrawLine(start, start + direction * distance, color, 0.1f);
+        Debug.DrawLine(start + right, start + right + direction * distance, color, 0.1f);
+        Debug.DrawLine(start - right, start - right + direction * distance, color, 0.1f);
     }
 
     void Respawn()
