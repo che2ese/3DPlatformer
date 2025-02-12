@@ -57,7 +57,6 @@ public class PlayerPhysics : MonoBehaviour
     bool isRunning;
     bool isStaminaDepleted;
     bool isAttack;
-    public bool isBlock;
 
     Vector3 moveVec;
 
@@ -176,10 +175,10 @@ public class PlayerPhysics : MonoBehaviour
         // 달리는 동시에 땅에 있지 않을 때
         if (isRunning && !isGrounded && !isAttack)
         {
-            stamina -= staminaDecreaseRate / 4 * Time.deltaTime;
+            stamina += staminaDecreaseRate / 5 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
 
-            // 스테미나 0이 되면 일정 시간 대기 후 회복 시작
+            // 스테미나 0이 되면 일정 시간 대기 후 회복 시작 
             if (stamina <= 0 && !isStaminaDepleted)
             {
                 isRunning = false;
@@ -220,7 +219,7 @@ public class PlayerPhysics : MonoBehaviour
 
         while (recoveryTime < staminaRecoveryDelay)
         {
-            stamina += staminaRecoveryRate * Time.deltaTime;
+            stamina += staminaRecoveryRate / 5 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
             staminaBar.fillAmount = stamina / maxStamina;
 
@@ -322,6 +321,11 @@ public class PlayerPhysics : MonoBehaviour
             }
             else
             {
+                AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+                if (stateInfo.IsName("Jump"))  // 실행 중인 애니메이션이 "Run"이라면
+                {
+                    anim.Play("Idle", 0, 0f);  // Idle 애니메이션으로 변경
+                }
                 anim.SetBool("isJump", false);
             }
         }
