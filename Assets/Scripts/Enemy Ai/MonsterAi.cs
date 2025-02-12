@@ -8,13 +8,13 @@ public class MonsterAi : MonoBehaviour
     //2.Skeleton
     public int EnemyVersion;
 
-    //¸ó½ºÅÍ ¼±ÅÃ º¯¼ö
+    //ëª¬ìŠ¤í„° ì„ íƒ ë³€ìˆ˜
     [Header("Monster")]
-    public Transform pathHolder; //°æ·Î ÇÒ´ç
+    public Transform pathHolder; //ê²½ë¡œ í• ë‹¹
     [HideInInspector]
     public int MonsterNumber; // Skeleton
 
-    // ÀÌµ¿ °ü·Ã º¯¼ö
+    // ì´ë™ ê´€ë ¨ ë³€ìˆ˜
     [Header("Move")]
 
     public float speed = 5;
@@ -25,15 +25,15 @@ public class MonsterAi : MonoBehaviour
     public int maxHealth = 100;
     private int currentHealth;
 
-    //°¨Áö°Å¸® °ü·Ã º¯¼ö
+    //ê°ì§€ê±°ë¦¬ ê´€ë ¨ ë³€ìˆ˜
     [Header("Sensor")]
-    public Light spotlight;// ¹ö¼¸ Àü¿ë
+    public Light spotlight;// ë²„ì„¯ ì „ìš©
     public LayerMask viewMask;
     public float viewDistance;
     public float viewAngle;
     public float AttackDistance;
 
-    //¸ó½ºÅÍ »óÅÂ º¯¼ö
+    //ëª¬ìŠ¤í„° ìƒíƒœ ë³€ìˆ˜
     public enum MonsterState { Patrolling, Chasing, Attacking }
     public MonsterState currentState = MonsterState.Patrolling;
 
@@ -48,8 +48,8 @@ public class MonsterAi : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         viewAngle = spotlight.spotAngle;
         originalSpotlightColour = spotlight.color;
-        animator = GetComponent<Animator>(); // ¾Ö´Ï¸ŞÀÌÅÍ °¡Á®¿À±â
-        SetAnimationParameters(); // ¾Ö´Ï¸ŞÀÌ¼Ç ¼³Á¤ Àû¿ë
+        animator = GetComponent<Animator>(); // ì• ë‹ˆë©”ì´í„° ê°€ì ¸ì˜¤ê¸°
+        SetAnimationParameters(); // ì• ë‹ˆë©”ì´ì…˜ ì„¤ì • ì ìš©
 
         waypoints = new Vector3[pathHolder.childCount];
         for (int i = 0; i < waypoints.Length; i++)
@@ -70,7 +70,7 @@ public class MonsterAi : MonoBehaviour
                 {
                     case MonsterState.Patrolling:
                         spotlight.color = originalSpotlightColour;
-                        //walk ÀÛµ¿
+                        //walk ì‘ë™
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", false);
                         if (CanSeePlayer())
@@ -82,11 +82,11 @@ public class MonsterAi : MonoBehaviour
                         break;
                     case MonsterState.Chasing:
                         spotlight.color = Color.red;
-                        //Run ÀÛµ¿
+                        //Run ì‘ë™
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", true);
                         animator.SetFloat("DistanceToPlayer", 3);
-                        if (!CanSeePlayer()) // ÇÃ·¹ÀÌ¾î¸¦ ³õÄ¡¸é ´Ù½Ã ¼øÂû »óÅÂ·Î ÀüÈ¯
+                        if (!CanSeePlayer()) // í”Œë ˆì´ì–´ë¥¼ ë†“ì¹˜ë©´ ë‹¤ì‹œ ìˆœì°° ìƒíƒœë¡œ ì „í™˜
                         {
                             spotlight.color = originalSpotlightColour;
                             currentState = MonsterState.Patrolling;
@@ -128,7 +128,7 @@ public class MonsterAi : MonoBehaviour
                 {
                     case MonsterState.Patrolling:
                         spotlight.color = originalSpotlightColour;
-                        //walk ÀÛµ¿
+                        //walk ì‘ë™
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", false);
                         if (CanSeePlayer())
@@ -140,10 +140,10 @@ public class MonsterAi : MonoBehaviour
                         break;
                     case MonsterState.Chasing:
                         spotlight.color = Color.red;
-                        //Run ÀÛµ¿
+                        //Run ì‘ë™
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", true);
-                        if (!CanSeePlayer()) // ÇÃ·¹ÀÌ¾î¸¦ ³õÄ¡¸é ´Ù½Ã ¼øÂû »óÅÂ·Î ÀüÈ¯
+                        if (!CanSeePlayer()) // í”Œë ˆì´ì–´ë¥¼ ë†“ì¹˜ë©´ ë‹¤ì‹œ ìˆœì°° ìƒíƒœë¡œ ì „í™˜
                         {
                             spotlight.color = originalSpotlightColour;
                             currentState = MonsterState.Patrolling;
@@ -161,10 +161,10 @@ public class MonsterAi : MonoBehaviour
     }
     void ChasePlayer()
     {
-        animator.SetBool("isChasing", true); // ÃßÀû ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+        animator.SetBool("isChasing", true); // ì¶”ì  ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
         Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
-        transform.LookAt(player); // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î È¸Àü
+        transform.LookAt(player); // í”Œë ˆì´ì–´ ë°©í–¥ìœ¼ë¡œ íšŒì „
     }
     bool CanSeePlayer()
     {
@@ -187,18 +187,18 @@ public class MonsterAi : MonoBehaviour
     //    if (Vector3.Distance(transform.position, player.position) < AttackDistance)
     //    {
     //        currentState = MonsterState.Attacking;
-    //        animator.SetTrigger("Attack"); // °ø°İ ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+    //        animator.SetTrigger("Attack"); // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
     //    }
     //}
     void SetAnimationParameters()
     {
         //if (EnemyVersion == 1) // Mushroom
         //{
-        //    animator.SetFloat("SpeedMultiplier", 1.0f); // ±âº» ¼Óµµ
+        //    animator.SetFloat("SpeedMultiplier", 1.0f); // ê¸°ë³¸ ì†ë„
         //}
         //else if (EnemyVersion == 2) // Skeleton
         //{
-        //    animator.SetFloat("SpeedMultiplier", 1.5f); // Á» ´õ ºü¸¥ ¼Óµµ
+        //    animator.SetFloat("SpeedMultiplier", 1.5f); // ì¢€ ë” ë¹ ë¥¸ ì†ë„
         //}
     }
 
@@ -220,7 +220,7 @@ public class MonsterAi : MonoBehaviour
                 yield return StartCoroutine(TurnToFace(targetWaypoint));
             }
 
-            if (CanSeePlayer()) // ÇÃ·¹ÀÌ¾î¸¦ °¨ÁöÇÏ¸é ÃßÀû »óÅÂ·Î ÀüÈ¯
+            if (CanSeePlayer()) // í”Œë ˆì´ì–´ë¥¼ ê°ì§€í•˜ë©´ ì¶”ì  ìƒíƒœë¡œ ì „í™˜
             {
                 spotlight.color = Color.red;
                 currentState = MonsterState.Chasing;
@@ -234,8 +234,8 @@ public class MonsterAi : MonoBehaviour
     {
         if (waypoints == null || waypoints.Length == 0)
         {
-            Debug.LogWarning(" waypoints ¹è¿­ÀÌ ºñ¾î ÀÖ½À´Ï´Ù.");
-            return 0; // ±âº»°ª ¹İÈ¯
+            Debug.LogWarning(" waypoints ë°°ì—´ì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
+            return 0; // ê¸°ë³¸ê°’ ë°˜í™˜
         }
 
         int nearestIndex = 0;
@@ -258,7 +258,7 @@ public class MonsterAi : MonoBehaviour
         Vector3 nearestWaypoint = waypoints[nearestIndex];
 
 
-        // ¹æÇâÀ» ¹Ì¸® ¼³Á¤
+        // ë°©í–¥ì„ ë¯¸ë¦¬ ì„¤ì •
         yield return StartCoroutine(TurnToFace(nearestWaypoint));
 
         while (Vector3.Distance(transform.position, nearestWaypoint) > 0.1f)
@@ -266,13 +266,13 @@ public class MonsterAi : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, nearestWaypoint, speed * Time.deltaTime);
             yield return null;
         }
-        //¼øÂû ·çÆ¾À» ÃÖ±Ù waypointºÎÅÍ ½ÃÀÛ
+        //ìˆœì°° ë£¨í‹´ì„ ìµœê·¼ waypointë¶€í„° ì‹œì‘
         StartCoroutine(FollowPathFromIndex(nearestIndex));
     }
 
     IEnumerator TurnToFace(Vector3 lookTarget)
     {
-        //°¡¸¸È÷ ÀÖ°Ô ¾Ö´Ï¸ŞÀÌ¼Ç ¼öÁ¤
+        //ê°€ë§Œíˆ ìˆê²Œ ì• ë‹ˆë©”ì´ì…˜ ìˆ˜ì •
         animator.SetBool("isWalking", false);
         animator.SetBool("isChasing", false);
 
@@ -305,15 +305,15 @@ public class MonsterAi : MonoBehaviour
     }
     void OnDrawGizmosSelected()
     {
-        // °¨Áö ¹üÀ§ (ÃÊ·Ï»ö)
+        // ê°ì§€ ë²”ìœ„ (ì´ˆë¡ìƒ‰)
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, viewDistance);
 
-        // °ø°İ ¹üÀ§ (»¡°£»ö)
+        // ê³µê²© ë²”ìœ„ (ë¹¨ê°„ìƒ‰)
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, AttackDistance);
 
-        // ½Ã¾ß°¢ Ç¥½Ã (ÆÄ¶õ»ö)
+        // ì‹œì•¼ê° í‘œì‹œ (íŒŒë€ìƒ‰)
         Vector3 leftBoundary = Quaternion.Euler(0, -viewAngle / 2, 0) * transform.forward * viewDistance;
         Vector3 rightBoundary = Quaternion.Euler(0, viewAngle / 2, 0) * transform.forward * viewDistance;
 

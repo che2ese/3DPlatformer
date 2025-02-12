@@ -838,7 +838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnPosition: {x: 148, y: 8, z: -157}
-  characterNum: 2
+  characterNum: 1
   character:
   - {fileID: 1777087739}
   - {fileID: 2062055407}
