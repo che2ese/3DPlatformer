@@ -210,9 +210,6 @@ public class PlayFabManager : MonoBehaviour
     {
         if (result.PlayerProfile != null)
         {
-            // 기본값 설정
-            string characterSelect = "0";  // 기본값: 0
-
             // 사용자 데이터를 별도로 가져오는 함수 호출
             GetUserData();  // 이 함수에서 UserData를 가져옵니다.
         }
