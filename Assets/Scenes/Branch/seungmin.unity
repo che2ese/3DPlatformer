@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 935800986}
-  m_IndirectSpecularColor: {r: 0.17660141, g: 0.53498113, b: 0.88457537, a: 1}
+  m_IndirectSpecularColor: {r: 0.17353046, g: 0.53125894, b: 0.8897848, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10810,7 +10810,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3097024448024870347, guid: 0f5abb52950f12a4f826c88ef9f1676c, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 3447
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 3097024448894120790, guid: 0f5abb52950f12a4f826c88ef9f1676c, type: 3}
       propertyPath: m_RootOrder
@@ -11918,7 +11918,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 914516066}
-  m_Material: {fileID: 13400000, guid: 4a991dd2753604ffaa61e52026bbc267, type: 2}
+  m_Material: {fileID: 13400000, guid: 15588c5e137c9489395e93bad7e0c476, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

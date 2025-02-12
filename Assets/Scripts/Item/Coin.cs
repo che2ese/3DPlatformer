@@ -11,6 +11,21 @@ public class Coin : MonoBehaviour
     [SerializeField]
     private bool isRed;
 
+    private void Start()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length > 0)
+        {
+            foreach (Renderer renderer in renderers)
+            {
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                renderer.receiveShadows = true;
+            }
+        }
+    }
+
+
     void Update()
     {
         transform.Rotate(direction * Time.deltaTime);
@@ -28,7 +43,7 @@ public class Coin : MonoBehaviour
             }
             else
             {
-                // 상점 코인 증가
+                // 상점 코인 증가  
             }
         }
     }
