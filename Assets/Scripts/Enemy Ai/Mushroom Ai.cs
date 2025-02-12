@@ -9,6 +9,7 @@ public class MushroomAi : MonoBehaviour
     public float speed = 5;
     public float waitTime = .3f;
     public float turnSpeed = 90;
+    public float attackRange = 2f;
 
     public Transform pathHolder; //경로 할당
     Transform player;
@@ -19,9 +20,14 @@ public class MushroomAi : MonoBehaviour
     public LayerMask viewMask;
     float viewAngle;
 
-    void Start()
+    private bool hasSpottedPlayer = false; // 플레이어 발견 여부
+    Animator anim;
+
+
+    void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        anim = GetComponent<Animator>();
         viewAngle = spotlight.spotAngle;
         originalSpotlightColour = spotlight.color;
 
@@ -36,15 +42,71 @@ public class MushroomAi : MonoBehaviour
     }
     void Update()
     {
-        if (CanSeePlayer())
+        bool canSee = CanSeePlayer();
+
+        if (canSee)
         {
             spotlight.color = Color.red;
+            hasSpottedPlayer = true;
         }
         else
         {
             spotlight.color = originalSpotlightColour;
+            hasSpottedPlayer = false;
+        }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        anim.SetFloat("distanceToPlayer", distanceToPlayer);
+
+        if (distanceToPlayer < attackRange)
+        {
+            anim.SetBool("isAttacking", true);
+            anim.SetBool("isMoving", false);
+        }
+        else if (hasSpottedPlayer)
+        {
+            anim.SetBool("isAttacking", false);
+            anim.SetBool("isMoving", true);
+            FollowPlayer(); // 여기에서 이동 실행
+        }
+        else
+        {
+            anim.SetBool("isMoving", true);
+            anim.SetBool("isAttacking", false);
         }
     }
+
+    void FollowPlayer()
+    {
+        if (!hasSpottedPlayer) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer < attackRange)
+        {
+            anim.SetBool("isAttacking", true);
+            anim.SetBool("isMoving", false);
+            return;
+        }
+
+        // 방향 계산
+        Vector3 direction = (player.position - transform.position).normalized;
+
+        // 현재 높이에서 점프 애니메이션 적용
+        float baseHeight = transform.position.y;
+        float jumpHeight = 0.5f; // 점프 높이 (조정 가능)
+        float jumpSpeed = 3f; // 점프 속도 (조정 가능)
+
+        float yOffset = Mathf.Sin(Time.time * jumpSpeed) * jumpHeight; // 포물선 이동
+
+        // 이동 적용
+        Vector3 movePos = transform.position + direction * speed * Time.deltaTime;
+        movePos.y = baseHeight + yOffset; // 기본 높이에 점프 값 추가
+
+        transform.position = movePos;
+        transform.LookAt(player.position);
+    }
+
     bool CanSeePlayer()
     {
         if (Vector3.Distance(transform.position, player.position) < viewDistance)
@@ -65,22 +127,32 @@ public class MushroomAi : MonoBehaviour
     IEnumerator FollowPath(Vector3[] waypoints)
     {
         transform.position = waypoints[0];
-
         int targetWaypointIndex = 1;
-        Vector3 targetWaypoint = waypoints[targetWaypointIndex]; // 목적지
+        Vector3 targetWaypoint = waypoints[targetWaypointIndex];
         transform.LookAt(targetWaypoint);
 
-        while(true)
+        float jumpHeight = 0.5f; // 점프 높이
+        float jumpSpeed = 3f; // 점프 속도
+        float baseHeight = transform.position.y; // 기본 높이 유지
+        //float jumpdistance = 2f;
+
+        while (true)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, speed * Time.deltaTime); // Movetoward(startpoint, endpoint, speed) / 델타타임은 성능에 무관하게 인간이 인지할수 있는 최소단위로 보정
-            if (transform.position == targetWaypoint)
+            float yOffset = Mathf.Sin(Time.time * jumpSpeed) * jumpHeight; // 부드러운 점프
+
+            Vector3 nextPos = Vector3.Lerp(transform.position, targetWaypoint, speed * Time.deltaTime);
+            nextPos.y = baseHeight + yOffset; // y값 고정된 범위에서 점프 적용
+
+            transform.position = nextPos;
+
+            if (Vector3.Distance(transform.position, targetWaypoint) < 0.1f)
             {
-                targetWaypointIndex = (targetWaypointIndex+1) % waypoints.Length;
+                targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
                 targetWaypoint = waypoints[targetWaypointIndex];
-                yield return new WaitForSeconds(waitTime); //대기시간
+                yield return new WaitForSeconds(waitTime);
                 yield return StartCoroutine(TurnToFace(targetWaypoint));
             }
-            yield return null; // 조건이 참일동안은 다음 단계로 넘어가는 것 방지
+            yield return null;
         }
     }
 
