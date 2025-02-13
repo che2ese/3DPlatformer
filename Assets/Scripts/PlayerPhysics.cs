@@ -59,6 +59,10 @@ public class PlayerPhysics : MonoBehaviour
     bool isRunning;
     bool isStaminaDepleted;
     bool isAttack;
+    bool isFalling;
+    bool isJump;
+    bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
+
     bool wallHit;
 
     Vector3 moveVec;
@@ -96,8 +100,9 @@ public class PlayerPhysics : MonoBehaviour
         CheckWallCollision();
         Move();
         Stamina();
-        if (!isStaminaDepleted) Attack();
-        if (!isStaminaDepleted && !isAttack) Jump();
+        Attack();
+        Jump();
+        Fall();
     }
 
     void OnTriggerEnter(Collider other)
@@ -133,6 +138,7 @@ public class PlayerPhysics : MonoBehaviour
 
     void CheckWallCollision()
     {
+
         // 벽 충돌 감지 (머리, 중심, 발)
         Vector3 centerPosition = transform.position + Vector3.down * 0.6f;
         Vector3 headPosition = transform.position + Vector3.up * 0.4f;
@@ -248,6 +254,8 @@ public class PlayerPhysics : MonoBehaviour
 
     void Attack()
     {
+        if (isStaminaDepleted) return;
+
         // 근접 공격 
         if (attack1Down && !isAttack && isGrounded && isAbleAttack)
         {
@@ -269,7 +277,20 @@ public class PlayerPhysics : MonoBehaviour
         if (characterNum == 0)
         {
             CatPunchEffect.SetActive(true);
+
+            // 애니메이션 보정 
+            Quaternion originalRotation = transform.rotation;
+
+            transform.rotation = Quaternion.Euler(
+                transform.rotation.eulerAngles.x,
+                transform.rotation.eulerAngles.y + 45,
+                transform.rotation.eulerAngles.z
+            );
+
             yield return new WaitForSeconds(1f);
+
+            // 원래 회전값으로 되돌리기
+            transform.rotation = originalRotation;
             CatPunchEffect.SetActive(false);
         }
         else if (characterNum == 1)
@@ -327,8 +348,17 @@ public class PlayerPhysics : MonoBehaviour
                 break;
             }
 
+            bool isAttackGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance * 1.2f, groundLayer);
+            if (!isAttackGrounded)
+            {
+                // 공중에 있을 경우 점점 떨어지게 만듦
+                targetPosition += Vector3.down * 7 * Time.deltaTime;
+            }
+
+
             transform.position = Vector3.Lerp(startPos, targetPosition, elapsedTime / moveDuration);
             elapsedTime += Time.deltaTime;
+
             yield return null;
         }
 
@@ -351,28 +381,37 @@ public class PlayerPhysics : MonoBehaviour
 
     void Jump()
     {
-        bool wasGrounded = isGrounded; // 이전 프레임에서 땅에 있었는지 확인
-        // 점프 기능 
+        // 땅에 있는 상태 확인 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
+        Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
+
+        if (isStaminaDepleted || isAttack) return; 
 
         // float rayRadius = 0.7f; // 아이템 판독
         // isBlock = Physics.SphereCast(transform.position, rayRadius, Vector3.up, out RaycastHit hit, raycastDistance, itemLayer);
-
-        // 바닥 인지 레이캐스트 보기 
-        Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
-
-        // 점프 입력 처리
-        if (isGrounded && !wasGrounded)  // 점프 중 땅에 닿았을 때
-        {
-            anim.SetBool("isJump", false); // 점프 상태 해제
-            anim.Play("Idle", 0, 0f);      // Idle 애니메이션 실행
-        }
 
         if (isGrounded && jumpDown) // 땅에 있을 때 점프 가능
         {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             anim.SetBool("isJump", true);
             anim.SetTrigger("doJump");
+            isJump = true;
+        }
+    }
+
+    void Fall()
+    {
+        // 낙하 애니메이션
+        // 거리 측정하여 땅과 근접하다면 낙하 애니메이션 실행 X
+
+        RaycastHit hit;
+        bool isNearGround = Physics.Raycast(transform.position, Vector3.down, out hit, 10f, groundLayer);
+
+        if (!isGrounded && rigid.velocity.y < -0.1f && !isNearGround && !isFalling && !isJump && !isCollidingWithGround)
+        {
+            anim.SetTrigger("doFall");
+            anim.SetBool("isFall", true);
+            isFalling = true;
         }
     }
 
@@ -394,12 +433,46 @@ public class PlayerPhysics : MonoBehaviour
         stamina = 100;
     }
 
-    private void OnTriggerStay(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("ScaleBlock"))
         {
             rigid.useGravity = true;
             rigid.AddForce(Vector3.down * 10f, ForceMode.Acceleration);
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        // 땅에 닿았을 때 + 착지 애니메이션 작동 
+        if (collision.gameObject.layer == 6)
+        {
+            anim.SetBool("isJump", false);
+            anim.SetBool("isFall", false);
+            isFalling = false;
+            isJump = false;
+        }
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.layer == 6) 
+        {
+            isCollidingWithGround = true;
+
+            if (isFalling)
+            {
+                anim.SetBool("isFall", false);
+                isFalling = false;
+            }
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.layer == 6) 
+        {
+            isCollidingWithGround = false;
         }
     }
 }
