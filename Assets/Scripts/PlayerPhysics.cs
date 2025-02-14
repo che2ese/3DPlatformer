@@ -42,6 +42,7 @@ public class PlayerPhysics : MonoBehaviour
     public float MonkeyAttackCooldown;
     public float RabbitAttackCooldown;
     public GameObject CatPunchEffect;
+    public GameObject PandaPunchEffect;
 
     bool isAbleAttack = true;
 
@@ -295,9 +296,21 @@ public class PlayerPhysics : MonoBehaviour
         }
         else if (characterNum == 1)
         {
+            // 슬라이딩 전 달리기
             yield return MoveCharacter(startPosition, transform.forward * 6.0f, 0.6f);
+
+            // 이펙트 보이기와 슬라이딩
+            var emission = PandaPunchEffect.GetComponent<ParticleSystem>().emission;
+            emission.rateOverTime = 20;
+            PandaPunchEffect.SetActive(true);
+            PandaPunchEffect.GetComponent<ParticleSystem>().Play();
+
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 9.0f, 0.6f);
+            yield return MoveCharacter(startPosition, transform.forward * 10.5f, 0.5f);
+
+            // 이펙트 서서히 제거 및 대기 
+            emission.rateOverTime = 0;
+            yield return new WaitForSeconds(0.4f);
         }
         else if (characterNum == 2)
         {
@@ -305,6 +318,7 @@ public class PlayerPhysics : MonoBehaviour
 
             startPosition = transform.position;
             yield return MoveCharacter(startPosition, transform.forward * 5.5f + Vector3.up * 1.4f, 0.6f);
+
         }
         else if (characterNum == 3)
         {
@@ -324,7 +338,10 @@ public class PlayerPhysics : MonoBehaviour
         if (characterNum == 0)
             yield return new WaitForSeconds(CatAttackCooldown);
         else if (characterNum == 1)
+        {
             yield return new WaitForSeconds(PandaAttackCooldown);
+            PandaPunchEffect.SetActive(false);
+        }
         else if (characterNum == 2)
             yield return new WaitForSeconds(MonkeyAttackCooldown);
         else if (characterNum == 3)
@@ -354,7 +371,6 @@ public class PlayerPhysics : MonoBehaviour
                 // 공중에 있을 경우 점점 떨어지게 만듦
                 targetPosition += Vector3.down * 7 * Time.deltaTime;
             }
-
 
             transform.position = Vector3.Lerp(startPos, targetPosition, elapsedTime / moveDuration);
             elapsedTime += Time.deltaTime;
