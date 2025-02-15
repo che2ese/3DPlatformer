@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5f64ec51b1f6f4e43a5c685788a7f2fa
+guid: 7c9efb0a6403949aea30237aee14cf96
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -16,8 +16,7 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: "Invalid copied Avatar Rig Configuration:\n\tNo human bone found.
-      Ensure both rig type match\n"
+    rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -34,19 +33,19 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Falling
+      name: LandingBeta
       takeName: mixamo.com
       internalID: -203655887218126122
-      firstFrame: 0
-      lastFrame: 100
+      firstFrame: 98
+      lastFrame: 113
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 1
+      loopTime: 0
+      loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
@@ -510,17 +509,17 @@ ModelImporter:
     - name: mixamorig:RightLeg
       parentName: mixamorig:RightUpLeg
       position: {x: -0, y: 0.26551798, z: -1.830287e-12}
-      rotation: {x: -0.34188935, y: 0.016683372, z: -0.06731701, w: 0.9371776}
+      rotation: {x: -0.34188935, y: 0.016683372, z: -0.067317, w: 0.9371776}
       scale: {x: 1, y: 1, z: 1}
     - name: mixamorig:RightFoot
       parentName: mixamorig:RightLeg
       position: {x: -0.0000000013164743, y: 0.15372859, z: 2.259021e-10}
-      rotation: {x: 0.87023795, y: -0.1259002, z: 0.05795573, w: 0.47273263}
+      rotation: {x: 0.87023795, y: -0.1259002, z: 0.057955716, w: 0.47273263}
       scale: {x: 1, y: 1, z: 1}
     - name: mixamorig:RightToeBase
       parentName: mixamorig:RightFoot
       position: {x: -1.974294e-10, y: 0.053851355, z: 2.7335004e-10}
-      rotation: {x: -0.046602752, y: 0.0036399332, z: -0.07778338, w: 0.99587387}
+      rotation: {x: -0.046602756, y: 0.003639933, z: -0.07778339, w: 0.9958738}
       scale: {x: 1, y: 1, z: 1}
     - name: mixamorig:RightToe_End
       parentName: mixamorig:RightToeBase
@@ -545,7 +544,7 @@ ModelImporter:
     - name: mixamorig:RightShoulder
       parentName: mixamorig:Spine2
       position: {x: 0.17453286, y: 0.14125705, z: -0.0018275605}
-      rotation: {x: -0.5411568, y: -0.45296702, z: 0.546558, w: -0.45082664}
+      rotation: {x: -0.5411568, y: -0.45296696, z: 0.546558, w: -0.4508266}
       scale: {x: 1, y: 1, z: 1}
     - name: mixamorig:RightArm
       parentName: mixamorig:RightShoulder

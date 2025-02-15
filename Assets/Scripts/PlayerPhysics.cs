@@ -42,6 +42,9 @@ public class PlayerPhysics : MonoBehaviour
     public float MonkeyAttackCooldown;
     public float RabbitAttackCooldown;
     public GameObject CatPunchEffect;
+    public GameObject PandaPunchEffect;
+    public GameObject MonkeyPunchEffect;
+    public GameObject RabbitPunchEffect;
 
     bool isAbleAttack = true;
 
@@ -295,26 +298,49 @@ public class PlayerPhysics : MonoBehaviour
         }
         else if (characterNum == 1)
         {
+            // 슬라이딩 전 달리기
             yield return MoveCharacter(startPosition, transform.forward * 6.0f, 0.6f);
+
+            // 이펙트 보이기와 슬라이딩
+            var emission = PandaPunchEffect.GetComponent<ParticleSystem>().emission;
+            emission.rateOverTime = 20;
+            PandaPunchEffect.SetActive(true);
+            PandaPunchEffect.GetComponent<ParticleSystem>().Play();
+
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 9.0f, 0.6f);
+            yield return MoveCharacter(startPosition, transform.forward * 10.5f, 0.5f);
+
+            // 이펙트 서서히 제거 및 대기 
+            emission.rateOverTime = 0;
+            yield return new WaitForSeconds(0.4f);
         }
         else if (characterNum == 2)
         {
             yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
 
+            // 이펙트 보이기
+            var emission = MonkeyPunchEffect.GetComponent<ParticleSystem>().emission;
+            emission.rateOverTime = 0;
+            MonkeyPunchEffect.SetActive(true);
+            MonkeyPunchEffect.GetComponent<ParticleSystem>().Play();
+
+
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 5.5f + Vector3.up * 1.4f, 0.6f);
+            yield return MoveCharacter(startPosition, transform.forward * 6.4f + Vector3.up * 1.4f, 0.8f);
+            MonkeyPunchEffect.SetActive(false);
         }
         else if (characterNum == 3)
         {
             yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
 
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 3.5f + Vector3.up * 1.4f, 0.4f);
+            yield return MoveCharacter(startPosition, transform.forward + Vector3.up * 14.4f, 0.8f);
 
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 6.5f + Vector3.up * -1f, 0.6f);
+            yield return MoveCharacter(startPosition, transform.forward + Vector3.down * 8f, 0.3f);
+            RabbitPunchEffect.SetActive(true);
+            yield return new WaitForSeconds(0.6f);
+            RabbitPunchEffect.SetActive(false);
         }
 
         isAttack = false;
@@ -324,9 +350,14 @@ public class PlayerPhysics : MonoBehaviour
         if (characterNum == 0)
             yield return new WaitForSeconds(CatAttackCooldown);
         else if (characterNum == 1)
+        {
             yield return new WaitForSeconds(PandaAttackCooldown);
+            PandaPunchEffect.SetActive(false);
+        }
         else if (characterNum == 2)
+        {
             yield return new WaitForSeconds(MonkeyAttackCooldown);
+        }      
         else if (characterNum == 3)
             yield return new WaitForSeconds(RabbitAttackCooldown);
         isAbleAttack = true;
@@ -354,7 +385,6 @@ public class PlayerPhysics : MonoBehaviour
                 // 공중에 있을 경우 점점 떨어지게 만듦
                 targetPosition += Vector3.down * 7 * Time.deltaTime;
             }
-
 
             transform.position = Vector3.Lerp(startPos, targetPosition, elapsedTime / moveDuration);
             elapsedTime += Time.deltaTime;
@@ -452,11 +482,18 @@ public class PlayerPhysics : MonoBehaviour
             isFalling = false;
             isJump = false;
         }
+        if (collision.gameObject.CompareTag("ConveyorBlock"))
+        {
+            anim.SetBool("isJump", false);
+            anim.SetBool("isFall", false);
+            isFalling = false;
+            isJump = false;
+        }
     }
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.layer == 6) 
+        if (collision.gameObject.layer == 6)
         {
             isCollidingWithGround = true;
 
@@ -466,13 +503,30 @@ public class PlayerPhysics : MonoBehaviour
                 isFalling = false;
             }
         }
-    }
+        if (collision.gameObject.CompareTag("ConveyorBlock"))
+        {
+            SpecialBlock conveyor = collision.gameObject.GetComponentInParent<SpecialBlock>();
 
+            if (conveyor != null && conveyor.version == 4 && conveyor.applyForce)
+            {
+                // 컨베이어 블록의 힘과 방향 가져오기 (X와 Z 바꾸기)
+                Vector3 forceDirection = new Vector3(conveyor.direction.z, conveyor.direction.y, -conveyor.direction.x).normalized;
+                float forceAmount = conveyor.force;
+
+                // 플레이어에 힘 적용 (중력 영향을 유지)
+                rigid.velocity = new Vector3(forceDirection.x * forceAmount, rigid.velocity.y, forceDirection.z * forceAmount);
+            }
+        }
+    }
     void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.layer == 6) 
         {
             isCollidingWithGround = false;
+        }
+        if (collision.gameObject.CompareTag("ConveyorBlock"))
+        {
+            isCollidingWithGround = true;
         }
     }
 }
