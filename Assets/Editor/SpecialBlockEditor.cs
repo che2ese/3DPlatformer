@@ -24,6 +24,8 @@ public class SpecialBlockEditor : Editor
         {
             block.changeX = EditorGUILayout.Toggle("Change X", block.changeX);
             block.changeZ = EditorGUILayout.Toggle("Change Z", block.changeZ);
+            block.changeY = EditorGUILayout.Toggle("Change Y", block.changeY);
+            block.scaleStartDelay = EditorGUILayout.FloatField("Scale Start DelayY", block.scaleStartDelay);
             block.scaleDuration = EditorGUILayout.FloatField("Scale Duration", block.scaleDuration);
             block.minScale = EditorGUILayout.FloatField("Min Scale", block.minScale);
         }

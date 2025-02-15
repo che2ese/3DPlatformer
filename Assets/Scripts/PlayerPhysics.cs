@@ -505,6 +505,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("ConveyorBlock"))
         {
+            Debug.Log("d");
             SpecialBlock conveyor = collision.gameObject.GetComponentInParent<SpecialBlock>();
 
             if (conveyor != null && conveyor.version == 4 && conveyor.applyForce)
@@ -512,7 +513,6 @@ public class PlayerPhysics : MonoBehaviour
                 // 컨베이어 블록의 힘과 방향 가져오기 (X와 Z 바꾸기)
                 Vector3 forceDirection = new Vector3(conveyor.direction.z, conveyor.direction.y, -conveyor.direction.x).normalized;
                 float forceAmount = conveyor.force;
-
                 // 플레이어에 힘 적용 (중력 영향을 유지)
                 rigid.velocity = new Vector3(forceDirection.x * forceAmount, rigid.velocity.y, forceDirection.z * forceAmount);
             }
@@ -527,6 +527,9 @@ public class PlayerPhysics : MonoBehaviour
         if (collision.gameObject.CompareTag("ConveyorBlock"))
         {
             isCollidingWithGround = true;
+            if(isJump)
+                // 컨베이어 벨트에서 벗어나면 힘이 더 이상 적용되지 않도록 속도 초기화
+                rigid.velocity = new Vector3(0, rigid.velocity.y, 0);
         }
     }
 }
