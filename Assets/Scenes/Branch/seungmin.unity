@@ -929,6 +929,7 @@ MonoBehaviour:
   CatPunchEffect: {fileID: 1462953505}
   PandaPunchEffect: {fileID: 285684106}
   MonkeyPunchEffect: {fileID: 1592384764}
+  RabbitPunchEffect: {fileID: 140931073}
 --- !u!54 &97318259
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1850,6 +1851,11 @@ Transform:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8352983042953932605, guid: 940998d745fdf87449ea21b589420be0, type: 3}
   m_PrefabInstance: {fileID: 766262227}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &140931073 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3432958286849152088, guid: 87ee7299dd44ed747af24dbb91bcd33b, type: 3}
+  m_PrefabInstance: {fileID: 381377608}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &144291041
 PrefabInstance:
@@ -5168,6 +5174,10 @@ PrefabInstance:
     - target: {fileID: 3432958286849152088, guid: 87ee7299dd44ed747af24dbb91bcd33b, type: 3}
       propertyPath: m_Name
       value: RabbitAttackEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 3432958286849152088, guid: 87ee7299dd44ed747af24dbb91bcd33b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4113911032170361916, guid: 87ee7299dd44ed747af24dbb91bcd33b, type: 3}
       propertyPath: m_Materials.Array.size
@@ -10330,8 +10340,8 @@ Transform:
   m_GameObject: {fileID: 759780388}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.4, y: -18.51566, z: -24.8}
-  m_LocalScale: {x: 32.269062, y: 31.46493, z: 52.326447}
+  m_LocalPosition: {x: -2.4, y: -18.51566, z: -24.4}
+  m_LocalScale: {x: 32.269062, y: 31.46493, z: 45.12685}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 558182750}
