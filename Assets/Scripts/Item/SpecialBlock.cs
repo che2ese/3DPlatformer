@@ -115,25 +115,19 @@ public class SpecialBlock : MonoBehaviour
     void ChangeScale()
     {
         float scaleFactor = Mathf.PingPong(Time.time / scaleDuration, 1f);
+        float clampedScaleFactor = Mathf.Clamp(scaleFactor, minScale, 1f); // 최소 크기 보장
 
         foreach (Transform child in transform)
         {
             if (originalScales.ContainsKey(child))
             {
-                Vector3 newScale = originalScales[child]; 
-                if (changeX && !changeZ)
-                {
-                    newScale.x = Mathf.Lerp(originalScales[child].x * minScale, originalScales[child].x, scaleFactor);
-                }
-                else if(!changeX && changeZ)
-                {
-                    newScale.z = Mathf.Lerp(originalScales[child].z * minScale, originalScales[child].z, scaleFactor);
-                }
-                else if(changeX && changeZ)
-                {
-                    newScale.x = Mathf.Lerp(originalScales[child].x * minScale, originalScales[child].x, scaleFactor);
-                    newScale.z = Mathf.Lerp(originalScales[child].z * minScale, originalScales[child].z, scaleFactor);
-                }
+                Vector3 newScale = originalScales[child];
+
+                if (changeX)
+                    newScale.x = Mathf.Lerp(originalScales[child].x * minScale, originalScales[child].x, clampedScaleFactor);
+                if (changeZ)
+                    newScale.z = Mathf.Lerp(originalScales[child].z * minScale, originalScales[child].z, clampedScaleFactor);
+
                 child.localScale = newScale;
             }
         }
@@ -179,29 +173,6 @@ public class SpecialBlock : MonoBehaviour
         if (version == 1 && other.CompareTag("Player"))
         {
             other.transform.parent = null;
-        }
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (version == 4 && applyForce && collision.gameObject.CompareTag("Player"))
-        {
-            Rigidbody playerRb = collision.gameObject.GetComponent<Rigidbody>();
-
-            if (playerRb != null && collision.contactCount > 0)
-            {
-                // 접촉한 지점의 법선 벡터(Normal Vector) 가져오기
-                Vector3 contactNormal = collision.contacts[0].normal;
-
-                // 부모 오브젝트의 회전 방향 가져오기
-                Vector3 rotationAxis = direction.normalized; // 회전 방향 (예: (0,1,0) = Y축 회전)
-
-                // 접촉한 위치에서 회전 방향과 법선 벡터를 이용해 이동 방향 계산
-                Vector3 tangentDirection = Vector3.Cross(rotationAxis, contactNormal).normalized;
-
-                // 플레이어가 원기둥의 회전 방향을 따라 자연스럽게 이동하도록 velocity 설정
-                playerRb.velocity = new Vector3(tangentDirection.x * force, playerRb.velocity.y, tangentDirection.z * force);
-            }
         }
     }
 }

@@ -8,6 +8,7 @@ TagManager:
   - Ground
   - ScaleBlock
   - FxTemporaire
+  - ConveyorBlock
   layers:
   - Default
   - TransparentFX
