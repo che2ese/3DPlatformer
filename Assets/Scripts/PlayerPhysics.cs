@@ -43,6 +43,8 @@ public class PlayerPhysics : MonoBehaviour
     public float RabbitAttackCooldown;
     public GameObject CatPunchEffect;
     public GameObject PandaPunchEffect;
+    public GameObject MonkeyPunchEffect;
+    public GameObject RabbitPunchEffect;
 
     bool isAbleAttack = true;
 
@@ -316,19 +318,29 @@ public class PlayerPhysics : MonoBehaviour
         {
             yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
 
-            startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 5.5f + Vector3.up * 1.4f, 0.6f);
+            // 이펙트 보이기
+            var emission = MonkeyPunchEffect.GetComponent<ParticleSystem>().emission;
+            emission.rateOverTime = 0;
+            MonkeyPunchEffect.SetActive(true);
+            MonkeyPunchEffect.GetComponent<ParticleSystem>().Play();
 
+
+            startPosition = transform.position;
+            yield return MoveCharacter(startPosition, transform.forward * 6.4f + Vector3.up * 1.4f, 0.8f);
+            MonkeyPunchEffect.SetActive(false);
         }
         else if (characterNum == 3)
         {
             yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
 
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 3.5f + Vector3.up * 1.4f, 0.4f);
+            yield return MoveCharacter(startPosition, transform.forward + Vector3.up * 14.4f, 0.8f);
 
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 6.5f + Vector3.up * -1f, 0.6f);
+            yield return MoveCharacter(startPosition, transform.forward + Vector3.down * 8f, 0.3f);
+            RabbitPunchEffect.SetActive(true);
+            yield return new WaitForSeconds(0.6f);
+            RabbitPunchEffect.SetActive(false);
         }
 
         isAttack = false;
@@ -343,7 +355,9 @@ public class PlayerPhysics : MonoBehaviour
             PandaPunchEffect.SetActive(false);
         }
         else if (characterNum == 2)
+        {
             yield return new WaitForSeconds(MonkeyAttackCooldown);
+        }      
         else if (characterNum == 3)
             yield return new WaitForSeconds(RabbitAttackCooldown);
         isAbleAttack = true;
