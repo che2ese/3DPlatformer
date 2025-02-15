@@ -505,7 +505,6 @@ public class PlayerPhysics : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("ConveyorBlock"))
         {
-            Debug.Log("d");
             SpecialBlock conveyor = collision.gameObject.GetComponentInParent<SpecialBlock>();
 
             if (conveyor != null && conveyor.version == 4 && conveyor.applyForce)
