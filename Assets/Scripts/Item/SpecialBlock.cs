@@ -21,6 +21,10 @@ public class SpecialBlock : MonoBehaviour
     [HideInInspector]
     public bool changeZ = true;
     [HideInInspector]
+    public bool changeY = true;
+    [HideInInspector]
+    public float scaleStartDelay = 0f; // 크기 변화 시작 전 대기 시간 (기본값: 0초)
+    [HideInInspector]
     public float scaleDuration = 2f;  // 작아지고 커지는 시간
     [HideInInspector]
     public float minScale = 0.2f;  // 최소 크기 비율 (1/5 크기)
@@ -55,6 +59,7 @@ public class SpecialBlock : MonoBehaviour
         if (version == 2)
         {
             StoreOriginalScales();
+            StartCoroutine(StartScaleAfterDelay()); // 일정 시간 후 크기 변경 시작
         }
         if (version == 3)
         {
@@ -78,9 +83,6 @@ public class SpecialBlock : MonoBehaviour
         {
             case 1:
                 MoveBetweenTwoPoints();
-                break;
-            case 2:
-                ChangeScale();
                 break;
             case 4:
                 transform.Rotate(direction * Time.deltaTime);
@@ -114,7 +116,8 @@ public class SpecialBlock : MonoBehaviour
 
     void ChangeScale()
     {
-        float scaleFactor = Mathf.PingPong(Time.time / scaleDuration, 1f);
+        float timeOffset = scaleDuration; // 시작할 때 큰 상태 유지
+        float scaleFactor = Mathf.PingPong((Time.time + timeOffset) / scaleDuration, 1f);
         float clampedScaleFactor = Mathf.Clamp(scaleFactor, minScale, 1f); // 최소 크기 보장
 
         foreach (Transform child in transform)
@@ -127,9 +130,22 @@ public class SpecialBlock : MonoBehaviour
                     newScale.x = Mathf.Lerp(originalScales[child].x * minScale, originalScales[child].x, clampedScaleFactor);
                 if (changeZ)
                     newScale.z = Mathf.Lerp(originalScales[child].z * minScale, originalScales[child].z, clampedScaleFactor);
+                if (changeY)
+                    newScale.y = Mathf.Lerp(originalScales[child].y * minScale, originalScales[child].y, clampedScaleFactor);
 
                 child.localScale = newScale;
             }
+        }
+    }
+
+
+    IEnumerator StartScaleAfterDelay()
+    {
+        yield return new WaitForSeconds(scaleStartDelay); // 설정된 시간만큼 대기
+        while (true)
+        {
+            ChangeScale();
+            yield return null; // 매 프레임 실행
         }
     }
 

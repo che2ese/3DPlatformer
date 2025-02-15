@@ -900,7 +900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnPosition: {x: 148, y: 8, z: -157}
-  characterNum: 3
+  characterNum: 0
   character:
   - {fileID: 1777087739}
   - {fileID: 2062055407}
@@ -2322,6 +2322,8 @@ MonoBehaviour:
   speed: 3
   changeX: 1
   changeZ: 1
+  changeY: 1
+  scaleStartDelay: 0
   scaleDuration: 2
   minScale: 0.2
   initialDisappearDelay: 1
@@ -2645,6 +2647,8 @@ MonoBehaviour:
   speed: 6
   changeX: 0
   changeZ: 1
+  changeY: 0
+  scaleStartDelay: 0
   scaleDuration: 3
   minScale: 0.2
   initialDisappearDelay: 1
@@ -8324,6 +8328,8 @@ MonoBehaviour:
   speed: 0
   changeX: 1
   changeZ: 1
+  changeY: 1
+  scaleStartDelay: 0
   scaleDuration: 2
   minScale: 0.2
   initialDisappearDelay: 1
@@ -10323,6 +10329,8 @@ MonoBehaviour:
   speed: 6
   changeX: 1
   changeZ: 1
+  changeY: 0
+  scaleStartDelay: 0
   scaleDuration: 3
   minScale: 0.2
   initialDisappearDelay: 1
@@ -13195,6 +13203,8 @@ MonoBehaviour:
   speed: 6
   changeX: 1
   changeZ: 1
+  changeY: 1
+  scaleStartDelay: 0
   scaleDuration: 2
   minScale: 0.2
   initialDisappearDelay: 2
@@ -14825,6 +14835,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1000, y: 100, z: 1000}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1166685298 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4772634663576477652, guid: e1385af346f4e624eb313ec1ea4fcd7e, type: 3}
+  m_PrefabInstance: {fileID: 258548206}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1167666409
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14971,6 +14986,8 @@ MonoBehaviour:
   speed: 6
   changeX: 1
   changeZ: 1
+  changeY: 1
+  scaleStartDelay: 0
   scaleDuration: 2
   minScale: 0.2
   initialDisappearDelay: 1
@@ -16449,6 +16466,8 @@ MonoBehaviour:
   speed: 6
   changeX: 1
   changeZ: 1
+  changeY: 1
+  scaleStartDelay: 0
   scaleDuration: 2
   minScale: 0.2
   initialDisappearDelay: 3
@@ -18041,14 +18060,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1921845152053738924, guid: 0f0190006e471ee46b5d2c7d6ffc8e78, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1921845152053738924, guid: 0f0190006e471ee46b5d2c7d6ffc8e78, type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1921845152053738924, guid: 0f0190006e471ee46b5d2c7d6ffc8e78, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -19131,6 +19149,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1178422362}
     m_Modifications:
+    - target: {fileID: 2739621136426754612, guid: 47b0e1937e1dd7546978669cabe0d29c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5563522720728323699, guid: 47b0e1937e1dd7546978669cabe0d29c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5909829147261079231, guid: 47b0e1937e1dd7546978669cabe0d29c, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -19408,7 +19434,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0eec903dc564f314a907106fed8688e0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1592384765}
+      addedObject: {fileID: 1166685298}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0eec903dc564f314a907106fed8688e0, type: 3}
 --- !u!4 &1415514821 stripped
@@ -20895,6 +20921,8 @@ MonoBehaviour:
   speed: 6
   changeX: 1
   changeZ: 1
+  changeY: 1
+  scaleStartDelay: 0
   scaleDuration: 2
   minScale: 0.2
   initialDisappearDelay: 1
@@ -23561,6 +23589,8 @@ MonoBehaviour:
   speed: 6
   changeX: 1
   changeZ: 0
+  changeY: 0
+  scaleStartDelay: 0
   scaleDuration: 3
   minScale: 0.2
   initialDisappearDelay: 1
