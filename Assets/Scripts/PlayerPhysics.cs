@@ -63,7 +63,7 @@ public class PlayerPhysics : MonoBehaviour
     bool isStaminaDepleted;
     bool isAttack;
     bool isFalling;
-    bool isJump;
+    public bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
 
     bool wallHit;
@@ -482,11 +482,18 @@ public class PlayerPhysics : MonoBehaviour
             isFalling = false;
             isJump = false;
         }
+        if (collision.gameObject.CompareTag("ConveyorBlock"))
+        {
+            anim.SetBool("isJump", false);
+            anim.SetBool("isFall", false);
+            isFalling = false;
+            isJump = false;
+        }
     }
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.layer == 6) 
+        if (collision.gameObject.layer == 6)
         {
             isCollidingWithGround = true;
 
@@ -496,13 +503,30 @@ public class PlayerPhysics : MonoBehaviour
                 isFalling = false;
             }
         }
-    }
+        if (collision.gameObject.CompareTag("ConveyorBlock"))
+        {
+            SpecialBlock conveyor = collision.gameObject.GetComponentInParent<SpecialBlock>();
 
+            if (conveyor != null && conveyor.version == 4 && conveyor.applyForce)
+            {
+                // 컨베이어 블록의 힘과 방향 가져오기 (X와 Z 바꾸기)
+                Vector3 forceDirection = new Vector3(conveyor.direction.z, conveyor.direction.y, -conveyor.direction.x).normalized;
+                float forceAmount = conveyor.force;
+
+                // 플레이어에 힘 적용 (중력 영향을 유지)
+                rigid.velocity = new Vector3(forceDirection.x * forceAmount, rigid.velocity.y, forceDirection.z * forceAmount);
+            }
+        }
+    }
     void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.layer == 6) 
         {
             isCollidingWithGround = false;
+        }
+        if (collision.gameObject.CompareTag("ConveyorBlock"))
+        {
+            isCollidingWithGround = true;
         }
     }
 }
