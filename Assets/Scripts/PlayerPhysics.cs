@@ -63,7 +63,7 @@ public class PlayerPhysics : MonoBehaviour
     bool isStaminaDepleted;
     bool isAttack;
     bool isFalling;
-    public bool isJump;
+    bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
 
     bool wallHit;
