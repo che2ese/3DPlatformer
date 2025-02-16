@@ -65,6 +65,7 @@ public class PlayerPhysics : MonoBehaviour
     bool isFalling;
     bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
+    bool isRabbitRespawn;
     bool isPush;
 
     bool wallHit;
@@ -362,16 +363,15 @@ public class PlayerPhysics : MonoBehaviour
         }
         else if (characterNum == 3)
         {
-            yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
+            yield return MoveCharacter(startPosition, transform.forward * 3.0f, 0.5f);
 
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward + Vector3.up * 14.4f, 0.8f);
+            yield return MoveCharacter(startPosition, transform.forward * 5.0f  + Vector3.up * 10.4f, 0.8f);
 
+            StartCoroutine(WaitUntilGroundedForRabbit());
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward + Vector3.down * 8f, 0.3f);
-            RabbitPunchEffect.SetActive(true);
+            yield return MoveCharacter(startPosition, transform.forward * 5.0f, 0.3f);
             yield return new WaitForSeconds(0.6f);
-            RabbitPunchEffect.SetActive(false);
         }
 
         isAttack = false;
@@ -388,9 +388,11 @@ public class PlayerPhysics : MonoBehaviour
         else if (characterNum == 2)
         {
             yield return new WaitForSeconds(MonkeyAttackCooldown);
-        }      
+        }
         else if (characterNum == 3)
+        {
             yield return new WaitForSeconds(RabbitAttackCooldown);
+        }
         isAbleAttack = true;
     }
 
@@ -438,6 +440,28 @@ public class PlayerPhysics : MonoBehaviour
             // 벽에 부딪히지 않았을 경우 최종 위치 보정
             transform.position = targetPosition;
         }
+    }
+
+    // 토끼 전용 이펙트 대기 함수 
+    private IEnumerator WaitUntilGroundedForRabbit()
+    {
+
+        while (!isGrounded)
+        {
+            yield return null; // 매 프레임마다 확인
+        }
+
+        if (isRabbitRespawn)
+        {
+            isRabbitRespawn = false;
+            yield break;
+        }
+            
+
+        // 조건이 만족되었을 때만 실행
+        RabbitPunchEffect.SetActive(true);
+        yield return new WaitForSeconds(0.8f);
+        RabbitPunchEffect.SetActive(false);
     }
 
     void Jump()
@@ -492,6 +516,7 @@ public class PlayerPhysics : MonoBehaviour
         rigid.angularVelocity = Vector3.zero;
         transform.position = respawnPosition;
         stamina = 100;
+        if (characterNum == 3) isRabbitRespawn = true;
     }
 
     void OnTriggerStay(Collider other)
