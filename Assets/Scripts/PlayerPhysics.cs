@@ -417,9 +417,6 @@ public class PlayerPhysics : MonoBehaviour
 
         while (!isGrounded)
         {
-            if (isRabbitRespawn)
-                yield break;
-
             yield return null; // 매 프레임마다 확인
         }
 
