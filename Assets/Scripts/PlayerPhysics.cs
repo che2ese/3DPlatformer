@@ -65,6 +65,7 @@ public class PlayerPhysics : MonoBehaviour
     bool isFalling;
     bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
+    bool isPush;
 
     bool wallHit;
 
@@ -99,12 +100,15 @@ public class PlayerPhysics : MonoBehaviour
 
     void Update()
     {
-        GetInput();
-        CheckWallCollision();
-        Move();
+        if (!isPush)
+        {
+            GetInput();
+            CheckWallCollision();
+            Move();
+            Attack();
+            Jump();
+        }
         Stamina();
-        Attack();
-        Jump();
         Fall();
     }
 
@@ -114,6 +118,33 @@ public class PlayerPhysics : MonoBehaviour
         {
             Respawn();
         }
+        // Manhole 태그가 있는 블록을 밟았을 때 반대 방향 + 위로 살짝 튕겨 나가기
+        if (other.CompareTag("ManHole"))
+        {
+            isPush = true;
+            anim.SetBool("isWalk", false);
+            anim.SetBool("isRun", false);
+            Vector3 playerPosition = transform.position;
+            Vector3 contactPoint = other.ClosestPoint(playerPosition); // 가장 가까운 충돌 지점
+            Vector3 bounceDirection = (playerPosition - contactPoint).normalized; // 반대 방향
+
+            float bounceForce = 15f; // 튕겨 나가는 힘
+            float upwardForce = 1.5f;  // 위로 살짝 뜨는 힘
+
+            // 기존 속도 초기화 후 반대 방향 + 위쪽으로 튕겨 나감
+            rigid.velocity = Vector3.zero;
+            Vector3 finalBounceDirection = bounceDirection + Vector3.up * 0.01f; // 위로 살짝 추가
+            rigid.AddForce(finalBounceDirection.normalized * bounceForce + Vector3.up * upwardForce, ForceMode.Impulse);
+
+            StartCoroutine(PushAnimFinished());
+        }
+    }
+
+    // 넘어지는 애니메이션 함수 만들기 - 애니메이션 끝나면 실행
+    IEnumerator PushAnimFinished()
+    {
+        yield return new WaitForSeconds(2f);
+        isPush = false;
     }
 
     void GetInput()
@@ -195,7 +226,7 @@ public class PlayerPhysics : MonoBehaviour
     void Stamina()
     {
         // 스테미나 관리
-        isRunning = !isStaminaDepleted && runDown && moveVec != Vector3.zero;
+        isRunning = !isPush && !isStaminaDepleted && runDown && moveVec != Vector3.zero;
 
         // 달리는 동시에 땅에 있지 않을 때
         if (isRunning && !isGrounded && !isAttack)
