@@ -24,7 +24,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -82,7 +82,72 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton: []
+    skeleton:
+    - name: newrabbit2(Clone)
+      parentName: 
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Cube
+      parentName: newrabbit2(Clone)
+      position: {x: -0, y: -1.4476196, z: 0}
+      rotation: {x: -0.70698476, y: 0, z: -0, w: 0.7072288}
+      scale: {x: 75.77523, y: 75.77523, z: 75.77523}
+    - name: Cube_001
+      parentName: newrabbit2(Clone)
+      position: {x: -0, y: -0.037413005, z: 0.0000000050267674}
+      rotation: {x: -0.70698476, y: 0, z: -0, w: 0.7072288}
+      scale: {x: 111.779526, y: 111.779526, z: 111.779526}
+    - name: Cube_002
+      parentName: newrabbit2(Clone)
+      position: {x: -5.4076873e-34, y: -0.40428692, z: 0.8257867}
+      rotation: {x: -0.70698476, y: 0, z: -0, w: 0.7072288}
+      scale: {x: 7.507128, y: 7.507128, z: 7.507128}
+    - name: Cube_003
+      parentName: newrabbit2(Clone)
+      position: {x: 0.9392437, y: 1.2665287, z: 0.00000017016934}
+      rotation: {x: -0.7053479, y: -0.049843695, z: 0.04984379, w: 0.70534784}
+      scale: {x: 78.26597, y: 78.26597, z: 78.26597}
+    - name: Cube_004
+      parentName: newrabbit2(Clone)
+      position: {x: 2.0305946, y: 0.7781618, z: 0.000000104552925}
+      rotation: {x: -0.70429844, y: 0.062957995, z: -0.062957995, w: 0.70429844}
+      scale: {x: 78.26596, y: 78.26597, z: 78.26596}
+    - name: Cube_005
+      parentName: newrabbit2(Clone)
+      position: {x: -0, y: 0, z: -0.013776964}
+      rotation: {x: -0.70698476, y: 0, z: -0, w: 0.7072288}
+      scale: {x: 101.46451, y: 101.46451, z: 101.46451}
+    - name: Cube_006
+      parentName: newrabbit2(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.70698476, y: 0, z: -0, w: 0.7072288}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Cube_007
+      parentName: newrabbit2(Clone)
+      position: {x: -3.4302214e-16, y: -1.5448344, z: -0.43853366}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 10.210705, y: 10.210705, z: 10.210705}
+    - name: Green_Simple
+      parentName: newrabbit2(Clone)
+      position: {x: -4.1949523e-34, y: 1.8892385e-18, z: -0.033367697}
+      rotation: {x: -0.70698476, y: 0, z: -0, w: 0.7072288}
+      scale: {x: 100, y: 100, z: 100}
+    - name: NurbsPath
+      parentName: newrabbit2(Clone)
+      position: {x: -0.031506203, y: -0.48629203, z: 0.7786994}
+      rotation: {x: -0.5494206, y: -3.1766316e-17, z: 3.1766287e-17, w: 0.83554596}
+      scale: {x: 3.0660217, y: 3.0660214, z: 3.0660214}
+    - name: NurbsPath_001
+      parentName: newrabbit2(Clone)
+      position: {x: 0.02928472, y: -0.48629203, z: 0.7786994}
+      rotation: {x: 0.00000029540115, y: 0.5437178, z: 0.8392681, w: -0.00000019137494}
+      scale: {x: 3.0660217, y: 3.0660212, z: 3.0660212}
+    - name: Sphere
+      parentName: newrabbit2(Clone)
+      position: {x: -0, y: 0, z: 0.006}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 101, y: 101, z: 101}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
