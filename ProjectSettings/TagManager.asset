@@ -9,6 +9,7 @@ TagManager:
   - ScaleBlock
   - FxTemporaire
   - ConveyorBlock
+  - ManHole
   layers:
   - Default
   - TransparentFX
