@@ -16,7 +16,6 @@ public class MonsterAi : MonoBehaviour
 
     // 이동 관련 변수
     [Header("Move")]
-
     public float speed = 5;
     public float waitTime = .3f;
     public float turnSpeed = 90;
@@ -32,6 +31,15 @@ public class MonsterAi : MonoBehaviour
     public float viewDistance;
     public float viewAngle;
     public float AttackDistance;
+    //이펙트
+    [Header("Effects")]
+    //[HideInInspector]
+    public GameObject Mush_jump_Effect;
+    //[HideInInspector]
+    public GameObject Mush_Attack_Effect;
+    public GameObject Skull_Find_Effect;
+    public GameObject Skull_Run_Effect;
+    
 
     //몬스터 상태 변수
     public enum MonsterState { Patrolling, Chasing, Attacking }
@@ -85,7 +93,6 @@ public class MonsterAi : MonoBehaviour
                         //Run 작동
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", true);
-                        animator.SetFloat("DistanceToPlayer", 3);
                         if (!CanSeePlayer()) // 플레이어를 놓치면 다시 순찰 상태로 전환
                         {
                             spotlight.color = originalSpotlightColour;
@@ -105,15 +112,16 @@ public class MonsterAi : MonoBehaviour
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", true);
                         animator.SetBool("isAttack", true);
-                        animator.SetFloat("DistanceToPlayer", 3);
                         if (!CanSeePlayer())
                         {
                             spotlight.color = originalSpotlightColour;
+                            animator.SetBool("isAttack", false);
                             currentState = MonsterState.Patrolling;
                             StartCoroutine(ReturnToNearestWaypoint());
                         }else if(Vector3.Distance(transform.position, player.position) > AttackDistance)
                         {
                             currentState = MonsterState.Chasing;
+                            animator.SetBool("isAttack", false);
                         }
                         else
                         {
@@ -162,9 +170,14 @@ public class MonsterAi : MonoBehaviour
     void ChasePlayer()
     {
         animator.SetBool("isChasing", true); // 추적 애니메이션 실행
-        Vector3 direction = (player.position - transform.position).normalized;
+
+        // y축 값을 고정
+        float fixedY = transform.position.y; // 현재 y축 값을 고정
+        Vector3 targetPosition = new Vector3(player.position.x, fixedY, player.position.z);
+
+        Vector3 direction = (targetPosition - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
-        transform.LookAt(player); // 플레이어 방향으로 회전
+        transform.LookAt(targetPosition); // 플레이어 방향으로 회전 (y축 무시)
     }
     bool CanSeePlayer()
     {
@@ -181,29 +194,22 @@ public class MonsterAi : MonoBehaviour
             }
         }
         return false;
-    }
-    //void TryAttack()
-    //{
-    //    if (Vector3.Distance(transform.position, player.position) < AttackDistance)
-    //    {
-    //        currentState = MonsterState.Attacking;
-    //        animator.SetTrigger("Attack"); // 공격 애니메이션 실행
-    //    }
-    //}
+    }    
     void SetAnimationParameters()
     {
-        //if (EnemyVersion == 1) // Mushroom
-        //{
-        //    animator.SetFloat("SpeedMultiplier", 1.0f); // 기본 속도
-        //}
-        //else if (EnemyVersion == 2) // Skeleton
-        //{
-        //    animator.SetFloat("SpeedMultiplier", 1.5f); // 좀 더 빠른 속도
-        //}
+        //    if (EnemyVersion == 1) // Mushroom
+        //    {
+        //        speed = 8f;
+        //    }
+        //    else if (EnemyVersion == 2) // Skeleton
+        //    {
+        //        speed = 8f;
+        //    }
     }
 
     IEnumerator FollowPathFromIndex(int startIndex)
     {
+        yield return StartCoroutine(LookAround()); //두리번 거리는 효과
         int targetWaypointIndex = (startIndex + 1) % waypoints.Length;
         Vector3 targetWaypoint = waypoints[targetWaypointIndex];
         transform.LookAt(targetWaypoint);
@@ -214,10 +220,24 @@ public class MonsterAi : MonoBehaviour
 
             if (transform.position == targetWaypoint)
             {
-                targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
-                targetWaypoint = waypoints[targetWaypointIndex];
-                yield return new WaitForSeconds(waitTime);
-                yield return StartCoroutine(TurnToFace(targetWaypoint));
+                switch (EnemyVersion)
+                {
+                    case 1:
+                        targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
+                        targetWaypoint = waypoints[targetWaypointIndex];
+                        yield return new WaitForSeconds(waitTime);
+                        yield return StartCoroutine(LookAround()); //두리번 거리는 효과
+                        yield return StartCoroutine(TurnToFace(targetWaypoint));
+                        break;
+                    case 2: //skeleton
+                        targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
+                        targetWaypoint = waypoints[targetWaypointIndex];
+                        yield return new WaitForSeconds(waitTime);
+                        yield return StartCoroutine(LookAround()); //두리번 거리는 효과
+                        yield return StartCoroutine(TurnToFace(targetWaypoint));
+                        break;
+                }
+                
             }
 
             if (CanSeePlayer()) // 플레이어를 감지하면 추적 상태로 전환
@@ -252,6 +272,46 @@ public class MonsterAi : MonoBehaviour
         }
         return nearestIndex;
     }
+    IEnumerator LookAround()
+    {
+        // 좌우로 두리번거리는 효과를 위한 회전 각도 설정
+        float lookAngle = 45f; // 좌우로 회전할 각도
+        float lookSpeed = turnSpeed * 0.5f; // 회전 속도 (기본 회전 속도의 절반)
+
+        // 오른쪽으로 회전
+        float targetAngle = transform.eulerAngles.y + lookAngle;
+        while (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle)) > 0.05f)
+        {
+            float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetAngle, lookSpeed * Time.deltaTime);
+            transform.eulerAngles = Vector3.up * angle;
+            yield return null;
+        }
+
+        // 잠시 대기
+        yield return new WaitForSeconds(0.5f);
+
+        // 왼쪽으로 회전
+        targetAngle = transform.eulerAngles.y - lookAngle * 2; // 왼쪽으로 더 회전
+        while (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle)) > 0.05f)
+        {
+            float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetAngle, lookSpeed * Time.deltaTime);
+            transform.eulerAngles = Vector3.up * angle;
+            yield return null;
+        }
+
+        // 잠시 대기
+        yield return new WaitForSeconds(0.5f);
+
+        // 원래 방향으로 복귀
+        targetAngle = transform.eulerAngles.y + lookAngle; // 오른쪽으로 다시 회전
+        while (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle)) > 0.05f)
+        {
+            float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetAngle, lookSpeed * Time.deltaTime);
+            transform.eulerAngles = Vector3.up * angle;
+            yield return null;
+        }
+    }
+
     IEnumerator ReturnToNearestWaypoint()
     {
         int nearestIndex = GetNearestWaypointIndex();
