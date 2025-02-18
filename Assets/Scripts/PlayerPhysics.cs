@@ -66,7 +66,8 @@ public class PlayerPhysics : MonoBehaviour
     bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
     bool isRabbitRespawn;
-    bool isPush;
+    [HideInInspector]
+    public bool isPush;
 
     bool wallHit;
 
@@ -119,15 +120,23 @@ public class PlayerPhysics : MonoBehaviour
         {
             Respawn();
         }
-        // Manhole 태그가 있는 블록을 밟았을 때 반대 방향 + 위로 살짝 튕겨 나가기
+
         if (other.CompareTag("ManHole"))
         {
             isPush = true;
             anim.SetBool("isWalk", false);
             anim.SetBool("isRun", false);
             Vector3 playerPosition = transform.position;
+            Vector3 manholePosition = other.transform.position;
             Vector3 contactPoint = other.ClosestPoint(playerPosition); // 가장 가까운 충돌 지점
             Vector3 bounceDirection = (playerPosition - contactPoint).normalized; // 반대 방향
+
+            // 충돌 방향 확인: 좌우(X축 변화량이 Z축 변화량보다 클 경우)
+            Vector3 collisionDirection = (playerPosition - manholePosition).normalized;
+            if (Mathf.Abs(collisionDirection.x) > Mathf.Abs(collisionDirection.z))
+                other.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+            else
+                other.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
             float bounceForce = 15f; // 튕겨 나가는 힘
             float upwardForce = 1.5f;  // 위로 살짝 뜨는 힘
@@ -141,7 +150,7 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    // 넘어지는 애니메이션 함수 만들기 - 애니메이션 끝나면 실행
+    // 넘어지는 애니메이션이 끝난 후 실행
     IEnumerator PushAnimFinished()
     {
         yield return new WaitForSeconds(2f);
@@ -545,6 +554,10 @@ public class PlayerPhysics : MonoBehaviour
             isFalling = false;
             isJump = false;
         }
+        if (collision.gameObject.CompareTag("Stone"))
+        {
+            Destroy(collision.gameObject); 
+        }
     }
 
     void OnCollisionStay(Collision collision)
@@ -581,7 +594,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("ConveyorBlock"))
         {
-            isCollidingWithGround = true;
+            isCollidingWithGround = false;
             if(isJump)
                 // 컨베이어 벨트에서 벗어나면 힘이 더 이상 적용되지 않도록 속도 초기화
                 rigid.velocity = new Vector3(0, rigid.velocity.y, 0);

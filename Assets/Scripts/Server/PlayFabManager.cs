@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
 
 public class PlayFabManager : MonoBehaviour
 {
     public static PlayFabManager instance; // **싱글톤 인스턴스**
 
-    public TMP_InputField idInput, pwInput;
+    public InputField idInput, pwInput;
     public TMP_Text errorText;
 
     private Coroutine currentCoroutine;
@@ -33,6 +35,16 @@ public class PlayFabManager : MonoBehaviour
         if (string.IsNullOrEmpty(PlayFabSettings.staticSettings.TitleId))
             PlayFabSettings.staticSettings.TitleId = "C528C";  // 여기에 올바른 Title ID 입력
 
+        idInput.onValidateInput = (string text, int charIndex, char addedChar) =>
+        {
+            return Regex.IsMatch(addedChar.ToString(), @"[0-9a-zA-Z@]") ? addedChar : '\0';
+        };
+
+        pwInput.onValidateInput = (string text, int charIndex, char addedChar) =>
+        {
+            return Regex.IsMatch(addedChar.ToString(), @"[0-9a-zA-Z@]") ? addedChar : '\0';
+        };
+
         // 씬이 변경될 때 코루틴을 취소하도록 이벤트 리스너 등록
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -53,8 +65,6 @@ public class PlayFabManager : MonoBehaviour
         }
     }
 
-
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
@@ -64,6 +74,7 @@ public class PlayFabManager : MonoBehaviour
                 Login();
             }
         }
+        Input.imeCompositionMode = IMECompositionMode.Off; // IME 입력 비활성화
         HandleTabKey();
     }
 

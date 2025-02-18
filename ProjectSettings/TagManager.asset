@@ -10,6 +10,7 @@ TagManager:
   - FxTemporaire
   - ConveyorBlock
   - ManHole
+  - Stone
   layers:
   - Default
   - TransparentFX

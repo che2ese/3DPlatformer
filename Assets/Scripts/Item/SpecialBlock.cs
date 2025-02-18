@@ -51,6 +51,19 @@ public class SpecialBlock : MonoBehaviour
     [HideInInspector]
     public float changeDir = 3f;
 
+    [Header("ManHole Settings")]
+    [HideInInspector]
+    public GameObject cover;
+    private Animator coverAnim;
+
+    [Header("Stone Settings")]
+    [HideInInspector]
+    public GameObject stonePrefab;
+    [HideInInspector]
+    public float createTime;
+    [HideInInspector]
+    public float deleteTime;
+
     void Start()
     {
         blockRenderer = GetComponentInChildren<Renderer>();  // 렌더러 컴포넌트를 가져옵니다.
@@ -73,6 +86,10 @@ public class SpecialBlock : MonoBehaviour
                 rb.isKinematic = true;
             }
             StartCoroutine(ChangeDirectionRoutine()); // 3초마다 방향 반전 코루틴 실행
+        }
+        if(version == 6)
+        {
+            StartCoroutine(CreateStoneRoutine());
         }
     }
 
@@ -182,6 +199,16 @@ public class SpecialBlock : MonoBehaviour
         {
             other.transform.parent = transform;
         }
+        if (version == 5 && other.CompareTag("Player"))
+        {
+            coverAnim = cover.GetComponent<Animator>();
+
+            if (coverAnim != null && !coverAnim.GetBool("isUp")) // 이미 실행된 경우 다시 실행되지 않도록 체크
+            {
+                coverAnim.SetBool("isUp", true); // 애니메이션 실행
+                StartCoroutine(ResetCoverAnimation(coverAnim)); // 애니메이션이 끝나면 자동으로 false 처리
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -189,6 +216,33 @@ public class SpecialBlock : MonoBehaviour
         if (version == 1 && other.CompareTag("Player"))
         {
             other.transform.parent = null;
+        }
+    }
+
+    // 애니메이션이 끝나면 자동으로 `false`로 변경하는 코루틴
+    IEnumerator ResetCoverAnimation(Animator anim)
+    {
+        // 애니메이션 길이만큼 대기 후 자동으로 false 변경
+        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+        anim.SetBool("isUp", false);
+    }
+
+    IEnumerator CreateStoneRoutine()
+    {
+        while (true)
+        {
+            GameObject newStone = Instantiate(stonePrefab, transform.position, Quaternion.identity, this.transform);
+            StartCoroutine(DeleteStoneAfterTime(newStone, deleteTime)); // 생성된 스톤을 deleteTime 후 삭제
+            yield return new WaitForSeconds(createTime);
+        }
+    }
+
+    IEnumerator DeleteStoneAfterTime(GameObject stone, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (stone != null)
+        {
+            Destroy(stone);
         }
     }
 }

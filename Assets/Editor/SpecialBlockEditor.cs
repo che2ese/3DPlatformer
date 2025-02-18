@@ -43,6 +43,16 @@ public class SpecialBlockEditor : Editor
             block.direction = EditorGUILayout.Vector3Field("Direction", block.direction);
             block.changeDir = EditorGUILayout.FloatField("Change Direction", block.changeDir);
         }
+        else if (block.version == 5)
+        {
+            block.cover = (GameObject)EditorGUILayout.ObjectField("ManHole Cover", block.cover, typeof(GameObject), true);
+        }
+        else if(block.version == 6)
+        {
+            block.stonePrefab = (GameObject)EditorGUILayout.ObjectField("Stone Prefab", block.stonePrefab, typeof(GameObject), true);
+            block.createTime = EditorGUILayout.FloatField("Create Time", block.createTime);
+            block.deleteTime = EditorGUILayout.FloatField("Delete Time", block.deleteTime);
+        }
         else
         {
             GUILayout.Label("Select a valid version (1 or 2) for additional settings.");
