@@ -19,6 +19,7 @@ public class PlayerPhysics : MonoBehaviour
     public float walkSpeed;
     public float runSpeed;
     public float jumpPower;
+    public GameObject RunEffect;
 
     // 스테미나 관련 변수
     [Header ("Stamina")]
@@ -101,14 +102,12 @@ public class PlayerPhysics : MonoBehaviour
 
     void Update()
     {
-        if (!isPush)
-        {
-            GetInput();
-            CheckWallCollision();
-            Move();
-            Attack();
-            Jump();
-        }
+
+        GetInput();
+        CheckWallCollision();
+        Move();
+        Attack();
+        Jump();
         Stamina();
         Fall();
     }
@@ -119,33 +118,53 @@ public class PlayerPhysics : MonoBehaviour
         {
             Respawn();
         }
-        // Manhole 태그가 있는 블록을 밟았을 때 반대 방향 + 위로 살짝 튕겨 나가기
+
+
         if (other.CompareTag("ManHole"))
         {
             isPush = true;
-            anim.SetBool("isWalk", false);
-            anim.SetBool("isRun", false);
+            anim.SetBool("isPush", true);
+            anim.SetTrigger("doPush");
+
             Vector3 playerPosition = transform.position;
-            Vector3 contactPoint = other.ClosestPoint(playerPosition); // 가장 가까운 충돌 지점
-            Vector3 bounceDirection = (playerPosition - contactPoint).normalized; // 반대 방향
+            Vector3 manholePosition = other.transform.position;
+            Vector3 contactPoint = other.ClosestPoint(playerPosition);
+            Vector3 bounceDirection = (playerPosition - contactPoint).normalized;
+
+            // 충돌 방향 확인: 좌우(X축 변화량이 Z축 변화량보다 클 경우)
+            Vector3 collisionDirection = (playerPosition - manholePosition).normalized;
+            if (Mathf.Abs(collisionDirection.x) > Mathf.Abs(collisionDirection.z))
+                other.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+            else
+                other.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
             float bounceForce = 15f; // 튕겨 나가는 힘
-            float upwardForce = 1.5f;  // 위로 살짝 뜨는 힘
+            float upwardForce = 1.5f; // 위로 뜨는 힘
 
             // 기존 속도 초기화 후 반대 방향 + 위쪽으로 튕겨 나감
             rigid.velocity = Vector3.zero;
-            Vector3 finalBounceDirection = bounceDirection + Vector3.up * 0.01f; // 위로 살짝 추가
-            rigid.AddForce(finalBounceDirection.normalized * bounceForce + Vector3.up * upwardForce, ForceMode.Impulse);
 
-            StartCoroutine(PushAnimFinished());
+            // 바운스 방향 보정 (수직 충돌 시 옆 방향으로 강제 튕기기)
+            if (Mathf.Abs(bounceDirection.x) < 0.1f && Mathf.Abs(bounceDirection.z) < 0.1f)
+            {
+                bounceDirection += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized * 0.5f;
+            }
+
+            Vector3 finalBounceDirection = bounceDirection + Vector3.up * 0.2f; // 위로 살짝 추가
+            rigid.AddForce(finalBounceDirection.normalized * bounceForce + Vector3.up * upwardForce, ForceMode.Impulse);
         }
     }
 
-    // 넘어지는 애니메이션 함수 만들기 - 애니메이션 끝나면 실행
+    // 땅에 닿았을 때 착지 
     IEnumerator PushAnimFinished()
     {
-        yield return new WaitForSeconds(2f);
-        isPush = false;
+        // 순간적으로 맨홀에 닿았을 때 땅에 닿은 것으로 인지함을 방지
+        yield return new WaitForSeconds(1f);
+        if (isGrounded)
+        {
+            yield return new WaitForSeconds(1f);
+            isPush = false;
+        }
     }
 
     void GetInput()
@@ -199,10 +218,13 @@ public class PlayerPhysics : MonoBehaviour
         Vector3 camForward = new Vector3(Camera.main.transform.forward.x, 0, Camera.main.transform.forward.z).normalized;
         Vector3 camRight = new Vector3(Camera.main.transform.right.x, 0, Camera.main.transform.right.z).normalized;
 
+        if (isRunning && !isStaminaDepleted && !isAttack && !isPush) RunEffect.SetActive(true);
+        else RunEffect.SetActive(false);
+
         // 입력 방향을 카메라 방향 기준으로 변환
         moveVec = (camForward * vAxis + camRight * hAxis).normalized;
 
-        if (!wallHit && !isStaminaDepleted && !isAttack)
+        if (!wallHit && !isStaminaDepleted && !isAttack && !isPush)
         {
             // 이동 처리
             transform.position += moveVec * (runDown ? runSpeed : walkSpeed) * Time.deltaTime;
@@ -229,8 +251,8 @@ public class PlayerPhysics : MonoBehaviour
         // 스테미나 관리
         isRunning = !isPush && !isStaminaDepleted && runDown && moveVec != Vector3.zero;
 
-        // 달리는 동시에 땅에 있지 않을 때
-        if (isRunning && !isGrounded && !isAttack)
+        // 달리는 동시에 땅에 있지 않을 때 (또한 넘어지는 중일 때)
+        if ((isRunning && !isGrounded && !isAttack) || isPush)
         {
             stamina += staminaDecreaseRate / 10 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
@@ -255,8 +277,8 @@ public class PlayerPhysics : MonoBehaviour
             }
         }
 
-        // 달리지 않을 때 스테미나 회복
-        if (!isRunning && stamina < maxStamina && !isStaminaDepleted)
+        // 달리지 않을 때 스테미나 회복 (또한 넘어지는 중이 아닐 때)
+        if (!isRunning && stamina < maxStamina && !isStaminaDepleted && !isPush)
         {
             stamina += staminaRecoveryRate * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
@@ -289,7 +311,7 @@ public class PlayerPhysics : MonoBehaviour
 
     void Attack()
     {
-        if (isStaminaDepleted) return;
+        if (isStaminaDepleted || isPush) return;
 
         // 근접 공격 
         if (attack1Down && !isAttack && isGrounded && isAbleAttack)
@@ -470,7 +492,7 @@ public class PlayerPhysics : MonoBehaviour
         isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
         Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
 
-        if (isStaminaDepleted || isAttack) return; 
+        if (isStaminaDepleted || isAttack || isPush) return; 
 
         // float rayRadius = 0.7f; // 아이템 판독
         // isBlock = Physics.SphereCast(transform.position, rayRadius, Vector3.up, out RaycastHit hit, raycastDistance, itemLayer);
@@ -488,6 +510,8 @@ public class PlayerPhysics : MonoBehaviour
     {
         // 낙하 애니메이션
         // 거리 측정하여 땅과 근접하다면 낙하 애니메이션 실행 X
+
+        if (isPush) return;
 
         RaycastHit hit;
         bool isNearGround = Physics.Raycast(transform.position, Vector3.down, out hit, 10f, groundLayer);
@@ -535,15 +559,14 @@ public class PlayerPhysics : MonoBehaviour
         {
             anim.SetBool("isJump", false);
             anim.SetBool("isFall", false);
+            anim.SetBool("isPush", false);
             isFalling = false;
             isJump = false;
-        }
-        if (collision.gameObject.CompareTag("ConveyorBlock"))
-        {
-            anim.SetBool("isJump", false);
-            anim.SetBool("isFall", false);
-            isFalling = false;
-            isJump = false;
+
+            if (isPush)
+            {
+                StartCoroutine(PushAnimFinished());
+            }
         }
     }
 
@@ -581,7 +604,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("ConveyorBlock"))
         {
-            isCollidingWithGround = true;
+            isCollidingWithGround = false;
             if(isJump)
                 // 컨베이어 벨트에서 벗어나면 힘이 더 이상 적용되지 않도록 속도 초기화
                 rigid.velocity = new Vector3(0, rigid.velocity.y, 0);
