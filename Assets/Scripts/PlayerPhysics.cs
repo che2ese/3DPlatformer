@@ -67,7 +67,8 @@ public class PlayerPhysics : MonoBehaviour
     bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
     bool isRabbitRespawn;
-    bool isPush;
+    [HideInInspector]
+    public bool isPush;
 
     bool wallHit;
 
@@ -119,7 +120,6 @@ public class PlayerPhysics : MonoBehaviour
             Respawn();
         }
 
-
         if (other.CompareTag("ManHole"))
         {
             isPush = true;
@@ -128,8 +128,8 @@ public class PlayerPhysics : MonoBehaviour
 
             Vector3 playerPosition = transform.position;
             Vector3 manholePosition = other.transform.position;
-            Vector3 contactPoint = other.ClosestPoint(playerPosition);
-            Vector3 bounceDirection = (playerPosition - contactPoint).normalized;
+            Vector3 contactPoint = other.ClosestPoint(playerPosition); // 가장 가까운 충돌 지점
+            Vector3 bounceDirection = (playerPosition - contactPoint).normalized; // 반대 방향
 
             // 충돌 방향 확인: 좌우(X축 변화량이 Z축 변화량보다 클 경우)
             Vector3 collisionDirection = (playerPosition - manholePosition).normalized;
@@ -155,7 +155,7 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    // 땅에 닿았을 때 착지 
+    // 넘어지는 애니메이션이 끝난 후 실행
     IEnumerator PushAnimFinished()
     {
         // 순간적으로 맨홀에 닿았을 때 땅에 닿은 것으로 인지함을 방지
@@ -567,6 +567,10 @@ public class PlayerPhysics : MonoBehaviour
             {
                 StartCoroutine(PushAnimFinished());
             }
+        }
+        if (collision.gameObject.CompareTag("Stone"))
+        {
+            Destroy(collision.gameObject); 
         }
     }
 
