@@ -13,6 +13,7 @@ TagManager:
   - Stone
   - Invincibility
   - SpeedUp
+  - Lightning
   layers:
   - Default
   - TransparentFX
