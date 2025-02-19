@@ -64,6 +64,13 @@ public class SpecialBlock : MonoBehaviour
     [HideInInspector]
     public float deleteTime;
 
+    [Header("Lightning Settings")]
+    [HideInInspector]
+    public GameObject startCollider;
+    [HideInInspector]
+    public GameObject endCollider;
+    private BoxCollider boxCollider;
+
     PlayerPhysics pp;
 
     private void Awake()
@@ -97,6 +104,18 @@ public class SpecialBlock : MonoBehaviour
         if(version == 6)
         {
             StartCoroutine(CreateStoneRoutine());
+        }
+        if(version == 7)
+        {
+            // 새로운 빈 게임 오브젝트 생성
+            GameObject colliderObj = new GameObject("LightningCollider");
+            colliderObj.tag = "Lightning";
+            colliderObj.transform.parent = this.transform;
+
+            // BoxCollider 추가 및 설정
+            boxCollider = colliderObj.AddComponent<BoxCollider>();
+            boxCollider.isTrigger = true;
+            AdjustCollider();
         }
     }
 
@@ -216,6 +235,11 @@ public class SpecialBlock : MonoBehaviour
                 StartCoroutine(ResetCoverAnimation(coverAnim)); // 애니메이션이 끝나면 자동으로 false 처리
             }
         }
+        if (version == 7 && other.CompareTag("Player")) // ⚡ 플레이어와 충돌 감지
+        {
+            Debug.Log("번개 충돌! 플레이어 감지됨! ⚡");
+            // 여기에 데미지 처리, 효과, 사운드 등을 추가
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -251,5 +275,24 @@ public class SpecialBlock : MonoBehaviour
         {
             Destroy(stone);
         }
+    }
+
+    void AdjustCollider()
+    {
+        Vector3 startPos = startCollider.transform.position;
+        Vector3 endPos = endCollider.transform.position;
+
+        // 중심 위치 설정
+        Vector3 centerPos = (startPos + endPos) / 2;
+        boxCollider.transform.position = centerPos;
+
+        // 방향 벡터 설정
+        Vector3 direction = (endPos - startPos).normalized;
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, direction);
+        boxCollider.transform.rotation = rotation;
+
+        // 크기 조정 (길이 = 두 점 사이 거리, 폭/높이는 원하는 값 설정)
+        float length = Vector3.Distance(startPos, endPos);
+        boxCollider.size = new Vector3(1f, length, 1f);
     }
 }

@@ -47,11 +47,16 @@ public class SpecialBlockEditor : Editor
         {
             block.cover = (GameObject)EditorGUILayout.ObjectField("ManHole Cover", block.cover, typeof(GameObject), true);
         }
-        else if(block.version == 6)
+        else if (block.version == 6)
         {
             block.stonePrefab = (GameObject)EditorGUILayout.ObjectField("Stone Prefab", block.stonePrefab, typeof(GameObject), true);
             block.createTime = EditorGUILayout.FloatField("Create Time", block.createTime);
             block.deleteTime = EditorGUILayout.FloatField("Delete Time", block.deleteTime);
+        }
+        else if (block.version == 7)
+        {
+            block.startCollider = (GameObject)EditorGUILayout.ObjectField("Start Collider", block.startCollider, typeof(GameObject), true);
+            block.endCollider = (GameObject)EditorGUILayout.ObjectField("End Collider", block.endCollider, typeof(GameObject), true);
         }
         else
         {

@@ -67,6 +67,7 @@ public class PlayerPhysics : MonoBehaviour
     bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
     bool isRabbitRespawn;
+    bool isShock;
     [HideInInspector]
     public bool isInvincibility;
     [HideInInspector]
@@ -211,8 +212,19 @@ public class PlayerPhysics : MonoBehaviour
             StartCoroutine(SpeedUp());
             Destroy(other.gameObject);
         }
+        if (!isInvincibility && !isShock && other.CompareTag("Lightning"))
+        {
+            isShock = true;
+            StartCoroutine(ElectricShock());
+        }
     }
-    
+
+    IEnumerator ElectricShock()
+    {
+        yield return new WaitForSeconds(3f);
+        isShock = false;
+    }
+
     IEnumerator ActivateInvincibility()
     {
         if (CatHide.activeSelf)
@@ -344,7 +356,7 @@ public class PlayerPhysics : MonoBehaviour
         // 입력 방향을 카메라 방향 기준으로 변환
         moveVec = (camForward * vAxis + camRight * hAxis).normalized;
 
-        if (!wallHit && !isStaminaDepleted && !isAttack && !isPush)
+        if (!wallHit && !isStaminaDepleted && !isAttack && !isPush && !isShock)
         {
             // 이동 처리
             transform.position += moveVec * (runDown ? runSpeed : walkSpeed) * Time.deltaTime;
@@ -369,10 +381,10 @@ public class PlayerPhysics : MonoBehaviour
     void Stamina()
     {
         // 스테미나 관리
-        isRunning = !isInvincibility && !isPush && !isStaminaDepleted && runDown && moveVec != Vector3.zero;
+        isRunning = !isShock && !isInvincibility && !isPush && !isStaminaDepleted && runDown && moveVec != Vector3.zero;
 
         // 달리는 동시에 땅에 있지 않을 때 (또한 넘어지는 중일 때)
-        if ((isRunning && !isGrounded && !isAttack) || isPush)
+        if ((isRunning && !isGrounded && !isAttack) || isPush || isShock)
         {
             stamina += staminaDecreaseRate / 10 * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
@@ -398,7 +410,7 @@ public class PlayerPhysics : MonoBehaviour
         }
 
         // 달리지 않을 때 스테미나 회복 (또한 넘어지는 중이 아닐 때)
-        if (!isRunning && stamina < maxStamina && !isStaminaDepleted && !isPush)
+        if (!isRunning && stamina < maxStamina && !isStaminaDepleted && !isPush && !isShock)
         {
             stamina += staminaRecoveryRate * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina);
@@ -431,7 +443,7 @@ public class PlayerPhysics : MonoBehaviour
 
     void Attack()
     {
-        if (isStaminaDepleted || isPush) return;
+        if (isStaminaDepleted || isPush || isShock) return;
 
         // 근접 공격 
         if (attack1Down && !isAttack && isGrounded && isAbleAttack)
@@ -612,7 +624,7 @@ public class PlayerPhysics : MonoBehaviour
         isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
         Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
 
-        if (isStaminaDepleted || isAttack || isPush) return; 
+        if (isStaminaDepleted || isAttack || isPush || isShock) return; 
 
         // float rayRadius = 0.7f; // 아이템 판독
         // isBlock = Physics.SphereCast(transform.position, rayRadius, Vector3.up, out RaycastHit hit, raycastDistance, itemLayer);
