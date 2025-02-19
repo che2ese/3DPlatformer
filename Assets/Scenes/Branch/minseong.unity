@@ -909,6 +909,7 @@ MonoBehaviour:
   PandaPunchEffect: {fileID: 866800102}
   MonkeyPunchEffect: {fileID: 773972986}
   RabbitPunchEffect: {fileID: 638606275}
+  isInvincibility: 0
   isPush: 0
   CatBody:
   - {fileID: 759078411}
@@ -3542,7 +3543,7 @@ MonoBehaviour:
   changeDir: 3
   cover: {fileID: 0}
   stonePrefab: {fileID: 8481294952806083487, guid: 2cc6c605f73dc4ee681739f862f4cf92, type: 3}
-  createTime: 1
+  createTime: 3
   deleteTime: 4
 --- !u!1 &237218060 stripped
 GameObject:
@@ -24128,7 +24129,7 @@ MonoBehaviour:
   changeDir: 3
   cover: {fileID: 0}
   stonePrefab: {fileID: 8481294952806083487, guid: 2cc6c605f73dc4ee681739f862f4cf92, type: 3}
-  createTime: 1
+  createTime: 3
   deleteTime: 4
 --- !u!1001 &1950015207
 PrefabInstance:
@@ -26732,13 +26733,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5015637515706513556, guid: 15239683abda24d19b3a338dc840cb2a, type: 3}
-      propertyPath: m_Enabled
+    - target: {fileID: 2124997570074247305, guid: 15239683abda24d19b3a338dc840cb2a, type: 3}
+      propertyPath: itemNum
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6606167341531255829, guid: 15239683abda24d19b3a338dc840cb2a, type: 3}
       propertyPath: m_Name
       value: BasicBlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 8514970035286251460, guid: 15239683abda24d19b3a338dc840cb2a, type: 3}
+      propertyPath: m_TagString
+      value: SpeedUp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

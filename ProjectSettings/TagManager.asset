@@ -12,6 +12,7 @@ TagManager:
   - ManHole
   - Stone
   - Invincibility
+  - SpeedUp
   layers:
   - Default
   - TransparentFX

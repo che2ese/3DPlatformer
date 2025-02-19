@@ -68,6 +68,8 @@ public class PlayerPhysics : MonoBehaviour
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
     bool isRabbitRespawn;
     [HideInInspector]
+    public bool isInvincibility;
+    [HideInInspector]
     public bool isPush;
 
     // 아이템
@@ -165,7 +167,7 @@ public class PlayerPhysics : MonoBehaviour
             Respawn();
         }
 
-        if (other.CompareTag("ManHole"))
+        if (!isInvincibility && other.CompareTag("ManHole"))
         {
             isPush = true;
             anim.SetBool("isPush", true);
@@ -200,11 +202,17 @@ public class PlayerPhysics : MonoBehaviour
         }
         if (other.CompareTag("Invincibility"))
         {
+            isInvincibility = true;
             StartCoroutine(ActivateInvincibility());
             Destroy(other.gameObject); // 아이템 제거
         }
+        if (other.CompareTag("SpeedUp"))
+        {
+            StartCoroutine(SpeedUp());
+            Destroy(other.gameObject);
+        }
     }
-
+    
     IEnumerator ActivateInvincibility()
     {
         if (CatHide.activeSelf)
@@ -252,7 +260,20 @@ public class PlayerPhysics : MonoBehaviour
         {
             RabbitHide.SetActive(true);
         }
+        isInvincibility = false;
     }
+
+    IEnumerator SpeedUp()
+    {
+        walkSpeed *= 1.5f;
+        runSpeed *= 1.5f;
+
+        yield return new WaitForSeconds(5f); // 5초 대기
+
+        walkSpeed /= 1.5f;
+        runSpeed /= 1.5f;
+    }
+
 
     // 넘어지는 애니메이션이 끝난 후 실행
     IEnumerator PushAnimFinished()
@@ -348,7 +369,7 @@ public class PlayerPhysics : MonoBehaviour
     void Stamina()
     {
         // 스테미나 관리
-        isRunning = !isPush && !isStaminaDepleted && runDown && moveVec != Vector3.zero;
+        isRunning = !isInvincibility && !isPush && !isStaminaDepleted && runDown && moveVec != Vector3.zero;
 
         // 달리는 동시에 땅에 있지 않을 때 (또한 넘어지는 중일 때)
         if ((isRunning && !isGrounded && !isAttack) || isPush)

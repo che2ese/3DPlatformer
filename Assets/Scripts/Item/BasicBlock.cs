@@ -50,7 +50,7 @@ public class BasicBlock : MonoBehaviour
     IEnumerator CreateItem()
     {
         item[itemNum].SetActive(true);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         item[itemNum].gameObject.GetComponent<BoxCollider>().enabled = true;
     }
 

@@ -64,6 +64,13 @@ public class SpecialBlock : MonoBehaviour
     [HideInInspector]
     public float deleteTime;
 
+    PlayerPhysics pp;
+
+    private void Awake()
+    {
+        pp = FindAnyObjectByType<PlayerPhysics>();
+    }
+
     void Start()
     {
         blockRenderer = GetComponentInChildren<Renderer>();  // 렌더러 컴포넌트를 가져옵니다.
@@ -199,7 +206,7 @@ public class SpecialBlock : MonoBehaviour
         {
             other.transform.parent = transform;
         }
-        if (version == 5 && other.CompareTag("Player"))
+        if (!pp.isInvincibility && version == 5 && other.CompareTag("Player"))
         {
             coverAnim = cover.GetComponent<Animator>();
 
