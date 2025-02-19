@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1267220415805118242}
   - component: {fileID: 8991492666883956673}
   m_Layer: 0
-  m_Name: Cylinder (1)
+  m_Name: Cover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -191,6 +191,9 @@ MonoBehaviour:
   direction: {x: 0, y: 0, z: 0}
   changeDir: 3
   cover: {fileID: 664040776431595002}
+  stonePrefab: {fileID: 0}
+  createTime: 0
+  deleteTime: 0
 --- !u!1 &8770784304313391275
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +206,7 @@ GameObject:
   - component: {fileID: 2869798036883630285}
   - component: {fileID: 5645758095101465270}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

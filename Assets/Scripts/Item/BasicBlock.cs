@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class BasicBlock : MonoBehaviour
 {
+    public int itemNum = 0;
+    public GameObject[] item;
+
     [SerializeField]
     private float directionalForce = 100;
     [SerializeField]
@@ -40,8 +43,17 @@ public class BasicBlock : MonoBehaviour
         if (collision.gameObject.CompareTag("Player")) // 플레이어 태그와 충돌했을 때만 실행
         {
             Apply();
+            StartCoroutine(CreateItem());
         }
     }
+
+    IEnumerator CreateItem()
+    {
+        item[itemNum].SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        item[itemNum].gameObject.GetComponent<BoxCollider>().enabled = true;
+    }
+
     public void Apply()
     {
         hasApplied = true;

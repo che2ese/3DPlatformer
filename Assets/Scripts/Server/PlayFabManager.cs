@@ -37,12 +37,12 @@ public class PlayFabManager : MonoBehaviour
 
         idInput.onValidateInput = (string text, int charIndex, char addedChar) =>
         {
-            return Regex.IsMatch(addedChar.ToString(), @"[0-9a-zA-Z@]") ? addedChar : '\0';
+            return Regex.IsMatch(addedChar.ToString(), @"[0-9a-zA-Z@.]") ? addedChar : '\0';
         };
 
         pwInput.onValidateInput = (string text, int charIndex, char addedChar) =>
         {
-            return Regex.IsMatch(addedChar.ToString(), @"[0-9a-zA-Z@]") ? addedChar : '\0';
+            return Regex.IsMatch(addedChar.ToString(), @"[0-9a-zA-Z]") ? addedChar : '\0';
         };
 
         // 씬이 변경될 때 코루틴을 취소하도록 이벤트 리스너 등록

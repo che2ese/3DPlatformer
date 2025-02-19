@@ -11,6 +11,7 @@ TagManager:
   - ConveyorBlock
   - ManHole
   - Stone
+  - Invincibility
   layers:
   - Default
   - TransparentFX

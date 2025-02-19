@@ -70,6 +70,19 @@ public class PlayerPhysics : MonoBehaviour
     [HideInInspector]
     public bool isPush;
 
+    // 아이템
+    [Header("Item")]
+    public GameObject[] CatBody;
+    public GameObject[] PandaBody;
+    public GameObject[] MonkeyBody;
+    public GameObject[] RabbitBody; // 플레이어의 자식 게임오브젝트 배열
+    public GameObject CatHide;
+    public GameObject RabbitHide;
+    public Material invincibleMaterial; // 무적 상태일 때 적용할 메테리얼
+    private Material[][] originalMaterials;  // 원래 메테리얼을 저장할 배열
+
+    GameObject[] body = null; 
+
     bool wallHit;
 
     Vector3 moveVec;
@@ -83,6 +96,39 @@ public class PlayerPhysics : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         stamina = maxStamina;
+    }
+
+    private void Start()
+    {
+        switch (characterNum)
+        {
+            case 0:
+                body = CatBody;
+                break;
+
+            case 1:
+                body = PandaBody;  
+                break;
+
+            case 2:
+                body = MonkeyBody;  
+                break;
+
+            case 3:
+                body = RabbitBody; 
+                break;
+        }
+
+        // 원래의 메테리얼들을 배열에 저장
+        originalMaterials = new Material[body.Length][];
+        for (int i = 0; i < body.Length; i++)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = body[i].GetComponent<SkinnedMeshRenderer>();
+            if (skinnedMeshRenderer != null)
+            {
+                originalMaterials[i] = skinnedMeshRenderer.materials; // 여러 메테리얼 저장
+            }
+        }
     }
 
     void SetActiveCharacter(int characterNum)
@@ -103,7 +149,6 @@ public class PlayerPhysics : MonoBehaviour
 
     void Update()
     {
-
         GetInput();
         CheckWallCollision();
         Move();
@@ -152,6 +197,60 @@ public class PlayerPhysics : MonoBehaviour
 
             Vector3 finalBounceDirection = bounceDirection + Vector3.up * 0.2f; // 위로 살짝 추가
             rigid.AddForce(finalBounceDirection.normalized * bounceForce + Vector3.up * upwardForce, ForceMode.Impulse);
+        }
+        if (other.CompareTag("Invincibility"))
+        {
+            StartCoroutine(ActivateInvincibility());
+            Destroy(other.gameObject); // 아이템 제거
+        }
+    }
+
+    IEnumerator ActivateInvincibility()
+    {
+        if (CatHide.activeSelf)
+        {
+            CatHide.SetActive(false);
+        }
+        if (RabbitHide.activeSelf)
+        {
+            RabbitHide.SetActive(false);
+        }
+
+        // 각 body의 SkinnedMeshRenderer에 대해 material을 변경
+        for (int i = 0; i < body.Length; i++)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = body[i].GetComponent<SkinnedMeshRenderer>();
+            if (skinnedMeshRenderer != null)
+            {
+                // 기존의 모든 메테리얼을 무적 상태 메테리얼로 변경
+                Material[] newMaterials = new Material[skinnedMeshRenderer.materials.Length];
+                for (int j = 0; j < newMaterials.Length; j++)
+                {
+                    newMaterials[j] = invincibleMaterial; // 무적 상태 메테리얼로 설정
+                }
+                skinnedMeshRenderer.materials = newMaterials; // 메테리얼 업데이트
+            }
+        }
+
+        yield return new WaitForSeconds(5f); // 5초 대기
+
+        // 5초 후에 원래 메테리얼로 복귀
+        for (int i = 0; i < body.Length; i++)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = body[i].GetComponent<SkinnedMeshRenderer>();
+            if (skinnedMeshRenderer != null)
+            {
+                skinnedMeshRenderer.materials = originalMaterials[i]; // 원래 메테리얼 복귀
+            }
+        }
+
+        if (!CatHide.activeSelf)
+        {
+            CatHide.SetActive(true);
+        }
+        if (!RabbitHide.activeSelf)
+        {
+            RabbitHide.SetActive(true);
         }
     }
 
