@@ -559,6 +559,11 @@ public class PlayerPhysics : MonoBehaviour
 
         while (elapsedTime < moveDuration)
         {
+            if (isPush)
+            {
+                yield break;
+            }
+
             if (wallHit)
             {
                 // 벽에 닿으면 현재 위치 저장 후 이동 중단
@@ -603,6 +608,11 @@ public class PlayerPhysics : MonoBehaviour
         while (!isGrounded)
         {
             yield return null; // 매 프레임마다 확인
+        }
+
+        if (isPush)
+        {
+            yield break;
         }
 
         if (isRabbitRespawn)
