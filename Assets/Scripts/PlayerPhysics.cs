@@ -20,10 +20,11 @@ public class PlayerPhysics : MonoBehaviour
     public float runSpeed;
     public float jumpPower;
     public GameObject RunEffect;
+    public GameObject SpeedUpRunEffect;
 
     // 스테미나 관련 변수
-    [Header ("Stamina")]
-    public float maxStamina = 100f; 
+    [Header("Stamina")]
+    public float maxStamina = 100f;
     public float stamina;
     public float staminaDecreaseRate = 30f;
     public float staminaRecoveryRate = 10f;
@@ -68,6 +69,7 @@ public class PlayerPhysics : MonoBehaviour
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
     bool isRabbitRespawn;
     bool isShock;
+    bool isSpeedUp;
     [HideInInspector]
     public bool isInvincibility;
     [HideInInspector]
@@ -84,7 +86,7 @@ public class PlayerPhysics : MonoBehaviour
     public Material invincibleMaterial; // 무적 상태일 때 적용할 메테리얼
     private Material[][] originalMaterials;  // 원래 메테리얼을 저장할 배열
 
-    GameObject[] body = null; 
+    GameObject[] body = null;
 
     bool wallHit;
 
@@ -108,17 +110,14 @@ public class PlayerPhysics : MonoBehaviour
             case 0:
                 body = CatBody;
                 break;
-
             case 1:
-                body = PandaBody;  
+                body = PandaBody;
                 break;
-
             case 2:
-                body = MonkeyBody;  
+                body = MonkeyBody;
                 break;
-
             case 3:
-                body = RabbitBody; 
+                body = RabbitBody;
                 break;
         }
 
@@ -221,6 +220,7 @@ public class PlayerPhysics : MonoBehaviour
 
     IEnumerator ElectricShock()
     {
+        anim.SetTrigger("doShock");
         yield return new WaitForSeconds(3f);
         isShock = false;
     }
@@ -277,11 +277,13 @@ public class PlayerPhysics : MonoBehaviour
 
     IEnumerator SpeedUp()
     {
+        isSpeedUp = true;
         walkSpeed *= 1.5f;
         runSpeed *= 1.5f;
 
         yield return new WaitForSeconds(5f); // 5초 대기
 
+        isSpeedUp = false;
         walkSpeed /= 1.5f;
         runSpeed /= 1.5f;
     }
@@ -317,7 +319,7 @@ public class PlayerPhysics : MonoBehaviour
                 runDown = false;
             }
         }
-        
+
         jumpDown = Input.GetButtonDown("Jump");
         attack1Down = Input.GetButtonDown("Fire1");
     }
@@ -350,8 +352,25 @@ public class PlayerPhysics : MonoBehaviour
         Vector3 camForward = new Vector3(Camera.main.transform.forward.x, 0, Camera.main.transform.forward.z).normalized;
         Vector3 camRight = new Vector3(Camera.main.transform.right.x, 0, Camera.main.transform.right.z).normalized;
 
-        if (isRunning && !isStaminaDepleted && !isAttack && !isPush) RunEffect.SetActive(true);
-        else RunEffect.SetActive(false);
+        // 달리기 이펙트 
+        if (isRunning && !isStaminaDepleted && !isAttack && !isPush)
+        {
+            if (!isSpeedUp)
+            {
+                RunEffect.SetActive(true);
+                SpeedUpRunEffect.SetActive(false);
+            }
+            else
+            {
+                SpeedUpRunEffect.SetActive(true);
+                RunEffect.SetActive(false);
+            }
+        }
+        else
+        {
+            RunEffect.SetActive(false);
+            SpeedUpRunEffect.SetActive(false);
+        }
 
         // 입력 방향을 카메라 방향 기준으로 변환
         moveVec = (camForward * vAxis + camRight * hAxis).normalized;
@@ -435,7 +454,7 @@ public class PlayerPhysics : MonoBehaviour
             staminaBar.fillAmount = stamina / maxStamina;
 
             recoveryTime += Time.deltaTime;
-            yield return null; 
+            yield return null;
         }
 
         isStaminaDepleted = false;
@@ -520,7 +539,7 @@ public class PlayerPhysics : MonoBehaviour
             yield return MoveCharacter(startPosition, transform.forward * 3.0f, 0.5f);
 
             startPosition = transform.position;
-            yield return MoveCharacter(startPosition, transform.forward * 5.0f  + Vector3.up * 10.4f, 0.8f);
+            yield return MoveCharacter(startPosition, transform.forward * 5.0f + Vector3.up * 10.4f, 0.8f);
 
             StartCoroutine(WaitUntilGroundedForRabbit());
             startPosition = transform.position;
@@ -559,7 +578,7 @@ public class PlayerPhysics : MonoBehaviour
 
         while (elapsedTime < moveDuration)
         {
-            if (isPush)
+            if (isPush || isShock)
             {
                 yield break;
             }
@@ -620,7 +639,7 @@ public class PlayerPhysics : MonoBehaviour
             isRabbitRespawn = false;
             yield break;
         }
-            
+
 
         // 조건이 만족되었을 때만 실행
         RabbitPunchEffect.SetActive(true);
@@ -634,7 +653,7 @@ public class PlayerPhysics : MonoBehaviour
         isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
         Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
 
-        if (isStaminaDepleted || isAttack || isPush || isShock) return; 
+        if (isStaminaDepleted || isAttack || isPush || isShock) return;
 
         // float rayRadius = 0.7f; // 아이템 판독
         // isBlock = Physics.SphereCast(transform.position, rayRadius, Vector3.up, out RaycastHit hit, raycastDistance, itemLayer);
@@ -712,7 +731,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Stone"))
         {
-            Destroy(collision.gameObject); 
+            Destroy(collision.gameObject);
         }
     }
 
@@ -744,14 +763,14 @@ public class PlayerPhysics : MonoBehaviour
     }
     void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.layer == 6) 
+        if (collision.gameObject.layer == 6)
         {
             isCollidingWithGround = false;
         }
         if (collision.gameObject.CompareTag("ConveyorBlock"))
         {
             isCollidingWithGround = false;
-            if(isJump)
+            if (isJump)
                 // 컨베이어 벨트에서 벗어나면 힘이 더 이상 적용되지 않도록 속도 초기화
                 rigid.velocity = new Vector3(0, rigid.velocity.y, 0);
         }
