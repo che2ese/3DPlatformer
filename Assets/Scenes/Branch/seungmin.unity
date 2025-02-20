@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17353046, g: 0.53125894, b: 0.8897848, a: 1}
+  m_IndirectSpecularColor: {r: 0.17353055, g: 0.5312591, b: 0.8897853, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -17000,7 +17000,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnPosition: {x: 148, y: 8, z: -157}
-  characterNum: 3
+  characterNum: 1
   character:
   - {fileID: 1547498998}
   - {fileID: 1838173492}
@@ -17076,7 +17076,8 @@ MonoBehaviour:
   - {fileID: 1199190527}
   CatHide: {fileID: 1547498988}
   RabbitHide: {fileID: 1199190527}
-  invincibleMaterial: {fileID: 2100000, guid: 59075f775befbc94fb3f2bc60ca0f90b, type: 2}
+  invincibleMaterial: {fileID: 2100000, guid: 40dfc7bfe4e0441f7a7bf5b1d586f35a, type: 2}
+  afterImageMaterial: {fileID: 2100000, guid: 59075f775befbc94fb3f2bc60ca0f90b, type: 2}
 --- !u!136 &1349575708
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -88,6 +88,12 @@ public class PlayerPhysics : MonoBehaviour
 
     GameObject[] body = null;
 
+    public Material afterImageMaterial; // 잔상용 머티리얼 (반투명 머티리얼)
+    float afterImageDuration = 0.5f; // 잔상이 유지되는 시간
+    float afterImageInterval = 0.1f; // 잔상 생성 간격
+    Coroutine afterSpeedImageCoroutine; // 코루틴 핸들 저장
+    Coroutine afterShockImageCoroutine; // 코루틴 핸들 저장
+
     bool wallHit;
 
     Vector3 moveVec;
@@ -221,7 +227,18 @@ public class PlayerPhysics : MonoBehaviour
     IEnumerator ElectricShock()
     {
         anim.SetTrigger("doShock");
+
+        // 코루틴 시작 및 핸들 저장
+        afterShockImageCoroutine = StartCoroutine(GenerateAfterImage());
+
         yield return new WaitForSeconds(3f);
+
+        // 잔상 코루틴 중지
+        if (afterShockImageCoroutine != null)
+        {
+            StopCoroutine(afterShockImageCoroutine);
+            afterShockImageCoroutine = null;
+        }
         isShock = false;
     }
 
@@ -281,13 +298,85 @@ public class PlayerPhysics : MonoBehaviour
         walkSpeed *= 1.5f;
         runSpeed *= 1.5f;
 
+        // 코루틴 시작 및 핸들 저장
+        afterSpeedImageCoroutine = StartCoroutine(GenerateAfterImage());
+
         yield return new WaitForSeconds(5f); // 5초 대기
 
+        // 속도 원상복구
         isSpeedUp = false;
         walkSpeed /= 1.5f;
         runSpeed /= 1.5f;
+
+        // 잔상 코루틴 중지
+        if (afterSpeedImageCoroutine != null)
+        {
+            StopCoroutine(afterSpeedImageCoroutine);
+            afterSpeedImageCoroutine = null;
+        }
     }
 
+    // 잔상 생성 코루틴
+    IEnumerator GenerateAfterImage()
+    {
+        while (true)
+        {
+            CreateAfterImage();
+            yield return new WaitForSeconds(afterImageInterval);
+        }
+    }
+
+    void CreateAfterImage()
+    {
+        foreach (var obj in body)
+        {
+            SkinnedMeshRenderer skinnedRenderer = obj.GetComponent<SkinnedMeshRenderer>();
+            if (skinnedRenderer == null) continue;
+
+            // 새로운 Mesh 복사
+            Mesh bakedMesh = new Mesh();
+            skinnedRenderer.BakeMesh(bakedMesh);
+
+            // 빈 게임 오브젝트 생성 후 MeshFilter, MeshRenderer 추가
+            GameObject afterImage = new GameObject("AfterImage");
+            afterImage.transform.position = obj.transform.position;
+            afterImage.transform.rotation = obj.transform.rotation;
+
+            MeshFilter meshFilter = afterImage.AddComponent<MeshFilter>();
+            meshFilter.mesh = bakedMesh;
+
+            MeshRenderer meshRenderer = afterImage.AddComponent<MeshRenderer>();
+
+            // 원본의 머티리얼 개수에 맞게 잔상 머티리얼 적용
+            Material[] originalMaterials = skinnedRenderer.materials;
+            Material[] afterImageMaterials = new Material[originalMaterials.Length];
+
+            for (int i = 0; i < originalMaterials.Length; i++)
+            {
+                afterImageMaterials[i] = afterImageMaterial; // 모든 머티리얼을 잔상용 머티리얼로 변경
+            }
+
+            meshRenderer.materials = afterImageMaterials; // 머티리얼 배열 적용
+
+            StartCoroutine(FadeAndDestroy(afterImage, afterImageDuration));
+        }
+    }
+
+
+    IEnumerator FadeAndDestroy(GameObject afterImage, float duration)
+    {
+        MeshRenderer meshRenderer = afterImage.GetComponent<MeshRenderer>();
+        Material mat = meshRenderer.material;
+        float elapsedTime = 0;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(afterImage);
+    }
 
     // 넘어지는 애니메이션이 끝난 후 실행
     IEnumerator PushAnimFinished()
