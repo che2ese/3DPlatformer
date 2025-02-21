@@ -14,6 +14,7 @@ TagManager:
   - Invincibility
   - SpeedUp
   - Lightning
+  - StaminaUp
   layers:
   - Default
   - TransparentFX

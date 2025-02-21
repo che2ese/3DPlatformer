@@ -94,6 +94,9 @@ public class PlayerPhysics : MonoBehaviour
     Coroutine afterSpeedImageCoroutine; // 코루틴 핸들 저장
     Coroutine afterShockImageCoroutine; // 코루틴 핸들 저장
 
+    public GameObject StaminaUpEffect;
+    public GameObject NoStaminaEffect;
+
     bool wallHit;
 
     Vector3 moveVec;
@@ -221,6 +224,12 @@ public class PlayerPhysics : MonoBehaviour
         {
             isShock = true;
             StartCoroutine(ElectricShock());
+        }
+        if (other.CompareTag("StaminaUp"))
+        {
+            StaminaUpEffect.SetActive(true);
+            stamina = maxStamina;
+            Destroy(other.gameObject);
         }
     }
 
@@ -532,6 +541,7 @@ public class PlayerPhysics : MonoBehaviour
     {
         // 스테미나 고갈 딜레이
         isStaminaDepleted = true;
+        NoStaminaEffect.SetActive(true);
         anim.SetTrigger("doStaminaRecovery");
 
         float recoveryTime = 0f;
