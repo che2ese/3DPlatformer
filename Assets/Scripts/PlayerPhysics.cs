@@ -391,10 +391,10 @@ public class PlayerPhysics : MonoBehaviour
     IEnumerator PushAnimFinished()
     {
         // 순간적으로 맨홀에 닿았을 때 땅에 닿은 것으로 인지함을 방지
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
         if (isGrounded)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1.7f);
             isPush = false;
         }
     }
@@ -748,9 +748,19 @@ public class PlayerPhysics : MonoBehaviour
 
     void Jump()
     {
-        // 땅에 있는 상태 확인 
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
-        Debug.DrawRay(transform.position, Vector3.down * raycastDistance, isGrounded ? Color.green : Color.red, 0.1f);
+        // 첫 번째 레이캐스트
+        Vector3 frontPosition = transform.position + transform.right * 0.3f;
+        bool raycastGrounded1 = Physics.Raycast(frontPosition, Vector3.down, raycastDistance, groundLayer);
+        Debug.DrawRay(frontPosition, Vector3.down * raycastDistance, raycastGrounded1 ? Color.green : Color.red, 0.1f);
+
+        // 두 번째 레이캐스트
+        frontPosition = transform.position - transform.right * 0.3f;
+        bool raycastGrounded2 = Physics.Raycast(frontPosition, Vector3.down, raycastDistance, groundLayer);
+        Debug.DrawRay(frontPosition, Vector3.down * raycastDistance, raycastGrounded2 ? Color.green : Color.red, 0.1f);
+
+        // 둘 중 하나라도 땅을 감지하면 isGrounded = true
+        isGrounded = raycastGrounded1 || raycastGrounded2;
+
 
         if (isStaminaDepleted || isAttack || isPush || isShock) return;
 
@@ -763,7 +773,25 @@ public class PlayerPhysics : MonoBehaviour
             anim.SetBool("isJump", true);
             anim.SetTrigger("doJump");
             isJump = true;
+
+            StartCoroutine(CheckJumpToFall()); // 점프 상태 확인
         }
+    }
+
+    IEnumerator CheckJumpToFall()
+    {
+        // 점프 후 일정시간 동안 착지하지 못하면 떨어지는 모션 실행 
+        float timer = 0f;
+        while (timer < 1.7f)
+        {
+            if (!isJump) yield break; // isJump가 false가 되면 즉시 종료
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // isJump가 true면 JumpToFall 트리거
+        anim.SetBool("JumpToFall", true);
+        anim.SetBool("isFall", true);
     }
 
     void Fall()
@@ -772,6 +800,21 @@ public class PlayerPhysics : MonoBehaviour
         // 거리 측정하여 땅과 근접하다면 낙하 애니메이션 실행 X
 
         if (isPush) return;
+
+        RaycastHit hit;
+        bool isNearGround = Physics.Raycast(transform.position, Vector3.down, out hit, 10f, groundLayer);
+
+        if (!isGrounded && rigid.velocity.y < -0.1f && !isNearGround && !isFalling && !isJump && !isCollidingWithGround)
+        {
+            StartCoroutine(CheckFallAfterDelay());
+        }
+    }
+
+    IEnumerator CheckFallAfterDelay()
+    {
+        // 0.5초 대기 후 아직 공중이라면 떨어지는 모션 실행
+        // 땅 모서리에서 떨어지는 현상 방지
+        yield return new WaitForSeconds(0.5f); 
 
         RaycastHit hit;
         bool isNearGround = Physics.Raycast(transform.position, Vector3.down, out hit, 10f, groundLayer);
@@ -820,6 +863,7 @@ public class PlayerPhysics : MonoBehaviour
             anim.SetBool("isJump", false);
             anim.SetBool("isFall", false);
             anim.SetBool("isPush", false);
+            anim.SetBool("JumpToFall", false);
             isFalling = false;
             isJump = false;
 

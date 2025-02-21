@@ -51,7 +51,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 5.4, y: 7.6, z: 5.4}
   m_Center: {x: 0, y: 0, z: 0}
@@ -85,6 +85,11 @@ MonoBehaviour:
   direction: {x: 0, y: 0, z: 0}
   changeDir: 3
   cover: {fileID: 0}
+  stonePrefab: {fileID: 0}
+  createTime: 0
+  deleteTime: 0
+  startCollider: {fileID: 0}
+  endCollider: {fileID: 0}
 --- !u!1001 &842642444881643313
 PrefabInstance:
   m_ObjectHideFlags: 0
