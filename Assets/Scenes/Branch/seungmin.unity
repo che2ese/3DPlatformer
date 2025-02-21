@@ -9777,13 +9777,25 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1596785753858403888, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2322627912829701941, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 2322627912829701941, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3690993167739830964, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3690993167739830964, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3892501671013169995, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
       propertyPath: m_LocalScale.x
@@ -9853,9 +9865,17 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 4786567340584050269, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6419508649348978559, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6419508649348978559, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7842279820806671616, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
       propertyPath: m_Layer
@@ -9865,6 +9885,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8232649064541571931, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8487989219196152781, guid: 8bd4db4730a85174cbf65a95c99f0b79, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 4a991dd2753604ffaa61e52026bbc267, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -382,10 +382,10 @@ public class PlayerPhysics : MonoBehaviour
     IEnumerator PushAnimFinished()
     {
         // 순간적으로 맨홀에 닿았을 때 땅에 닿은 것으로 인지함을 방지
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
         if (isGrounded)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1.7f);
             isPush = false;
         }
     }
