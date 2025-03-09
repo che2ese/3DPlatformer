@@ -22,7 +22,7 @@ public class MonsterAIEditor : Editor
             EditorGUILayout.HelpBox("Skeleton 몬스터 설정", MessageType.Info);
 
             // MonsterNumber는 Skeleton에서만 보이도록 설정
-            monster.MonsterNumber = EditorGUILayout.IntField("Monster Number (Skeleton 전용)", monster.MonsterNumber);
+            // monster.MonsterNumber = EditorGUILayout.IntField("Monster Number (Skeleton 전용)", monster.MonsterNumber);
         }
         else
         {
