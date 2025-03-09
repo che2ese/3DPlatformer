@@ -16,7 +16,7 @@ public class PlayerPhysics : MonoBehaviour
 
     // 이동 관련 변수
     [Header("Move")]
-    public float walkSpeed;
+    public float walkSpeed; 
     public float runSpeed;
     public float jumpPower;
     public GameObject RunEffect;
@@ -67,9 +67,10 @@ public class PlayerPhysics : MonoBehaviour
     bool isFalling;
     bool isJump;
     bool isCollidingWithGround; // 땅에 있는 지 (콜라이더 기준)
-    bool isRabbitRespawn;
+    bool isRabbitRespawn; // 토끼 공격 취소용  
     bool isShock;
     bool isSpeedUp;
+    bool isRespawn;
     [HideInInspector]
     public bool isInvincibility;
     [HideInInspector]
@@ -242,6 +243,8 @@ public class PlayerPhysics : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
+        if (!isShock) yield break;
+
         // 잔상 코루틴 중지
         if (afterShockImageCoroutine != null)
         {
@@ -280,6 +283,8 @@ public class PlayerPhysics : MonoBehaviour
 
         yield return new WaitForSeconds(5f); // 5초 대기
 
+        if (!isInvincibility) yield break;
+
         // 5초 후에 원래 메테리얼로 복귀
         for (int i = 0; i < body.Length; i++)
         {
@@ -312,6 +317,8 @@ public class PlayerPhysics : MonoBehaviour
 
         yield return new WaitForSeconds(5f); // 5초 대기
 
+        if (!isSpeedUp) yield break;
+
         // 속도 원상복구
         isSpeedUp = false;
         walkSpeed /= 1.5f;
@@ -332,6 +339,8 @@ public class PlayerPhysics : MonoBehaviour
         {
             CreateAfterImage();
             yield return new WaitForSeconds(afterImageInterval);
+
+            if (isRespawn) yield break;
         }
     }
 
@@ -390,12 +399,79 @@ public class PlayerPhysics : MonoBehaviour
     // 넘어지는 애니메이션이 끝난 후 실행
     IEnumerator PushAnimFinished()
     {
+        if (isRespawn)
+        {
+            isPush = false;
+            yield break;
+        }
         // 순간적으로 맨홀에 닿았을 때 땅에 닿은 것으로 인지함을 방지
         yield return new WaitForSeconds(0.3f);
         if (isGrounded)
         {
+            if (isRespawn)
+            {
+                isPush = false;
+                yield break;
+            }
             yield return new WaitForSeconds(1.7f);
             isPush = false;
+        }
+    }
+
+    void Respawn()
+    {
+        // DeadZone에 닿았을 때 부활
+        isRespawn = true;
+
+        // 물리 효과 제거 
+        rigid.velocity = Vector3.zero;
+        rigid.angularVelocity = Vector3.zero;
+        transform.position = respawnPosition;
+
+        // 애니메이션 종료
+        anim.Play("Idle");
+        anim.SetBool("isRespawn", true);
+
+        // 스테미나 초기화 
+        stamina = 100;
+
+        // 공격 종료 
+        if (characterNum == 3) isRabbitRespawn = true;
+
+        // 넘어지(맨홀) 종료 
+        isPush = false;
+
+        // 감전 종료 
+        isShock = false;
+
+        // 스피드 아이템 종료
+        if (isSpeedUp)
+        {
+            isSpeedUp = false;
+            walkSpeed /= 1.5f;
+            runSpeed /= 1.5f;
+        }
+        // 투명 아이템 종료
+        if (isInvincibility)
+        {
+            for (int i = 0; i < body.Length; i++)
+            {
+                SkinnedMeshRenderer skinnedMeshRenderer = body[i].GetComponent<SkinnedMeshRenderer>();
+                if (skinnedMeshRenderer != null)
+                {
+                    skinnedMeshRenderer.materials = originalMaterials[i]; // 원래 메테리얼 복귀
+                }
+            }
+
+            if (!CatHide.activeSelf)
+            {
+                CatHide.SetActive(true);
+            }
+            if (!RabbitHide.activeSelf)
+            {
+                RabbitHide.SetActive(true);
+            }
+            isInvincibility = false;
         }
     }
 
@@ -421,10 +497,8 @@ public class PlayerPhysics : MonoBehaviour
         jumpDown = Input.GetButtonDown("Jump");
         attack1Down = Input.GetButtonDown("Fire1");
     }
-
     void CheckWallCollision()
     {
-
         // 벽 충돌 감지 (머리, 중심, 발)
         Vector3 centerPosition = transform.position + Vector3.down * 0.6f;
         Vector3 headPosition = transform.position + Vector3.up * 0.4f;
@@ -432,16 +506,30 @@ public class PlayerPhysics : MonoBehaviour
 
         Vector3 checkDirection = (moveVec != Vector3.zero && !isAttack) ? moveVec : transform.forward; // 이동 중이면 moveVec, 아니면 정면 방향 사용
 
-        bool wallHitCenter = Physics.Raycast(centerPosition, checkDirection, 0.9f, LayerMask.GetMask("Ground"));
-        bool wallHitHead = Physics.Raycast(headPosition, checkDirection, 0.8f, LayerMask.GetMask("Ground"));
-        bool wallHitFoot = Physics.Raycast(footPosition, checkDirection, 0.4f, LayerMask.GetMask("Ground"));
+        // 좌우 30도 회전 벡터 계산
+        Quaternion leftRotation = Quaternion.Euler(0, -20, 0);
+        Quaternion rightRotation = Quaternion.Euler(0, 20, 0);
+        Vector3 leftDirection = leftRotation * checkDirection;
+        Vector3 rightDirection = rightRotation * checkDirection;
 
-        wallHit = wallHitCenter || wallHitHead || wallHitFoot;
+        // 기존 정면 체크
+        bool wallHitCenter = Physics.Raycast(centerPosition, checkDirection, 1.0f, LayerMask.GetMask("Ground"));
+        bool wallHitHead = Physics.Raycast(headPosition, checkDirection, 0.9f, LayerMask.GetMask("Ground"));
+        bool wallHitFoot = Physics.Raycast(footPosition, checkDirection, 0.7f, LayerMask.GetMask("Ground"));
+
+        // 좌우 30도 방향 추가 체크
+        bool wallHitLeft = Physics.Raycast(centerPosition, leftDirection, 0.9f, LayerMask.GetMask("Ground"));
+        bool wallHitRight = Physics.Raycast(centerPosition, rightDirection, 0.9f, LayerMask.GetMask("Ground"));
+
+        wallHit = wallHitCenter || wallHitHead || wallHitFoot || wallHitLeft || wallHitRight;
 
         // 벽 감지 레이캐스트 디버깅
-        Debug.DrawRay(centerPosition, checkDirection * 0.9f, wallHitCenter ? Color.red : Color.green, 0.1f);
-        Debug.DrawRay(headPosition, checkDirection * 0.8f, wallHitHead ? Color.red : Color.green, 0.1f);
-        Debug.DrawRay(footPosition, checkDirection * 0.4f, wallHitFoot ? Color.red : Color.green, 0.1f);
+        Debug.DrawRay(centerPosition, checkDirection * 1.0f, wallHitCenter ? Color.red : Color.green, 0.1f);
+        Debug.DrawRay(headPosition, checkDirection * 0.9f, wallHitHead ? Color.red : Color.green, 0.1f);
+        Debug.DrawRay(footPosition, checkDirection * 0.7f, wallHitFoot ? Color.red : Color.green, 0.1f);
+
+        Debug.DrawRay(centerPosition, leftDirection * 0.9f, wallHitLeft ? Color.blue : Color.cyan, 0.1f); // 좌측 방향 확인 (파란색)
+        Debug.DrawRay(centerPosition, rightDirection * 0.9f, wallHitRight ? Color.magenta : Color.yellow, 0.1f); // 우측 방향 확인 (핑크색)
     }
 
     void Move()
@@ -451,7 +539,7 @@ public class PlayerPhysics : MonoBehaviour
         Vector3 camRight = new Vector3(Camera.main.transform.right.x, 0, Camera.main.transform.right.z).normalized;
 
         // 달리기 이펙트 
-        if (isRunning && !isStaminaDepleted && !isAttack && !isPush)
+        if (isRunning && !isStaminaDepleted && !isAttack && !isPush && !isRespawn)
         {
             if (!isSpeedUp)
             {
@@ -473,7 +561,7 @@ public class PlayerPhysics : MonoBehaviour
         // 입력 방향을 카메라 방향 기준으로 변환
         moveVec = (camForward * vAxis + camRight * hAxis).normalized;
 
-        if (!wallHit && !isStaminaDepleted && !isAttack && !isPush && !isShock)
+        if (!wallHit && !isStaminaDepleted && !isAttack && !isPush && !isShock && !isRespawn)
         {
             // 이동 처리
             transform.position += moveVec * (runDown ? runSpeed : walkSpeed) * Time.deltaTime;
@@ -643,6 +731,10 @@ public class PlayerPhysics : MonoBehaviour
             StartCoroutine(WaitUntilGroundedForRabbit());
             startPosition = transform.position;
             yield return MoveCharacter(startPosition, transform.forward * 5.0f, 0.3f);
+
+            yield return new WaitUntil(() => isGrounded);
+            anim.SetBool("isAttack", false);
+
             yield return new WaitForSeconds(0.6f);
         }
 
@@ -836,16 +928,6 @@ public class PlayerPhysics : MonoBehaviour
         Debug.DrawLine(start - right, start - right + direction * distance, color, 0.1f);
     }
 
-    void Respawn()
-    {
-        // DeadZone에 닿았을 때 부활
-        rigid.velocity = Vector3.zero;
-        rigid.angularVelocity = Vector3.zero;
-        transform.position = respawnPosition;
-        stamina = 100;
-        if (characterNum == 3) isRabbitRespawn = true;
-    }
-
     void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("ScaleBlock"))
@@ -867,9 +949,22 @@ public class PlayerPhysics : MonoBehaviour
             isFalling = false;
             isJump = false;
 
+            if (isRespawn)
+            {
+                isRespawn = false;
+                anim.SetBool("isRespawn", false);
+            }
+
             if (isPush)
             {
-                StartCoroutine(PushAnimFinished());
+                if (isRespawn)
+                {
+                    isPush = false;
+                }
+                else
+                {
+                    StartCoroutine(PushAnimFinished());
+                }
             }
         }
         if (collision.gameObject.CompareTag("Stone"))
