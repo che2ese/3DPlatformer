@@ -242,6 +242,7 @@ public class ShopManager : MonoBehaviour
     {
         if (selectedButton != null)
         {
+            // 선택된 아이템을 구매하는 처리
             Transform typeGroup = FindChildWithTag(player.transform, selectedButton.type);
             if (typeGroup != null)
             {
@@ -260,10 +261,39 @@ public class ShopManager : MonoBehaviour
                     }
                 }
             }
+
+            // 모든 배열을 돌면서 active가 1인 것들을 모두 3으로 바꿈
+            UpdateAllItemsToEquipped("Hat");
+            UpdateAllItemsToEquipped("Wing");
+            // 필요한 경우 다른 타입들도 추가할 수 있음 (예: "Shirt", "Pants" 등)
         }
 
         PrintStatusByType(selectedButton.type); // 구매 후 상태 출력
         UpdateTotalPrice();
+    }
+
+    // 주어진 타입에 해당하는 모든 아이템을 확인하여 active가 1인 경우 3으로 바꿈
+    private void UpdateAllItemsToEquipped(string type)
+    {
+        Transform typeGroup = FindChildWithTag(player.transform, type);
+        if (typeGroup != null)
+        {
+            foreach (Transform skin in typeGroup)
+            {
+                ShopID shopID = skin.GetComponent<ShopID>();
+                if (shopID != null && shopID.active == 1) // active가 1인 경우
+                {
+                    shopID.active = 3; // 3으로 변경 (구매 완료, 장착됨)
+                    shopID.UpdateSkinStatus();
+
+                    // 해당 타입의 배열을 업데이트
+                    if (type == "Hat")
+                        hat[shopID.id] = shopID.active;
+                    else if (type == "Wing")
+                        wing[shopID.id] = shopID.active;
+                }
+            }
+        }
     }
 
 
