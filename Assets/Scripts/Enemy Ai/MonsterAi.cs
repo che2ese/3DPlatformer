@@ -17,9 +17,9 @@ public class MonsterAi : MonoBehaviour
     // 이동 관련 변수
     [Header("Move")]
     public float speed = 5;
-    public float waitTime = .3f;
+    public float waitTime = 0.1f;
     public float turnSpeed = 90;
-    public float rotateSpeed = 0.1f; // 회전 속도 (높을수록 빠름)
+    public float rotateSpeed = 1f; // 회전 속도 (높을수록 빠름)
 
     [Header("Health")]
     public int maxHealth = 100;
@@ -44,8 +44,9 @@ public class MonsterAi : MonoBehaviour
     [Header("Attack Settings")]
     public float attackCooldown = 1.5f; // 공격 후 대기 시간
     private bool canAttack = true; // 공격 가능 여부
+    private bool isAttacking = false; // 공격 중인지 확인하는 변수
     [Header("Chase Settings")]
-    public float lostPlayerTime = 2.0f; // 플레이어를 놓친 후 Patrolling으로 전환되는 시간
+    public float lostPlayerTime = 0.5f; // 플레이어를 놓친 후 Patrolling으로 전환되는 시간
     private float lostPlayerTimer = 0;  // 타이머
     private Vector3 lastSeenPlayerPosition;
 
@@ -56,6 +57,7 @@ public class MonsterAi : MonoBehaviour
     public enum MonsterState { Patrolling, Chasing, Attacking }
     public MonsterState currentState = MonsterState.Patrolling;
 
+    public GameObject AttackMarkerPrefab; // 씬에 표시할 마커 프리팹
     Transform player;
     Animator animator;
     Color originalSpotlightColour;
@@ -104,6 +106,7 @@ public class MonsterAi : MonoBehaviour
                 switch (currentState)
                 {
                     case MonsterState.Patrolling:
+                        if (isAttacking) break; // 공격 중이면 이동 로직 무시
                         spotlight.color = originalSpotlightColour;
                         //walk 작동
                         animator.SetBool("isWalking", true);
@@ -121,6 +124,7 @@ public class MonsterAi : MonoBehaviour
                         frameCounter = 0;
                         break;
                     case MonsterState.Chasing:
+                        if (isAttacking) break; // 공격 중이면 이동 로직 무시
                         spotlight.color = Color.red;
                         //Run 작동
                         animator.SetBool("isWalking", true);
@@ -173,7 +177,12 @@ public class MonsterAi : MonoBehaviour
                         break;
                     case MonsterState.Attacking:
                         if (!canAttack) break; // 쿨타임 중이면 공격 불가
-                        canAttack = false; // 공격 시작 -> 일단 공격 불가능 상태로 변경
+                        if (!isAttacking)
+                        {
+                            canAttack = false;
+                            animator.SetBool("isAttack", true);
+                            StartCoroutine(AttackJumpSequence());
+                        }
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", true);
                         animator.SetBool("isAttack", true);
@@ -206,8 +215,6 @@ public class MonsterAi : MonoBehaviour
                         {
                             ChasePlayer();
                         }
-                        // 공격 후 일정 시간 동안 재공격 불가
-                        StartCoroutine(ResetAttackCooldown());
                         break;
                 }
                 break;
@@ -257,7 +264,13 @@ public class MonsterAi : MonoBehaviour
 
         Vector3 direction = (targetPosition - transform.position).normalized;
         transform.position += direction * speed * Time.deltaTime;
-        transform.LookAt(targetPosition); // 플레이어 방향으로 회전 (y축 무시)
+
+        // XZ 평면에서만 회전하도록 설정
+        Vector3 lookDirection = new Vector3(direction.x, 0, direction.z);
+        if (lookDirection != Vector3.zero) // 방향이 0이 아닐 때만 회전
+        {
+            transform.rotation = Quaternion.LookRotation(lookDirection);
+        }
     }
     bool CanSeePlayer()
     {
@@ -293,7 +306,6 @@ public class MonsterAi : MonoBehaviour
         int targetWaypointIndex = (startIndex + 1) % waypoints.Length;
         Vector3 targetWaypoint = waypoints[targetWaypointIndex];
         yield return StartCoroutine(TurnToFace(targetWaypoint));
-        //transform.LookAt(targetWaypoint);
 
         while (currentState == MonsterState.Patrolling)
         {
@@ -303,7 +315,7 @@ public class MonsterAi : MonoBehaviour
             {
                 switch (EnemyVersion)
                 {
-                    case 1:
+                    case 1://Mush
                         targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
                         targetWaypoint = waypoints[targetWaypointIndex];
                         yield return new WaitForSeconds(waitTime);
@@ -537,55 +549,77 @@ public class MonsterAi : MonoBehaviour
     }
     IEnumerator AttackJumpSequence()
     {
-        // 1. 0.3초 대기
-        yield return new WaitForSeconds(0.3f);
+         isAttacking = true; // 공격 시작
 
-        // 2. 점프 애니메이션 실행
-        animator.SetTrigger("JumpAttack");
+        // 1. 점프 전 대기 및 공격 위치 표시
+        yield return new WaitForSeconds(0.5f);
 
-        // 3. 점프 이펙트 실행
+        // 2. 공격 위치 계산 및 마커 표시, 마커위치를 바라보게 하는 변수 추가
+        Vector3 attackPosition = new Vector3(player.position.x, 0.7f, player.position.z);
+        Vector3 markerPosition = attackPosition+ new Vector3(0, 0.25f, 0);
+
+        yield return StartCoroutine(TurnToFace(markerPosition));
+
+        // AttackMarkerPrefab을 공격 지점에 생성
+        GameObject attackMarker = Instantiate(AttackMarkerPrefab, attackPosition, Quaternion.identity);
+        attackMarker.SetActive(true);
+
+        // 3. 경고 마커가 보이는 시간 (1초 유지)
+        yield return new WaitForSeconds(0.5f);
+
+        // 4. 점프 애니메이션 실행
         SetMushJumpEffectActive(true);
 
-        // 4. 몬스터 점프 (Y축 이동)
-        float jumpHeight = 2.5f;
-        float jumpTime = 0.4f;
-        Vector3 startPosition = transform.position;
-        Vector3 peakPosition = startPosition + new Vector3(0, jumpHeight, 0);
+        // 5. 포물선 점프 구현
+        float jumpHeight = 4.0f;
+        float slowUpDuration = 0.3f;  // 천천히 상승하는 시간
+        float peakHoldTime = 0.15f;    // 정점에서 멈추는 시간
+        float fastDownDuration = 0.1f; // 빠르게 하강하는 시간
         float elapsedTime = 0;
-        Vector3 jumpTarget = player.position;
 
-        // 점프 상승
-        while (elapsedTime < jumpTime / 2)
+        Vector3 startPosition = transform.position;
+        Vector3 peakPosition = (startPosition + attackPosition) / 2 + new Vector3(0, jumpHeight, 0);
+
+
+        // 천천히 상승 (Ease-in 적용)
+        while (elapsedTime < slowUpDuration)
         {
-            transform.position = Vector3.Lerp(startPosition, peakPosition, (elapsedTime / (jumpTime / 2)));
+            float t = elapsedTime / slowUpDuration;
+            t = t * t; // Ease-in 적용 (느리게 시작)
+            transform.position = Vector3.Lerp(startPosition, peakPosition, t);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        // 정점에서 잠깐 머무름
+        yield return new WaitForSeconds(peakHoldTime);
 
         elapsedTime = 0;
-        Vector3 targetPosition = new Vector3(player.position.x,startPosition.y+0.25f, player.position.z);
 
-        transform.LookAt(jumpTarget); // 점프 중에도 플레이어 방향으로 회전
-        // 내리찍기 (Y축 하강)
-        while (elapsedTime < jumpTime / 2)
+        // 빠르게 하강 (Ease-out 적용)
+        while (elapsedTime < fastDownDuration)
         {
-            transform.position = Vector3.Lerp(peakPosition, targetPosition, (elapsedTime / (jumpTime / 2)));
+            float t = elapsedTime / fastDownDuration;
+            t = 1 - (1 - t) * (1 - t); // Ease-out 적용 (빠르게 끝남)
+            transform.position = Vector3.Lerp(peakPosition, attackPosition, t);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        // 5. 내리찍기 이펙트 실행
+        // 착지 후 이펙트 및 공격 처리
         SetMushJumpEffectActive(false);
-        SetMushAttackEffectActive(true);
+        Destroy(attackMarker); // 마커 제거
 
-        // 6. 공격 후 일정 시간 기다린 뒤 다시 Chasing 상태로 변경
-        yield return new WaitForSeconds(0.5f);
+        // 7. 공격 후 대기 (쿨타임 적용)
+        StartCoroutine(ResetAttackCooldown());
         currentState = MonsterState.Chasing;
         animator.SetBool("isAttack", false);
     }
+
     IEnumerator ResetAttackCooldown()
     {
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true; // 쿨타임 종료 후 다시 공격 가능
+        isAttacking = false;
     }
 }
