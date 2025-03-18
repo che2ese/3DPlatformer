@@ -21,6 +21,8 @@ public class PlayerPhysics : MonoBehaviour
     public float jumpPower;
     public GameObject RunEffect;
     public GameObject SpeedUpRunEffect;
+    private int sfxWalkIndex = 0; // SFX 순서를 저장하는 변수
+    private bool isPlayingSFX = false; // SFX 재생 상태 체크
 
     // 스테미나 관련 변수
     [Header("Stamina")]
@@ -179,6 +181,7 @@ public class PlayerPhysics : MonoBehaviour
 
         if (!isInvincibility && other.CompareTag("ManHole"))
         {
+            AudioManager.instance.PlaySFX("ManHole");
             isPush = true;
             anim.SetBool("isPush", true);
             anim.SetTrigger("doPush");
@@ -237,6 +240,7 @@ public class PlayerPhysics : MonoBehaviour
     IEnumerator ElectricShock()
     {
         anim.SetTrigger("doShock");
+        AudioManager.instance.PlaySFX("Electric");
 
         // 코루틴 시작 및 핸들 저장
         afterShockImageCoroutine = StartCoroutine(GenerateAfterImage());
@@ -568,7 +572,6 @@ public class PlayerPhysics : MonoBehaviour
 
             if (moveVec != Vector3.zero)
             {
-
                 Quaternion targetRotation = Quaternion.LookRotation(moveVec, Vector3.up);
 
                 if (Quaternion.Angle(transform.rotation, targetRotation) > 1f)
@@ -671,6 +674,9 @@ public class PlayerPhysics : MonoBehaviour
         // 각 캐릭터에 따른 공격 이동 
         if (characterNum == 0)
         {
+            // SFX 지연 시작
+            StartCoroutine(PlaySFXWithDelay(0.2f, "CatAttack"));
+
             CatPunchEffect.SetActive(true);
 
             // 애니메이션 보정 
@@ -690,6 +696,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         else if (characterNum == 1)
         {
+            StartCoroutine(PlaySFXWithDelay(0.2f, "PandaAttack"));
             // 슬라이딩 전 달리기
             yield return MoveCharacter(startPosition, transform.forward * 6.0f, 0.6f);
 
@@ -708,6 +715,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         else if (characterNum == 2)
         {
+            StartCoroutine(PlaySFXWithDelay(0.5f, "MonkeyAttack"));
             yield return MoveCharacter(startPosition, transform.forward * 4.0f, 0.5f);
 
             // 이펙트 보이기
@@ -723,6 +731,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         else if (characterNum == 3)
         {
+            StartCoroutine(PlaySFXWithDelay(0.5f, "RabbitAttack"));
             yield return MoveCharacter(startPosition, transform.forward * 3.0f, 0.5f);
 
             startPosition = transform.position;
@@ -758,6 +767,12 @@ public class PlayerPhysics : MonoBehaviour
             yield return new WaitForSeconds(RabbitAttackCooldown);
         }
         isAbleAttack = true;
+    }
+
+    private IEnumerator PlaySFXWithDelay(float delay, string name)
+    {
+        yield return new WaitForSeconds(delay);
+        AudioManager.instance.PlaySFX(name);
     }
 
     // 공격 이동을 담당 함수 
@@ -861,6 +876,11 @@ public class PlayerPhysics : MonoBehaviour
 
         if (isGrounded && jumpDown) // 땅에 있을 때 점프 가능
         {
+            // SFX 지연 시작
+            if(!isInvincibility && isRunning)
+                StartCoroutine(PlaySFXWithDelay(0.1f, "RunJump"));
+            if(!isInvincibility && !isRunning)
+                AudioManager.instance.PlaySFX("WalkJump");
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             anim.SetBool("isJump", true);
             anim.SetTrigger("doJump");
@@ -919,15 +939,6 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    void DrawThickRay(Vector3 start, Vector3 direction, float distance, Color color, float thickness = 0.05f)
-    {
-        Vector3 right = Vector3.Cross(direction, Camera.main.transform.forward).normalized * thickness;
-
-        Debug.DrawLine(start, start + direction * distance, color, 0.1f);
-        Debug.DrawLine(start + right, start + right + direction * distance, color, 0.1f);
-        Debug.DrawLine(start - right, start - right + direction * distance, color, 0.1f);
-    }
-
     void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("ScaleBlock"))
@@ -942,6 +953,9 @@ public class PlayerPhysics : MonoBehaviour
         // 땅에 닿았을 때 + 착지 애니메이션 작동 
         if (collision.gameObject.layer == 6)
         {
+            if(isGrounded)
+                AudioManager.instance.PlaySFX("Landing");
+
             anim.SetBool("isJump", false);
             anim.SetBool("isFall", false);
             anim.SetBool("isPush", false);
