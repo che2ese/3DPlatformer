@@ -11,7 +11,8 @@ public class PlayerPhysics : MonoBehaviour
 
     // 캐릭터 관련 변수
     [Header("Character")]
-    public int characterNum;
+    // public int characterNum;
+    int characterNum = UserInfoManager.instance.GetCharacter() - 1;
     public GameObject[] character;
 
     // 이동 관련 변수
