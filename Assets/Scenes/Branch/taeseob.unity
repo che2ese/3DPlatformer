@@ -3292,6 +3292,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 907067544}
     m_Modifications:
     - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
+      propertyPath: waitTime
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
       propertyPath: spotlight
       value: 
       objectReference: {fileID: 1473276828}
@@ -3304,6 +3308,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1669113035}
     - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
+      propertyPath: rotateSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
       propertyPath: viewDistance
       value: 10
       objectReference: {fileID: 0}
@@ -3312,8 +3320,16 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
+      propertyPath: attackCooldown
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
       propertyPath: attackDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
+      propertyPath: lostPlayerTime
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
       propertyPath: mushJumpEffect
@@ -3327,6 +3343,10 @@ PrefabInstance:
       propertyPath: mushAttackEffect
       value: 
       objectReference: {fileID: 882405860}
+    - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
+      propertyPath: AttackMarkerPrefab
+      value: 
+      objectReference: {fileID: 2146852739840934665, guid: 83eb38c8ecfe0504cb0a98021d05b472, type: 3}
     - target: {fileID: -3433172578161457052, guid: e738eaa7920b6c842897abef6286fbcd, type: 3}
       propertyPath: Mush_Attack_Effect
       value: 

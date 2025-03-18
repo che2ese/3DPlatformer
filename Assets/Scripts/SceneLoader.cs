@@ -88,7 +88,7 @@ public class SceneLoader : MonoBehaviour
                 if (btn != null)
                 {
                     btn.onClick.RemoveAllListeners(); // 기존 이벤트 제거
-                    btn.onClick.AddListener(() => OnStartButtonClicked("StageScene")); // 새로운 이벤트 추가
+                    btn.onClick.AddListener(() => OnStartButtonClicked("StageSelectScene")); // 새로운 이벤트 추가
                 }
             }
             if (arcadeButton != null)
