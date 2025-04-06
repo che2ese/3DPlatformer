@@ -6,6 +6,7 @@ public class MonsterAi : MonoBehaviour
 {
     //1.Mushroom
     //2.Skeleton
+    //3.Ghost y축 값 0.6으로 설정해야함
     public int EnemyVersion;
 
     //몬스터 선택 변수
@@ -67,7 +68,7 @@ public class MonsterAi : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        viewAngle = spotlight.spotAngle;
+        spotlight.spotAngle = viewAngle;
         originalSpotlightColour = spotlight.color;
         animator = GetComponent<Animator>(); // 애니메이터 가져오기
         SetAnimationParameters(); // 애니메이션 설정 적용
@@ -226,27 +227,64 @@ public class MonsterAi : MonoBehaviour
                         //walk 작동
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", false);
+                        speed = 3f;
                         if (CanSeePlayer())
                         {
                             spotlight.color = Color.red;
                             currentState = MonsterState.Chasing;
                             StopAllCoroutines();
+                            frameCounter = 0; // Chasing으로 전환 시 초기화
                         }
+                        frameCounter = 0;
                         break;
                     case MonsterState.Chasing:
                         spotlight.color = Color.red;
                         //Run 작동
                         animator.SetBool("isWalking", true);
                         animator.SetBool("isChasing", true);
-                        if (!CanSeePlayer()) // 플레이어를 놓치면 다시 순찰 상태로 전환
+                        speed = 5f;
+                        if (CanSeePlayer())
+                        {
+                            ChasePlayer();
+                        }
+                        else
                         {
                             spotlight.color = originalSpotlightColour;
                             currentState = MonsterState.Patrolling;
                             StartCoroutine(ReturnToNearestWaypoint());
                         }
-                        else
+                        break;
+                }
+                break;
+            case 3://Ghost
+                switch (currentState)
+                {
+                    case MonsterState.Patrolling:
+                        spotlight.color = originalSpotlightColour;
+                        
+                        speed = 2f;
+                        if (CanSeePlayer())
+                        {
+                            spotlight.color = Color.red;
+                            currentState = MonsterState.Chasing;
+                            StopAllCoroutines();
+                            frameCounter = 0; // Chasing으로 전환 시 초기화
+                        }
+                        frameCounter = 0;
+                        break;
+                    case MonsterState.Chasing:
+                        spotlight.color = Color.red;
+                        
+                        speed = 4f;
+                        if (CanSeePlayer())
                         {
                             ChasePlayer();
+                        }
+                        else
+                        {
+                            spotlight.color = originalSpotlightColour;
+                            currentState = MonsterState.Patrolling;
+                            StartCoroutine(ReturnToNearestWaypoint());
                         }
                         break;
                 }
@@ -323,6 +361,13 @@ public class MonsterAi : MonoBehaviour
                         yield return StartCoroutine(TurnToFace(targetWaypoint));
                         break;
                     case 2: //skeleton
+                        targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
+                        targetWaypoint = waypoints[targetWaypointIndex];
+                        yield return new WaitForSeconds(waitTime);
+                        yield return StartCoroutine(LookAround()); //두리번 거리는 효과
+                        yield return StartCoroutine(TurnToFace(targetWaypoint));
+                        break;
+                    case 3://Mush
                         targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
                         targetWaypoint = waypoints[targetWaypointIndex];
                         yield return new WaitForSeconds(waitTime);
