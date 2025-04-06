@@ -24,6 +24,10 @@ public class MonsterAIEditor : Editor
             // MonsterNumber는 Skeleton에서만 보이도록 설정
             // monster.MonsterNumber = EditorGUILayout.IntField("Monster Number (Skeleton 전용)", monster.MonsterNumber);
         }
+        else if (monster.EnemyVersion == 3)
+        {
+            EditorGUILayout.HelpBox("Ghost 몬스터 설정", MessageType.Info);
+        }
         else
         {
             EditorGUILayout.HelpBox("올바른 Monster Version을 선택하세요 (1: Mushroom, 2: Skeleton)", MessageType.Warning);

@@ -653,9 +653,10 @@ MonoBehaviour:
   EnemyVersion: 2
   pathHolder: {fileID: 0}
   MonsterNumber: 1
-  speed: 5
-  waitTime: 0.3
+  speed: 2
+  waitTime: 0.1
   turnSpeed: 90
+  rotateSpeed: 1
   maxHealth: 100
   spotlight: {fileID: 4599483245823339848}
   viewMask:
@@ -664,7 +665,14 @@ MonoBehaviour:
   viewDistance: 10
   viewAngle: 60
   AttackDistance: 3
+  Mush_jump_Effect: {fileID: 0}
+  Mush_Attack_Effect: {fileID: 0}
+  Skull_Find_Effect: {fileID: 0}
+  Skull_Run_Effect: {fileID: 0}
+  attackCooldown: 1.5
+  lostPlayerTime: 2
   currentState: 0
+  AttackMarkerPrefab: {fileID: 0}
 --- !u!1 &3802687383761891443
 GameObject:
   m_ObjectHideFlags: 0
