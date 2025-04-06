@@ -3,6 +3,8 @@ using System.Collections;
 
 public class StageManager : MonoBehaviour
 {
+    public static string selectedStageName;
+
     public int clearStage = 0; // 현재 클리어된 스테이지 값
     public GameObject[] objectsToAppear; // 등장할 오브젝트 배열
     public GameObject[] objectsToDisappear; // 특정 스테이지에서 제거될 오브젝트 배열

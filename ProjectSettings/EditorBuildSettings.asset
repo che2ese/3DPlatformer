@@ -21,9 +21,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Online/OnlineScene.unity
     guid: d1dfb674e4bde7b488c0704912c28bac
   - enabled: 1
-    path: Assets/Scenes/Stage/StageScene.unity
-    guid: d3ff07e097026f043afb7cfddfededab
-  - enabled: 1
     path: Assets/Scenes/Arcade/ArcadeScene.unity
     guid: eb8f3f81dd7a1184ea5f600eeabbc1e3
   - enabled: 1
@@ -35,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Stage/StageSelectScene.unity
     guid: b124e4d8343aa46faa57b08193cec411
+  - enabled: 1
+    path: Assets/Scenes/Stage/StageScene.unity
+    guid: d3ff07e097026f043afb7cfddfededab
   m_configObjects: {}
